@@ -29,8 +29,8 @@ rule all:
     input:
         expand("/scratch/users/swalton/coalescence-pilot-mgx/trimmed/{samplelane}-trimmed-pair1.fastq.gz",samplelane=samplelanes),
         expand("workflow/out/filter/{sample}-filtered.1.fastq.gz",sample=samples),
-        expand("workflow/out/midas2_output/{sample}/species/species_profile.tsv",sample=samples),
-        "workflow/out/midas2_output/merge/species/species_prevalence.tsv",
+#        expand("workflow/out/midas2_output/{sample}/species/species_profile.tsv",sample=samples),
+ #       "workflow/out/midas2_output/merge/species/species_prevalence.tsv",
       #  expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples),
 #        "workflow/out/midas2_output/merge/snps_summary.tsv",
      #   "workflow/out/midas2_output/merge_bacteroides/snps_summary.tsv",
@@ -41,5 +41,5 @@ rule all:
 
 
 include: "workflow/rules/processRawReads.smk",
-include: "workflow/rules/runMIDAS2.smk",
+#include: "workflow/rules/runMIDAS2.smk",
 

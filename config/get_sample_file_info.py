@@ -4,7 +4,7 @@ import pandas as pd
 
 
 if __name__ == '__main__':
-    sample_folders = glob.glob('/oak/stanford/groups/dpetrov/swalton/data/coalescence-pilot/coalescence_data/*/')
+    sample_folders = glob.glob('/oak/stanford/groups/dpetrov/swalton/data/coalescence-pilot/coalescence_data/*')
     sample_names = [fname.split('/')[-2] for fname in sample_folders]
     read1 = [glob.glob(f'{folder}*R1*.gz')[0]for folder in sample_folders]
     read2 = [glob.glob(f'{folder}*R2*.gz')[0]for folder in sample_folders] 
