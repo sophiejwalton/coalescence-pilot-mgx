@@ -5,14 +5,20 @@ import os
 configfile: "config/config.yaml"
 
 # Convert list of samples to a dataframe.
-df=pd.read_csv(config['sampleFileRaw'])
+df=pd.read_csv('config/sample_fnames.csv')
 
 # Parse sample names from df and generate sample list 
-df['SampleLane'] = df['Sample'].transform(lambda x: f'{x}_L002')
+#df['SampleLane'] = df['Sample'].transform(lambda x: f'{x}_L002')
 samples=list(set(df['Sample'].tolist()))
 samplelanes = list(set(df['SampleLane'].tolist()))
 df = df.set_index('Sample')
-
+#print(df)
+#print(samples)
+#print(samplelanes)
+#print(df['trim1'].values)
+#print(df['trim2'].values)
+#print(df['read1'].values)
+#print(df['read2'].values)
 #samples.remove('AD_0809_SW_26')
 # Parse the list of species analyzed in the MIDAS snps module.
 #if(os.path.isdir("workflow/out/midasOutput/snps")):
@@ -27,9 +33,9 @@ df = df.set_index('Sample')
 
 rule all:
     input:
-        expand("/scratch/users/swalton/coalescence-pilot-mgx/trimmed/{samplelane}-trimmed-pair1.fastq.gz",samplelane=samplelanes),
+        expand("workflow/out/trimmed/{samplelane}-trimmed-pair1.fastq.gz",samplelane=samplelanes),
         expand("workflow/out/filter/{sample}-filtered.1.fastq.gz",sample=samples),
-#        expand("workflow/out/midas2_output/{sample}/species/species_profile.tsv",sample=samples),
+        expand("workflow/out/midas2_output/{sample}/species/species_profile.tsv",sample=samples),
  #       "workflow/out/midas2_output/merge/species/species_prevalence.tsv",
       #  expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples),
 #        "workflow/out/midas2_output/merge/snps_summary.tsv",
@@ -41,5 +47,5 @@ rule all:
 
 
 include: "workflow/rules/processRawReads.smk",
-#include: "workflow/rules/runMIDAS2.smk",
+include: "workflow/rules/runMIDAS2.smk",
 

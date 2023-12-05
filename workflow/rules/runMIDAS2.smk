@@ -36,9 +36,9 @@ rule get_abundant_species:
         """
 
 def get_abundance_species():
-    df= pd.read_csv('workflow/out/midas2_output/abundant_species.csv')
-    return list(df['species_id'].values)
-
+     pass
+#    df= pd.read_csv('workflow/out/midas2_output/abundant_species.csv')
+#    return list(df['species_id'].values)
 rule identifySNVs:
     input:
         r1=join(config["filterdir"],"{sample}-filtered.1.fastq.gz"),
