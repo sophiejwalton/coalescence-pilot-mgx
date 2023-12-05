@@ -52,8 +52,8 @@ rule identifySNVs:
         midasdb_dir=config['midasdb_dir'],
         species_list=get_abundance_species()
     threads: config['maxCPUs']
-    conda:
-        "../../workflow/envs/midas2_sw-no-builds.yml"
+ #   conda:
+#        "../../workflow/envs/midas2_sw-no-builds.yml"
     shell:
         """
         midas2 run_snps --sample_name {wildcards.sample} -1 {input.r1} -2 {input.r2}  --midasdb_name {params.midasdb} \
