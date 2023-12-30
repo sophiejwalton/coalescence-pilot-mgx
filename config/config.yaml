@@ -14,7 +14,7 @@ midasdb_dir: "/home/groups/bhgood/my_midasdb_uhgg"
 
 
 # Output directories
-trimdir: "/scratch/users/swalton/coalescence-pilot-mgx/trimmed"
+trimdir: "workflow/out/trimmed"
 filterdir: "workflow/out/filter"
 rePaireddir: "workflow/out/rePair"
 #plotMIDASoutdir: "workflow/report/plotMIDAS"
