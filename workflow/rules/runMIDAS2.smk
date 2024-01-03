@@ -62,6 +62,9 @@ rule identifySNVs:
             --advanced \
             --species_list {params.species_list} --select_threshold=-1
         """
+        merge_midas.py snps {params.outdir} -t dir -i workflow/out/midasOutput  \
+        --sample_depth 1 --site_depth 1 --species_id {wildcards.species} --site_prev 0.0 --threads {threads} \
+        --fract_cov 0 --all_sites --all_samples
 
 rule compute_populationSNVs:
     input:
@@ -78,8 +81,9 @@ rule compute_populationSNVs:
     shell:
         """
         midas2 merge_snps --samples_list workflow/out/list_of_samples.tsv  --midasdb_name {params.midasdb} \
-           --site_depth -1  --site_ratio 10000 ----site_prev 0.0 --snp_maf .000001 --genome_depth 0 --genome_coverage 0 \
-           --advanced --midasdb_dir {params.midasdb_dir} --snp_type any --genome_coverage 0.7 --num_cores {threads} workflow/out/midas2_output/merge
+           --site_depth 1  --site_prev 0.0 --snp_maf 0.01 --genome_depth 0 --genome_coverage 0 \
+           --advanced --midasdb_dir {params.midasdb_dir} --snp_type any --genome_coverage 0.7 --num_cores {threads} \ 
+           workflow/out/midas2_output/merge
         """
 
 
@@ -97,8 +101,9 @@ rule compute_populationSNVs_prominent:
         "../../workflow/envs/midas2_sw-no-builds.yml"
     shell:
         """
-        midas2 merge_snps --samples_list workflow/out/list_of_samples.tsv  --midasdb_name {params.midasdb} --species_list 102478 \
-          --site_depth -1  --site_ratio 10000 --site_prev 0.0 --snp_maf .000001 --genome_depth 0 --genome_coverage 0 \  
-          --advanced --midasdb_dir {params.midasdb_dir} --snp_type any --genome_coverage 0.7 --num_cores {threads} workflow/out/midas2_output/merge_bacteroides
+        midas2 merge_snps --samples_list workflow/out/list_of_samples.tsv  --midasdb_name {params.midasdb} \
+           --site_depth 1  --site_prev 0.0 --snp_maf 0.01 --genome_depth 0 --genome_coverage 0 \
+           --advanced --midasdb_dir {params.midasdb_dir} --snp_type any --genome_coverage 0.7 --num_cores {threads} \ 
+           workflow/out/midas2_output/merge_bacteroides
         """
 
