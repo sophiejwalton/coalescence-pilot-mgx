@@ -67,7 +67,7 @@ rule compute_populationSNVs:
     input:
         expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples)
     output:
-        "workflow/out/midas2_output/merge/snps_summary.tsv"
+        "workflow/out/midas2_output/merge/snps/snps_summary.tsv"
     params:
         minCoverage=config["runMIDAS_speciesMinCoverage"],
         midasdb=config['midasdb'],
@@ -78,7 +78,8 @@ rule compute_populationSNVs:
     shell:
         """
         midas2 merge_snps --samples_list workflow/out/list_of_samples.tsv  --midasdb_name {params.midasdb} \
-            --advanced --midasdb_dir {params.midasdb_dir} --genome_coverage 0.7 --num_cores {threads} workflow/out/midas2_output/merge
+           --site_depth -1  --site_ratio 10000 ----site_prev 0.0 --snp_maf .000001 --genome_depth 0 --genome_coverage 0 \
+           --advanced --midasdb_dir {params.midasdb_dir} --snp_type any --genome_coverage 0.7 --num_cores {threads} workflow/out/midas2_output/merge
         """
 
 
@@ -86,7 +87,7 @@ rule compute_populationSNVs_prominent:
     input:
         expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples)
     output:
-        "workflow/out/midas2_output/merge_bacteroides/snps_summary.tsv"
+        "workflow/out/midas2_output/merge_bacteroides/snps/snps_summary.tsv"
     params:
         minCoverage=config["runMIDAS_speciesMinCoverage"],
         midasdb=config['midasdb'],
@@ -96,7 +97,8 @@ rule compute_populationSNVs_prominent:
         "../../workflow/envs/midas2_sw-no-builds.yml"
     shell:
         """
-        midas2 merge_snps --samples_list workflow/out/list_of_samples.tsv  --midasdb_name {params.midasdb} --species_list 101346,102478 \
-            --advanced --midasdb_dir {params.midasdb_dir} --genome_coverage 0.7 --num_cores {threads} workflow/out/midas2_output/merge_bacteroides
+        midas2 merge_snps --samples_list workflow/out/list_of_samples.tsv  --midasdb_name {params.midasdb} --species_list 102478 \
+          --site_depth -1  --site_ratio 10000 --site_prev 0.0 --snp_maf .000001 --genome_depth 0 --genome_coverage 0 \  
+          --advanced --midasdb_dir {params.midasdb_dir} --snp_type any --genome_coverage 0.7 --num_cores {threads} workflow/out/midas2_output/merge_bacteroides
         """
 
