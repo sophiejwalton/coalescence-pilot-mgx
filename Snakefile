@@ -12,24 +12,7 @@ df=pd.read_csv('config/sample_fnames.csv')
 samples=list(set(df['Sample'].tolist()))
 samplelanes = list(set(df['SampleLane'].tolist()))
 df = df.set_index('Sample')
-#print(df)
-#print(samples)
-#print(samplelanes)
-#print(df['trim1'].values)
-#print(df['trim2'].values)
-#print(df['read1'].values)
-#print(df['read2'].values)
-#samples.remove('AD_0809_SW_26')
-# Parse the list of species analyzed in the MIDAS snps module.
-#if(os.path.isdir("workflow/out/midasOutput/snps")):
-    # Iterate through the species analyzed by the snps module.
-   # dirs=[x[0] for x in os.walk("workflow/out/midasOutput/snps/HouseholdTransmission-Stool")]
-    # Remove the first element, which is the directory itself without subdirectories.
-   # dirs.pop(0)
-    # Parse the species names and generate a list.
-  #  snpsSpecies=[]
-   # for species in dirs:
-      #  snpsSpecies.append(species.split("/")[5])
+
 
 rule all:
     input:

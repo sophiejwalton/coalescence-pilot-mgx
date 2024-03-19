@@ -27,7 +27,7 @@ def get_sampleLane(x):
 
 if __name__ == '__main__':
 
-    R1 = glob.glob('/oak/stanford/groups/dpetrov/swalton/data/coalescence-pilot/coalescence_data/*R1*.gz')
+    R1 = glob.glob('/oak/stanford/groups/dpetrov/Feb2024_biohub_SJW_JCCV_KAS/Sophie_Walton/*R1*.gz')
     df = pd.DataFrame(data = {'read1': R1})
     print(df)
     df['read2'] = df['read1'].transform(get_R2)

@@ -2,7 +2,7 @@ project: "coalescence-pilot-mgx"
 
 # Input directories and files.
 snakedir: "/oak/stanford/groups/dpetrov/swalton/coalescence-pilot-mgx"
-fastqdir: "/oak/stanford/groups/dpetrov/swalton/data/coalescence-pilot/coalescence_data"
+fastqdir: "/oak/stanford/groups/dpetrov/Feb2024_biohub_SJW_JCCV_KAS/Sophie_Walton"
 sampleFileRaw: "config/sample_fnames.csv"
 #speciesTaxonomy: "workflow/out/midasOutput/database/species_taxonomy.txt"
 
