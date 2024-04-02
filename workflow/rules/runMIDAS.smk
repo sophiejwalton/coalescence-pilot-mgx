@@ -1,16 +1,16 @@
 # Run the MIDAS species module to generate species profiles.
 rule profileSpeciesAbundances:
     input:
-        r1=join(config["filterdir"],"{sample}-filtered.1.fastq.gz"),
-        r2=join(config["filterdir"],"{sample}-filtered.2.fastq.gz")
+        r1=join(config["filterdir"],"{samplelane}-filtered.1.fastq.gz"),
+        r2=join(config["filterdir"],"{samplelane}-filtered.2.fastq.gz")
     output:
-        profile="workflow/out/midasOutput/{sample}/species/species_profile.txt"
+        profile="workflow/out/midasOutput/{samplelane}/species/species_profile.txt"
     threads: config['maxCPUs']
     conda:
         "../../workflow/envs/MIDASpython2-no-builds.yml"
     shell:
         """
-        run_midas.py species workflow/out/midasOutput/{wildcards.sample} \
+        run_midas.py species workflow/out/midasOutput/{wildcards.samplelane} \
             -1 {input.r1} -2 {input.r2} -t {threads}
         """
 
