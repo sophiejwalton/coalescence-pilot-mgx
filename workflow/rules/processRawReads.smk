@@ -56,8 +56,8 @@ rule concatenate_fastq_files_across_lanes:
 		filter1s=lambda wildcards: list(df.loc[df['Sample'] == wildcards.sample, 'filter1'].values),
 		filter2s=lambda wildcards: list(df.loc[df['Sample'] == wildcards.sample, 'filter2'].values)
 	output:
-		concate1={config['concate_dir']}/{sample}-filtered.1.fastq.gz,
-		concate2={config['concate_dir']}/{sample}-filtered.2.fastq.gz,
+		concate1=join(config['concate_dir'], "/{sample}-filtered.1.fastq.gz"),
+		concate2=join({config['concate_dir']}, "/{sample}-filtered.2.fastq.gz"),
 	threads: config['maxCPUs']
 	params:
 		concate_dir=config['concate_dir'],
