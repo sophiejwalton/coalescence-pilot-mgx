@@ -55,13 +55,13 @@ rule filterOutHumanReads:
 
 rule concatenate_fastq_files_across_lanes:
 	input:
-		filter1s=lambda wildcards: expand(join(config['concate_dir'], '/{wildcards.sample}-{lane}-filtered.1.fastq.gz'),
-			lane=[i.split('_')[-1][:4] for i in list(df.loc[df['Sample']==wildcards.sample,'filter1'])]), 
-		filter2s=lambda wildcards: expand(join(config['concate_dir'], '/{wildcards.sample}-{lane}-filtered.2.fastq.gz'),
-			lane=[i.split('_')[-1][:4] for i in list(df.loc[df['Sample']==wildcards.sample,'filter2'])]), 
+		filter1s=lambda wildcards: expand('workflow/out/filter/{wildcards.sample}-{lane}-filtered.1.fastq.gz',
+			lane=[i.split('_')[-1][:4] for i in list(df.loc[df['Sample']==wildcards.sample,'filter1'].values)]), 
+		filter2s=lambda wildcards: expand('workflow/out/filter/{wildcards.sample}-{lane}-filtered.2.fastq.gz',
+			lane=[i.split('_')[-1][:4] for i in list(df.loc[df['Sample']==wildcards.sample,'filter2'].values)]), 
 	output:
-		concate1=join(config['concate_dir'], "/{sample}-filtered.1.fastq.gz"),
-		concate2=join({config['concate_dir']}, "/{sample}-filtered.2.fastq.gz"),
+		concate1='workflow/out/concat/{sample}-filtered.1.fastq.gz',
+		concate2='workflow/out/concat/{sample}-filtered.2.fastq.gz',
 	threads: config['maxCPUs']
 	params:
 		concate_dir=config['concate_dir'],
