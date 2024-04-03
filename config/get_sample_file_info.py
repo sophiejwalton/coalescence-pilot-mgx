@@ -19,6 +19,18 @@ def get_trim2(x):
     
     return 'workflow/out/trimmed/' + string_sample + '-trimmed-pair2.fastq.gz'
 
+def get_filter1(x):
+    string_sample = x.split('R1')[0][:-1]
+    string_sample = string_sample.split('/')[-1]
+    
+    return 'workflow/out/filter/' + string_sample + '-filtered.1.fastq.gz'
+
+def get_filter2(x):
+    string_sample = x.split('R2')[0][:-1]
+    string_sample = string_sample.split('/')[-1]
+    
+    return 'workflow/out/filter/' + string_sample + '-filtered.2.fastq.gz'
+
 
 def get_sampleLane(x):
     filename = x.split('/')[-1]
@@ -33,6 +45,8 @@ if __name__ == '__main__':
     df['read2'] = df['read1'].transform(get_R2)
     df['trim1'] = df['read1'].transform(get_trim1)
     df['trim2'] = df['read2'].transform(get_trim2)
+    df['filter1'] = df['read1'].transform(get_filter1)
+    df['filter2'] = df['read2'].transform(get_filter2)
     df['SampleLane'] = df['read1'].transform(get_sampleLane)
     df['Sample'] = df['SampleLane'].transform(lambda x: x.split('_')[0])
 
