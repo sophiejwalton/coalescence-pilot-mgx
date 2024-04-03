@@ -50,11 +50,15 @@ rule filterOutHumanReads:
 
 		"""
 
+#lambda wildcards: expand("workflow/out/midasOutput/species/abundantSpecies_{subject}.txt",
+ #           subject=dict(tuple(df.groupby(['household'])))[wildcards.household]['subject'].tolist())
 
 rule concatenate_fastq_files_across_lanes:
 	input:
-		filter1s=lambda wildcards: list(df.loc[df['Sample'] == wildcards.sample, 'filter1'].values),
-		filter2s=lambda wildcards: list(df.loc[df['Sample'] == wildcards.sample, 'filter2'].values)
+		filter1s=lambda wildcards: expand(join(config['concate_dir'], '/{wildcards.sample}-{lane}-filtered.1.fastq.gz'),
+			lane=[i.split('_')[-1][:4] for i in list(df.loc[df['Sample']==wildcards.sample,'filter1'])]), 
+		filter2s=lambda wildcards: expand(join(config['concate_dir'], '/{wildcards.sample}-{lane}-filtered.2.fastq.gz'),
+			lane=[i.split('_')[-1][:4] for i in list(df.loc[df['Sample']==wildcards.sample,'filter2'])]), 
 	output:
 		concate1=join(config['concate_dir'], "/{sample}-filtered.1.fastq.gz"),
 		concate2=join({config['concate_dir']}, "/{sample}-filtered.2.fastq.gz"),
