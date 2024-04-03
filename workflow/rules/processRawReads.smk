@@ -47,4 +47,23 @@ rule filterOutHumanReads:
 		  2> {output.bt2log}
 		mv {params.filterdir}/{wildcards.samplelane}-filtered.1 {params.filterdir}/{wildcards.samplelane}-filtered.1.fastq.gz
 		mv {params.filterdir}/{wildcards.samplelane}-filtered.2 {params.filterdir}/{wildcards.samplelane}-filtered.2.fastq.gz
+
+		"""
+
+
+rule concatenate_fastq_files_across_lanes:
+	input:
+		filter1s=lambda wildcards: list(df.loc[df['Sample'] == wildcards.sample, 'filter1'].values)
+		filter2s=lambda wildcards: list(df.loc[df['Sample'] == wildcards.sample, 'filter2'].values)
+	output:
+		concate1={config['concate_dir']}/{sample}-filtered.1.fastq.gz
+		concate2={config['concate_dir']}/{sample}-filtered.2.fastq.gz
+	threads: config['maxCPUs']
+	params:
+		concate_dir=config['concate_dir']
+		project=config['project'],
+	shell:
+		"""
+		cat {input.filter1s} > {params.concate_dir}/{wildcards.sample}-filtered.1.fastq.gz
+		cat {input.filter2s} > {params.concate_dir}/{wildcards.sample}-filtered.2.fastq.gz
 		"""

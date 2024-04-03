@@ -17,6 +17,7 @@ midasdb_dir: "/home/groups/bhgood/my_midasdb_uhgg"
 trimdir: "workflow/out/trimmed"
 filterdir: "workflow/out/filter"
 rePaireddir: "workflow/out/rePair"
+concate_dir: "workflow/out/concat"
 #plotMIDASoutdir: "workflow/report/plotMIDAS"
 
 # Analysis parameters.

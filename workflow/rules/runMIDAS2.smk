@@ -3,10 +3,10 @@ import pandas as pd
 # Run the MIDAS species module to generate species profiles.
 rule identifySpecies:
     input:
-        r1=join(config["filterdir"],"{samplelane}-filtered.1.fastq.gz"),
-        r2=join(config["filterdir"],"{samplelane}-filtered.2.fastq.gz")
+        r1=join(config["concate_dir"],"{sample}-filtered.1.fastq.gz"),
+        r2=join(config["concate_dir"],"{sample}-filtered.2.fastq.gz")
     output:
-        profile="workflow/out/midas2_output/{samplelane}/species/species_profile.tsv"
+        profile="workflow/out/midas2_output/{sample}/species/species_profile.tsv"
     params:
         midasdb=config['midasdb'],
         midasdb_dir=config['midasdb_dir']
@@ -15,7 +15,7 @@ rule identifySpecies:
         "../../workflow/envs/midas2_sw-no-builds.yml"
     shell:
         """
-        midas2 run_species --sample_name {wildcards.samplelane} -1 {input.r1} -2 {input.r2} --midasdb_name {params.midasdb} \
+        midas2 run_species --sample_name {wildcards.sample} -1 {input.r1} -2 {input.r2} --midasdb_name {params.midasdb} \
             --midasdb_dir {params.midasdb_dir} --num_cores {threads} workflow/out/midas2_output
         """
 
@@ -42,8 +42,8 @@ def get_abundance_species():
 
 rule identifySNVs:
     input:
-        r1=join(config["filterdir"],"{sample}-filtered.1.fastq.gz"),
-        r2=join(config["filterdir"],"{sample}-filtered.2.fastq.gz"),
+        r1=join(config["concate_dir"],"{sample}-filtered.1.fastq.gz"),
+        r2=join(config["concate_dir"],"{sample}-filtered.2.fastq.gz"),
         good_species='workflow/out/midas2_output/species/abundant_species.csv',
         species="workflow/out/midas2_output/{sample}/species/species_profile.tsv"
     output:

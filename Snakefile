@@ -20,7 +20,8 @@ rule all:
     input:
         expand("workflow/out/trimmed/{samplelane}-trimmed-pair1.fastq.gz",samplelane=samplelanes),
         expand("workflow/out/filter/{samplelane}-filtered.1.fastq.gz",samplelane=samplelanes),
-        expand("workflow/out/midas2_output/{samplelane}/species/species_profile.tsv",samplelane=samplelanes),
+        expand("workflow/out/concat/{sample}-filtered.1.fastq.gz",sample=samples),
+        expand("workflow/out/midas2_output/{sample}/species/species_profile.tsv",sample=samples),
  #       "workflow/out/midas2_output/species/abundant_species.csv",
   #      expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples),
    #     "workflow/out/midas2_output/merge/snps/snps_summary.tsv",
