@@ -5,7 +5,7 @@ import os
 configfile: "config/config.yaml"
 
 # Convert list of samples to a dataframe.
-df=pd.read_csv('config/sample_fnames.csv')
+df=pd.read_csv('sample_fnames.csv')
 
 # Parse sample names from df and generate sample list 
 #df['SampleLane'] = df['Sample'].transform(lambda x: f'{x}_L002')
@@ -20,7 +20,7 @@ rule all:
     input:
         expand("workflow/out/trimmed/{samplelane}-trimmed-pair1.fastq.gz",samplelane=samplelanes),
         expand("workflow/out/filter/{samplelane}-filtered.1.fastq.gz",samplelane=samplelanes),
-        #expand("workflow/out/concat/{sample}-filtered.1.fastq.gz",sample=samples),
+        expand("workflow/out/concat/{sample}-filtered.1.fastq.gz",sample=samples),
         #expand("workflow/out/midas2_output/{sample}/species/species_profile.tsv",sample=samples),
  #       "workflow/out/midas2_output/species/abundant_species.csv",
   #      expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples),
