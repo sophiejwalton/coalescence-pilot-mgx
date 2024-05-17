@@ -36,7 +36,7 @@ rule get_abundant_species:
         """
 
 def get_abundance_species():
-#     pass
+    # pass
     df= pd.read_csv('workflow/out/midas2_output/species/abundant_species.csv')
     return ','.join(list(df['species_id'].astype(str)))
 

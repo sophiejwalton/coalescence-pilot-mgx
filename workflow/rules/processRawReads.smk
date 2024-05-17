@@ -33,15 +33,15 @@ rule filterOutHumanReads:
 		humanref=config['humanGenomeRef'],
 		filterdir=config['filterdir'],
 		project=config['project'],
-		trim1= lambda wildcards: df.loc[str(wildcards.samplelane), 'trim1'],
-		trim2= lambda wildcards: df.loc[str(wildcards.samplelane), 'trim2'],
+	#	trim1= lambda wildcards: df.loc[str(wildcards.samplelane), 'trim1'],
+	#	trim2= lambda wildcards: df.loc[str(wildcards.samplelane), 'trim2'],
 	conda:
 		"../../workflow/envs/bowtie2-no-builds.yml"
 	shell:
 		"""
 		bowtie2 --very-fast \
 		  -x {params.humanref} \
-		  -1 {params.trim1} -2 {params.trim2} \
+		  -1 {input.trim1} -2 {input.trim2} \
 		  -S {params.filterdir}/{wildcards.samplelane}.sam \
 		  --un-conc-gz {params.filterdir}/{wildcards.samplelane}-filtered \
 		  2> {output.bt2log}
