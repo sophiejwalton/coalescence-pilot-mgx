@@ -62,7 +62,11 @@ rule identifySNVs:
             --advanced \
             --species_list {params.species_list} --select_threshold=-1
         """
-        
+def get_species_list():
+    df = pd.read_csv('workflow/out/midas2_output/species/species_prevalence.tsv',delimiter = '\t')
+    df = df.sort_values(by = 'mean_coverage',ascending = False).reset_index()
+    return ','.join(df.loc[1:20,'species_id'].astype(str).to_list())
+
 rule compute_populationSNVs:
     input:
         expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples)
@@ -71,13 +75,14 @@ rule compute_populationSNVs:
     params:
         minCoverage=config["runMIDAS_speciesMinCoverage"],
         midasdb=config['midasdb'],
-        midasdb_dir=config['midasdb_dir']
+        midasdb_dir=config['midasdb_dir'],
+        species_list = get_species_list()
     threads: config['maxCPUs']
     conda:
         "../../workflow/envs/midas2_sw-no-builds.yml"
     shell:
         """
-        midas2 merge_snps --samples_list workflow/out/list_of_samples.tsv  --midasdb_name {params.midasdb} --site_depth 1  --site_prev 0.0 --snp_maf 0.01 --advanced --midasdb_dir {params.midasdb_dir} --snp_type any --genome_coverage 0.5 --num_cores {threads} workflow/out/midas2_output/merge
+        midas2 merge_snps --samples_list workflow/out/list_of_samples.tsv --species_list {params.species_list}  --midasdb_name {params.midasdb} --genome_depth 1 --site_depth 1  --site_prev 0.0 --snp_maf 0.01 --advanced --midasdb_dir {params.midasdb_dir} --snp_type any --genome_coverage 0.5 --num_cores {threads} workflow/out/midas2_output/merge
         """
 
 
@@ -95,6 +100,6 @@ rule compute_populationSNVs_prominent:
         "../../workflow/envs/midas2_sw-no-builds.yml"
     shell:
         """
-        midas2 merge_snps --samples_list workflow/out/list_of_samples.tsv  --midasdb_name {params.midasdb} --species_list 102478 --site_depth 1  --site_prev 0.0 --snp_maf 0.01 --advanced --midasdb_dir {params.midasdb_dir} --snp_type any --genome_depth 1 --genome_coverage 0.5 --num_cores {threads} workflow/out/midas2_output/merge_bacteroides
+        midas2 merge_snps --samples_list workflow/out/list_of_samples.tsv  --midasdb_name {params.midasdb} --species_list 102478,101346 --site_depth 1  --site_prev 0.0 --snp_maf 0.01 --advanced --midasdb_dir {params.midasdb_dir} --snp_type any --genome_depth 1 --genome_coverage 0.5 --num_cores {threads} workflow/out/midas2_output/merge_bacteroides
         """
 
