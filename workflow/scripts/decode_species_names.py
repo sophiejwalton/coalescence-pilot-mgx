@@ -6,7 +6,7 @@ import argparse
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='Conduct Strain fishing for a given species across all cows')
 
     # add arguments
     parser.add_argument('minCoverage', action='store',

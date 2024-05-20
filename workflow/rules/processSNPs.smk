@@ -27,7 +27,7 @@ rule get_filtered_dfs:
         snpsDepth="/workflow/out/midas2_output/merge/snps/{species}/{species}.snps_depth.tsv",
         snpsFreq="/workflow/out/midas2_output/merge/snps/{species}/{species}.snps_freq.tsv",
         snpsInfo="/workflow/out/midas2_output/merge/snps/{species}/{species}.snps_info.tsv",
-        snpsSummary=config['MIDASRundir']+"/workflow/out/midasOutput/snps/HouseholdTransmission-Stool/{species}/snps_summary.txt.gz"
+      #  snpsSummary=config['MIDASRundir']+"/workflow/out/midasOutput/snps/HouseholdTransmission-Stool/{species}/snps_summary.txt.gz"
     output:
         "workflow/out/filtered_snps/{species}/diversity_df.csv",
         "workflow/out/filtered_snps/{species}/median_depth_df.csv"
