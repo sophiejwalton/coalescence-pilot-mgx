@@ -13,9 +13,9 @@ def load_and_sort_files(species_dir,species):
     """
     Takes in snp directory, returns dataframes of various MIDAS2 outputs: info, depth, freq
     """
-    info = pd.read_csv(species_dir + f"/{species}.snps_info.tsv", sep = "\t", low_memory=False).set_index('site_id')
-    depth = pd.read_csv(species_dir + f"/{species}.snps_depth.tsv", sep = "\t", ).set_index('site_id')
-    freq = pd.read_csv(species_dir + f"/{species}.snps_freqs.tsv", sep = "\t", ).set_index('site_id')
+    info = pd.read_csv(species_dir + f"/{species}.snps_info.tsv.gz", sep = "\t", compression='gzip', low_memory=False).set_index('site_id')
+    depth = pd.read_csv(species_dir + f"/{species}.snps_depth.tsv.gz", compression='gzip',sep = "\t", ).set_index('site_id')
+    freq = pd.read_csv(species_dir + f"/{species}.snps_freqs.tsv.gz",compression='gzip', sep = "\t", ).set_index('site_id')
 
     return info, depth, freq
 

@@ -32,8 +32,9 @@ rule all:
         "workflow/out/midas2_output/merge/snps/snps_summary.tsv",
        # "workflow/out/midas2_output/merge_bacteroides/snps/snps_summary.tsv",
       #  expand("workflow/out/midasOutput/{sample}/species/species_profile.txt",sample=samples),
-       # "workflow/out/midas2_output/merge/snps/100013/100013.snps_freqs.tsv.gzip",
+      #  "workflow/out/midas2_output/merge/snps/100013/100013.snps_freqs.tsv.gzip",
         "workflow/report/calculateDiversityDepth/100013/100013_diversity_df.csv",      
+        "workflow/report/calculateFixedDiffs/100013/100013_fixed_diffs.csv"
  # "workflow/out/midasOutput/species/species_profile_all_abundant.csv",
         #"workflow/out/midasOutput/species/abundantSpecies.txt",
        # expand("workflow/out/midasOutput/species/abundantSpecies_{subject}.txt", subject=subjects),

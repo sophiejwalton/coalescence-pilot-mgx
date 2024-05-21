@@ -33,11 +33,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='basic filtering of sites')
 
     # add arguments
-    parser.add_argument('outdir', action='store',
+    parser.add_argument('--outdir', action='store',
                     help='Outdir prefix where to save stuff')
-    parser.add_argument('indir', action = 'store', 
+    parser.add_argument('--indir', action = 'store', 
                        help = 'location where to get stuff from')
-    parser.add_argument('species', action = 'store', 
+    parser.add_argument('--species', action = 'store', 
                        help = 'species to perform analysis on')
     args = parser.parse_args()
     species_dir = f'{args.indir}/{args.species}'
