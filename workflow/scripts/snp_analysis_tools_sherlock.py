@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from os import path
-import lz4.frame
+#import lz4.frame
 
 from collections import Counter
 

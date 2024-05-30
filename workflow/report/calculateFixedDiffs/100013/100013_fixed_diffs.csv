@@ -1,0 +1,7 @@
+,s1,s2,fixed_diffs,Species,Strain Shift
+0,D2-e004Assembly-mGAM-p7,B2-e003Coalescence-mBHI-p3,13907,100013,True
+1,D2-e004Assembly-mGAM-p7,A4-e003Coalescence-mBHI-inoculumn-redo,12808,100013,True
+2,D2-e004Assembly-mGAM-p7,B3-e003Coalescence-mBHI-p3,14228,100013,True
+3,B2-e003Coalescence-mBHI-p3,A4-e003Coalescence-mBHI-inoculumn-redo,14912,100013,True
+4,B2-e003Coalescence-mBHI-p3,B3-e003Coalescence-mBHI-p3,0,100013,False
+5,A4-e003Coalescence-mBHI-inoculumn-redo,B3-e003Coalescence-mBHI-p3,15402,100013,True
