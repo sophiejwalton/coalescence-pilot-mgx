@@ -71,7 +71,8 @@ rule compute_populationSNVs:
     input:
         expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples)
     output:
-        "workflow/out/midas2_output/merge/snps/snps_summary.tsv"
+        #"workflow/out/midas2_output/merge_v2/snps/snps_summary.tsv",
+        "workflow/out/midas2_output/merge/snps/{species}/{species}.snps_freqs.tsv.lz4"
     params:
         minCoverage=config["runMIDAS_speciesMinCoverage"],
         midasdb=config['midasdb'],
@@ -82,7 +83,11 @@ rule compute_populationSNVs:
         "../../workflow/envs/midas2_sw-no-builds.yml"
     shell:
         """
-        midas2 merge_snps --samples_list workflow/out/list_of_samples.tsv --species_list {params.species_list}  --midasdb_name {params.midasdb} --genome_depth 1 --site_depth 1  --site_prev 0.0 --snp_maf 0.01 --advanced --midasdb_dir {params.midasdb_dir} --snp_type any --genome_coverage 0.5 --num_cores {threads} workflow/out/midas2_output/merge
+        midas2 merge_snps --samples_list workflow/out/list_of_samples.tsv \
+            --species_list {wildcards.species}  --midasdb_name {params.midasdb} \
+            --genome_depth 1 --site_depth 1  --site_prev 0.0 --snp_maf 0.01  --advanced \ 
+            --midasdb_dir {params.midasdb_dir} --snp_type any --robust_chunk --genome_coverage 0.5 \
+            --num_cores {threads} workflow/out/midas2_output/merge
         """
 
 
@@ -90,7 +95,8 @@ rule compute_populationSNVs_prominent:
     input:
         expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples)
     output:
-        "workflow/out/midas2_output/merge_bacteroides/snps/snps_summary.tsv"
+        "workflow/out/midas2_output/merge_bacteroides/snps/snps_summary.tsv",
+        "workflow/out/midas2_output/merge_b/snps/101346/101346.snps_freqs.tsv.lz4" 
     params:
         minCoverage=config["runMIDAS_speciesMinCoverage"],
         midasdb=config['midasdb'],
@@ -100,6 +106,6 @@ rule compute_populationSNVs_prominent:
         "../../workflow/envs/midas2_sw-no-builds.yml"
     shell:
         """
-        midas2 merge_snps --samples_list workflow/out/list_of_samples.tsv  --midasdb_name {params.midasdb} --species_list 102478,101346 --site_depth 1  --site_prev 0.0 --snp_maf 0.01 --advanced --midasdb_dir {params.midasdb_dir} --snp_type any --genome_depth 1 --genome_coverage 0.5 --num_cores {threads} workflow/out/midas2_output/merge_bacteroides
+        midas2 merge_snps --samples_list workflow/out/list_of_samples.tsv  --midasdb_name {params.midasdb} --species_list 101346 --site_depth 1  --site_prev 0.0 --snp_maf 0.01  --advanced --midasdb_dir {params.midasdb_dir} --snp_type any --genome_depth 1 --genome_coverage 0.5  --robust_chunk  --num_cores {threads} workflow/out/midas2_output/merge_bacteroides
         """
 

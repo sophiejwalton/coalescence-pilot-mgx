@@ -27,7 +27,7 @@ def get_main(species_dir, save_dir, species):
     num_int_sites, diversity = get_diversity_series(freq_filtered, thresh=.2)
     diversity_df = pd.DataFrame(diversity.reset_index()).rename(columns = {0:'diversity','index':'sample'})
     diversity_df.to_csv(f'{save_dir}/{species}_diversity_df.csv')
-
+    med_nonzero_depth.to_csv(f'{save_dir}/{species}_med_depth_df.csv')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='basic filtering of sites')

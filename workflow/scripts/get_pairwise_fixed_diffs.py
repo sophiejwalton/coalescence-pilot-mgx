@@ -15,7 +15,7 @@ def get_main(species_dir, save_dir, species):
     med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
     good_samples = med_nonzero_depth[med_nonzero_depth>10.]
     depth = depth[good_samples.index.values]
-
+    print('why')
     freq = freq[good_samples.index.values]  
     depth_filtered= depth_filtering(depth)
     freq_filtered = freq_masked(freq, depth_filtered)
@@ -23,9 +23,12 @@ def get_main(species_dir, save_dir, species):
     s1s = []
     s2s = []
     snps_switch = []
-    print(good_samples.index.values)
-    for s1,s2 in it.combinations(good_samples.index.values[:4], 2):
+    print('yay', good_samples.index.values)
+    for s1,s2 in it.combinations(good_samples.index.values, 2):
         print(s1,s2)
+        if (('noculumn' not in s1) and ('noculumn' not in s2)):
+            print('meh')
+            continue
         freq_small = freq_filtered[[s1,s2]].copy()
         depth_small =  depth_filtered[[s1,s2]].copy()
         freq_small = polarize_species(freq_small.copy(), s1)
