@@ -36,7 +36,10 @@ species_list = get_species_list()
 print(species_list)
 print(species_list)
 print(len(good_species))
-#species_list.remove('101346')
+species_list.remove('101346')
+species_list.remove('102492')
+species_list.remove('103439')
+#species_list.remove('100196')
 #good_species.remove('101346')
 rule all:
     input:
@@ -47,11 +50,11 @@ rule all:
         "workflow/out/midas2_output/species/abundant_species.csv",
        # expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples),
 #        "workflow/out/midas2_output/merge/snps/snps_summary.tsv",
-#        "workflow/out/midas2_output/merge_bacteroides/snps/snps_summary.tsv",
+      # "workflow/out/midas2_output/merge_bacteroides/snps/snps_summary.tsv",
       #  expand("workflow/out/midasOutput/{sample}/species/species_profile.txt",sample=samples),
-        expand("workflow/out/midas2_output/merge/snps/{species}/{species}.snps_freqs.tsv.lz4", species=species_list),
-        expand("workflow/out/midas2_output/merge/snps/{species}/{species}.snps_freqs.tsv.gz", species=good_species),
-        expand("workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv",species=good_species),     
+        expand("workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_freqs.tsv.lz4", species=species_list),
+ #       expand("workflow/out/midas2_output/merge/snps/{species}/{species}.snps_freqs.tsv.gz", species=good_species),
+        expand("workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv",species=species_list),     
         #expand("workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv",species=good_species),      
 #  "workflow/report/calculateFixedDiffs/100013/100013_fixed_diffs.csv"
  # "workflow/out/midasOutput/species/species_profile_all_abundant.csv",
