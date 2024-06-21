@@ -24,20 +24,33 @@ def get_main(species_dir, save_dir, species):
     s2s = []
     snps_switch = []
     print('yay', good_samples.index.values)
-    for s1,s2 in it.combinations(good_samples.index.values, 2):
-        print(s1,s2)
-        if (('noculumn' not in s1) and ('noculumn' not in s2)):
-            print('meh')
-            continue
-        freq_small = freq_filtered[[s1,s2]].copy()
-        depth_small =  depth_filtered[[s1,s2]].copy()
-        freq_small = polarize_species(freq_small.copy(), s1)
-        freq_polarized_transition = get_transition_frequency_snps(freq_small, depth_small)
-        depth_small = depth_small.loc[freq_polarized_transition.index.values, ]
-        freq_transition_filter = filter_transition_frequency(freq_polarized_transition.copy(), depth_small, med_nonzero_depth[[s1,s2]])
-        snps_switch.append(len(freq_transition_filter))
-        s1s.append(s1)
-        s2s.append(s2)
+    inoculumns = []
+    good_inoculumns = ['A2-e003Coalescence-Inoculumn-mBHI',
+       'A2-e003Coalescence-Inoculumn-mGAM',
+       'A2-e003Coalescence-mBHI-inoculumn-redo',
+       'B3-e003Coalescence-Inoculumn-mBHI',
+       'B3-e003Coalescence-Inoculumn-mGAM',
+       'C4-e003Coalescence-Inoculumn-mGAM',
+       'C4-e003Coalescence-mBHI-inoculumn-redo',
+       'D5-e003Coalescence-Inoculumn-mBHI',
+       'D5-e003Coalescence-Inoculumn-mGAM']
+    for s in good_samples.index.values:
+        if s in good_inoculumns:
+            inoculumns.append(s)
+
+    for i, s1 in enumerate(inoculumns):
+        print(i, s1)
+
+        for s2 in good_samples.index.values:
+            freq_small = freq_filtered[[s1,s2]].copy()
+            depth_small =  depth_filtered[[s1,s2]].copy()
+            freq_small = polarize_species(freq_small.copy(), s1)
+            freq_polarized_transition = get_transition_frequency_snps(freq_small, depth_small)
+            depth_small = depth_small.loc[freq_polarized_transition.index.values, ]
+            freq_transition_filter = filter_transition_frequency(freq_polarized_transition.copy(), depth_small, med_nonzero_depth[[s1,s2]])
+            snps_switch.append(len(freq_transition_filter))
+            s1s.append(s1)
+            s2s.append(s2)
     ss_df = pd.DataFrame(data = {'s1': s1s, 's2': s2s, 'fixed_diffs': snps_switch, })
     ss_df['Species'] = species
     ss_df['Strain Shift'] = ss_df['fixed_diffs'] > 1000
