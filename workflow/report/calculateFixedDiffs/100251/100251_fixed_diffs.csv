@@ -1,0 +1,21 @@
+,s1,s2,fixed_diffs,Species,Strain Shift
+0,C4-e003Coalescence-Inoculumn-mGAM,e004-inoculumn-fecal-BD,17950,100251,True
+1,C4-e003Coalescence-Inoculumn-mGAM,e004-inoculumn-fecal-AK,14001,100251,True
+2,C4-e003Coalescence-Inoculumn-mGAM,BB-Fecal,9537,100251,True
+3,C4-e003Coalescence-Inoculumn-mGAM,BF-Fecal,9497,100251,True
+4,C4-e003Coalescence-Inoculumn-mGAM,AM-Fecal,17479,100251,True
+5,C4-e003Coalescence-Inoculumn-mGAM,e003-inoculumn-fecal-inoculumn,10803,100251,True
+6,C4-e003Coalescence-Inoculumn-mGAM,e003-inoculumn-fecal-AC,7802,100251,True
+7,C4-e003Coalescence-Inoculumn-mGAM,BG-Fecal,14457,100251,True
+8,C4-e003Coalescence-Inoculumn-mGAM,C3-e003Coalescence-Inoculumn-mGAM,9,100251,False
+9,C4-e003Coalescence-Inoculumn-mGAM,C2-e003Coalescence-Inoculumn-mGAM,11,100251,False
+10,C4-e003Coalescence-Inoculumn-mGAM,B4-e003Coalescence-Inoculumn-mGAM,2,100251,False
+11,C4-e003Coalescence-Inoculumn-mGAM,e004-inoculumn-fecal-AR,14802,100251,True
+12,C4-e003Coalescence-Inoculumn-mGAM,BK-Fecal,14900,100251,True
+13,C4-e003Coalescence-Inoculumn-mGAM,e003-inoculumn-fecal-AE,259,100251,False
+14,C4-e003Coalescence-Inoculumn-mGAM,C5-e003Coalescence-Inoculumn-mGAM,0,100251,False
+15,C4-e003Coalescence-Inoculumn-mGAM,BC-Fecal,9147,100251,True
+16,C4-e003Coalescence-Inoculumn-mGAM,e004-inoculumn-fecal-BE,7441,100251,True
+17,C4-e003Coalescence-Inoculumn-mGAM,BA-Fecal,11704,100251,True
+18,C4-e003Coalescence-Inoculumn-mGAM,e003-inoculumn-fecal-AF,15698,100251,True
+19,C4-e003Coalescence-Inoculumn-mGAM,A4-e003Coalescence-Inoculumn-mGAM,1,100251,False

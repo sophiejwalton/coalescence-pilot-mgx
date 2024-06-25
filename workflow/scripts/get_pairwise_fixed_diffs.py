@@ -34,14 +34,19 @@ def get_main(species_dir, save_dir, species):
        'C4-e003Coalescence-mBHI-inoculumn-redo',
        'D5-e003Coalescence-Inoculumn-mBHI',
        'D5-e003Coalescence-Inoculumn-mGAM']
-    for s in good_samples.index.values:
-        if s in good_inoculumns:
-            inoculumns.append(s)
+ #   for s in good_samples.index.values:
+       # if s in good_inoculumns:
+         #   inoculumns.append(s)
 
-    for i, s1 in enumerate(inoculumns):
+    for i, s1 in enumerate(good_inoculumns):
         print(i, s1)
+        if s1 not in good_samples.index.values:
+            continue 
 
-        for s2 in good_samples.index.values:
+        for s2 in good_samples.index.values: 
+            print(s2)
+            if s1 == s2:
+                continue 
             freq_small = freq_filtered[[s1,s2]].copy()
             depth_small =  depth_filtered[[s1,s2]].copy()
             freq_small = polarize_species(freq_small.copy(), s1)

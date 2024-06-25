@@ -36,13 +36,14 @@ rule calculateDiversity:
 
 rule calculateFixedDiffs:
     input:
-        snpsDepth="workflow/out/midas2_output/merge/snps/{species}/{species}.snps_depth.tsv.gz",
-        snpsFreq="workflow/out/midas2_output/merge/snps/{species}/{species}.snps_freqs.tsv.gz",
-        snpsInfo="workflow/out/midas2_output/merge/snps/{species}/{species}.snps_info.tsv.gz",
+        snpsDepth="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_depth.tsv.gz",
+        snpsFreq="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_freqs.tsv.gz",
+        snpsInfo="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_info.tsv.gz",
+        wo="workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv"
     output:
         "workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv"
     params:
-        indir="workflow/out/midas2_output/merge/snps/",
+        indir="workflow/out/midas2_output/merge_{species}/snps/",
         outdir="workflow/report/calculateFixedDiffs/",
         species="{species}"
   #  conda:
