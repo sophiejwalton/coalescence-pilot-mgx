@@ -50,3 +50,24 @@ rule calculateFixedDiffs:
    #     "../../workflow/envs/snps_analysis_tools-no-builds.yml"
     shell:
         "python3 workflow/scripts/get_pairwise_fixed_diffs.py --outdir {params.outdir} --indir {params.indir} --species {params.species}"
+
+
+
+
+rule trackSNPs:
+    input:
+        snpsDepth="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_depth.tsv.gz",
+        snpsFreq="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_freqs.tsv.gz",
+        snpsInfo="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_info.tsv.gz",
+        wo="workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv"
+    output:
+        "workflow/report/calculateFixedDiffs/{species}/{inoculumn}_parent_freqs.csv"
+    params:
+        indir="workflow/out/midas2_output/merge_{species}/snps/",
+        outdir="workflow/report/track_snps/",
+        species="{species}"
+  #  conda:
+   #     "../../workflow/envs/snps_analysis_tools-no-builds.yml"
+    shell:
+        "python3 workflow/scripts/track_snps.py --outdir {params.outdir} --indir {params.indir} --species {params.species} -- inoculumn {wildcards.inoculumn}"
+

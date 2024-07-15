@@ -9,34 +9,42 @@ from evo_changes_tools import *
 import warnings
 warnings.filterwarnings('ignore')
 
+def get_samples_to_test():
+    pass 
+
+
+def get_distinguishing_snps(freq_inoculumns, thresh = .8):
+    detect_df = freq_inoculumns.copy()
+    detect_df = np.nan 
+    detect_df[freq_inoculumns < 1- thresh] = 1 # alt allele 
+    detect_df[freq_inoculumns > thresh] = 0 # ref allele 
+    diffs = detect_df.diff(axis = 1)[freq_incolumns.columns.values[1]]
+    diffs = diffs[diffs.abs() =1] # both sites present 
+
+
+
+
  
-def get_main(species_dir, save_dir, species):
+def get_main(species_dir, save_dir, species, parent_subjects):
     info, depth, freq = load_and_sort_files(species_dir, species)
     med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
     good_samples = med_nonzero_depth[med_nonzero_depth>10.]
     depth = depth[good_samples.index.values]
-    print('why')
     freq = freq[good_samples.index.values]  
     depth_filtered= depth_filtering(depth)
     freq_filtered = freq_masked(freq, depth_filtered)
 
-    s1s = []
-    s2s = []
-    snps_switch = []
-    print('yay', good_samples.index.values)
-    inoculumns = []
-    good_inoculumns = ['A2-e003Coalescence-Inoculumn-mBHI',
-       'A2-e003Coalescence-Inoculumn-mGAM',
-       'A2-e003Coalescence-mBHI-inoculumn-redo',
-       'B3-e003Coalescence-Inoculumn-mBHI',
-       'B3-e003Coalescence-Inoculumn-mGAM',
-       'C4-e003Coalescence-Inoculumn-mGAM',
-       'C4-e003Coalescence-mBHI-inoculumn-redo',
-       'D5-e003Coalescence-Inoculumn-mBHI',
-       'D5-e003Coalescence-Inoculumn-mGAM']
- #   for s in good_samples.index.values:
-       # if s in good_inoculumns:
-         #   inoculumns.append(s)
+    inoculumns = [good_inoculumns[parent_subjects[0]], good_inoculumns[parent_subjects[1]]]
+    freq_inoculumns = freq_filtered[inoculumns]
+
+
+
+    samples_to_test = get_samples_to_test()
+
+    haplotype1 = get_haplotype(freq_filtered, inoculumns[0])
+
+    haplotype2 = get_haplotype(freq_filtered, inoculumns[1])
+
 
     for i, s1 in enumerate(good_inoculumns):
         print(i, s1)
@@ -71,12 +79,14 @@ if __name__ == '__main__':
                        help = 'location where to get stuff from')
     parser.add_argument('--species', action = 'store', 
                        help = 'species to perform analysis on')
+    parser.add_argument('--parent_subjects', action = 'store', 
+                       help = 'parent_subject-media')
     args = parser.parse_args()
     species_dir = f'{args.indir}/{args.species}'
     save_dir = f'{args.outdir}/{args.species}'
     if not path.isdir(save_dir):
         mkdir(save_dir)
-    get_main(species_dir, save_dir, args.species)
+    get_main(species_dir, save_dir, args.species, args.parent_subjects)
     
 
 

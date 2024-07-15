@@ -41,6 +41,12 @@ species_list.remove('102492')
 #species_list.remove('103439')
 #species_list.remove('100196')
 #good_species.remove('101346')
+inoculumns = ['AA-AE-mGAM', 'AA-AF-mGAM', 
+       'AA-AC/PP-mGAM', 'AA-AC/PP-mBHI', 'AA-AE-mBHI', 'AA-AF-mBHI',
+       'AC/PP-AE-mGAM', 'AC/PP-AF-mGAM', 
+       'AC/PP-AE-mBHI', 'AC/PP-AF-mBHI', 
+       'AE-AF-mGAM', 'AE-AF-mBHI',
+     ]
 rule all:
     input:
  #       expand("workflow/out/trimmed/{samplelane}-trimmed-pair1.fastq.gz",samplelane=samplelanes),
@@ -55,7 +61,8 @@ rule all:
         expand("workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_freqs.tsv.lz4", species=species_list),
  #       expand("workflow/out/midas2_output/merge/snps/{species}/{species}.snps_freqs.tsv.gz", species=good_species),
         expand("workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv",species=species_list),     
-        expand("workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv",species=species_list),      
+        expand("workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv",species=species_list),  
+        expand("workflow/report/calculateFixedDiffs/101346/{inoculumn}_parent_freqs.csv", inoculumn=inoculumns)    
 #  "workflow/report/calculateFixedDiffs/100013/100013_fixed_diffs.csv"
  # "workflow/out/midasOutput/species/species_profile_all_abundant.csv",
         #"workflow/out/midasOutput/species/abundantSpecies.txt",
