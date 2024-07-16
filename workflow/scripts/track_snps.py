@@ -13,7 +13,8 @@ warnings.filterwarnings('ignore')
 def get_distinguishing_snps(freq_inoculumns, thresh = .8):
     # find snps that are greater than .8 (aka alternative alleles > .8)
     detect_df = freq_inoculumns > thresh
-    detect_df['diff'] = detect_df[freq_inoculumns.columns[0]] - detect_df[freq_inoculumns.columns[1]]
+    print(detect_df[freq_inoculumns.columns.values[0]])
+    detect_df['diff'] = detect_df[freq_inoculumns.columns.values[0]] - detect_df[freq_inoculumns.columns.values[1]]
     return detect_df['diff']
 
 def get_frequency_parent(freq_children, parent_snps):
@@ -27,11 +28,11 @@ def get_parent_children(inoculumn):
     child_samples = list(metadata.loc[metadata['inoculumn'] == inoculumn, 'sample'].values)
     parent_subjects = inoculumn.split('-')[:-1]
     parent_media = inoculumn.split('-')[-1]
-    ins = e003_coal_metadata.loc[e003_coal_metadata['is_inoculumn'],:]
+    ins = metadata.loc[metadata['is_inoculumn'],:]
     ins = ins.loc[ins['parent_media'] == parent_media,:]
-    ins1 = ins.loc[ins['parent_subject'] == parent_subjects[0] + '-' +  parent_subjects[0],:]
+    ins1 = ins.loc[ins['parent_subjects'] == parent_subjects[0] + '-' +  parent_subjects[0],:]
 
-    ins2 = ins.loc[ins['parent_subject'] == parent_subjects[1] + '-' +  parent_subjects[1],:]
+    ins2 = ins.loc[ins['parent_subjects'] == parent_subjects[1] + '-' +  parent_subjects[1],:]
     if (len(ins1) ==0) or (len(ins2) ==0): 
         return np.nan, np.nan
     parent_samples = [ins1['sample'].values[0], ins2['sample'].values[0]]
