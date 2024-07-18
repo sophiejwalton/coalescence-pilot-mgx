@@ -50,6 +50,8 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered):
    # freq_filtered = freq_masked(freq, depth_filtered)
 
     freq_inoculumns = freq_filtered[parent_samples]
+    if len(freq_inoculumns.columns.values)<2:
+        return pd.DataFrame()
     # get distinguishing SNPs for inoculumns - there should be like 1k distinguishing SNPs 
     # use only Alt Allele as marker... so sites where strain allele is alt allele in one strain and not other strain
     # is the marker 
