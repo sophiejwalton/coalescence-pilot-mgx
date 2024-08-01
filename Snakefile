@@ -52,17 +52,17 @@ rule all:
  #       expand("workflow/out/trimmed/{samplelane}-trimmed-pair1.fastq.gz",samplelane=samplelanes),
   #      expand("workflow/out/filter/{samplelane}-filtered.1.fastq.gz",samplelane=samplelanes),
    #     expand("workflow/out/concat/{sample}-filtered.1.fastq.gz",sample=samples),
-        expand("workflow/out/midas2_output/{sample}/species/species_profile.tsv",sample=samples),
-        "workflow/out/midas2_output/species/abundant_species.csv",
+   #     expand("workflow/out/midas2_output/{sample}/species/species_profile.tsv",sample=samples),
+  #      "workflow/out/midas2_output/species/abundant_species.csv",
        # expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples),
 #        "workflow/out/midas2_output/merge/snps/snps_summary.tsv",
       # "workflow/out/midas2_output/merge_bacteroides/snps/snps_summary.tsv",
       #  expand("workflow/out/midasOutput/{sample}/species/species_profile.txt",sample=samples),
-        expand("workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_freqs.tsv.lz4", species=species_list),
+ #       expand("workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_freqs.tsv.lz4", species=species_list),
  #       expand("workflow/out/midas2_output/merge/snps/{species}/{species}.snps_freqs.tsv.gz", species=good_species),
-        expand("workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv",species=species_list),     
-        expand("workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv",species=species_list),  
-        expand("workflow/report/calculateFixedDiffs/101346/{inoculumn}_parent_freqs.csv", inoculumn=inoculumns)    
+       # expand("workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv",species=species_list),     
+       # expand("workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv",species=species_list),  
+        expand("workflow/report/track_snps/100013/{inoculumn}_parent_freqs.csv", inoculumn=inoculumns)    
 #  "workflow/report/calculateFixedDiffs/100013/100013_fixed_diffs.csv"
  # "workflow/out/midasOutput/species/species_profile_all_abundant.csv",
         #"workflow/out/midasOutput/species/abundantSpecies.txt",
@@ -70,6 +70,6 @@ rule all:
 
 
 #include: "workflow/rules/processRawReads.smk",
-include: "workflow/rules/runMIDAS2.smk",
+#include: "workflow/rules/runMIDAS2.smk",
 include: "workflow/rules/processMIDAS2.smk"
 #include: "workflow/rules/processSNPs.smk"

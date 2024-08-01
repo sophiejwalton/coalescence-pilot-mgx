@@ -56,18 +56,18 @@ rule calculateFixedDiffs:
 
 rule trackSNPs:
     input:
-        snpsDepth="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_depth.tsv.gz",
-        snpsFreq="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_freqs.tsv.gz",
-        snpsInfo="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_info.tsv.gz",
-        wo="workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv"
+       # snpsDepth="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_depth.tsv.gz",
+        snpsFreq="workflow/out/midas2_output/merge_100013/snps/100013/100013.snps_freqs.tsv.gz",
+       # snpsInfo="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_info.tsv.gz",
+       # wo="workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv"
     output:
-        "workflow/report/calculateFixedDiffs/{species}/{inoculumn}_parent_freqs.csv"
+        "workflow/report/track_snps/100013/{inoculumn}_parent_freqs.csv"
     params:
-        indir="workflow/out/midas2_output/merge_{species}/snps/",
+        indir="workflow/out/midas2_output/merge_100013/snps/",
         outdir="workflow/report/track_snps/",
-        species="{species}"
+        species="100013"
   #  conda:
    #     "../../workflow/envs/snps_analysis_tools-no-builds.yml"
     shell:
-        "python3 workflow/scripts/track_snps.py --outdir {params.outdir} --indir {params.indir} --species {params.species} -- inoculumn {wildcards.inoculumn}"
+        "python3 workflow/scripts/track_snps.py --outdir {params.outdir} --indir {params.indir} --species {params.species}" # --inoculumn {wildcards.inoculumn}"
 
