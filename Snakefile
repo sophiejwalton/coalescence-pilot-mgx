@@ -28,16 +28,18 @@ good_species = [f.split('/')[-1].split('.')[0] for f in fnames2] #+ [f.split('/'
 print(good_species)
 
 def get_species_list():
-    df = pd.read_csv('workflow/out/midas2_output/species/species_prevalence.tsv',delimiter = '\t')
-    df = df.sort_values(by = 'mean_coverage',ascending = False).reset_index()
-    return df.loc[1:20,'species_id'].astype(str).to_list()
+    df = pd.read_csv('workflow/out/midas2_output/species/species_marker_median_coverage.tsv', delimiter = '\t').set_index('species_id')
+    dfgood = df>= 5
+    dfgood = dfgood.sum(axis = 1)
+
+    return list(dfgood[dfgood>5].index.values)
 
 species_list = get_species_list()
 print(species_list)
 print(species_list)
 print(len(good_species))
 #species_list.remove('101346')
-species_list.remove('102492')
+#species_list.remove('102492')
 #species_list.remove('103439')
 #species_list.remove('100196')
 #good_species.remove('101346')
@@ -58,11 +60,11 @@ rule all:
 #        "workflow/out/midas2_output/merge/snps/snps_summary.tsv",
       # "workflow/out/midas2_output/merge_bacteroides/snps/snps_summary.tsv",
       #  expand("workflow/out/midasOutput/{sample}/species/species_profile.txt",sample=samples),
- #       expand("workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_freqs.tsv.lz4", species=species_list),
- #       expand("workflow/out/midas2_output/merge/snps/{species}/{species}.snps_freqs.tsv.gz", species=good_species),
+        expand("workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_freqs.tsv.lz4", species=species_list),
+      #  expand("workflow/out/midas2_output/merge/snps/{species}/{species}.snps_freqs.tsv.gz", species=species_list),
        # expand("workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv",species=species_list),     
        # expand("workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv",species=species_list),  
-        expand("workflow/report/track_snps/{species}/done.txt", species=species_list)    
+       # expand("workflow/report/track_snps/{species}/done.txt", species=species_list)    
 #  "workflow/report/calculateFixedDiffs/100013/100013_fixed_diffs.csv"
  # "workflow/out/midasOutput/species/species_profile_all_abundant.csv",
         #"workflow/out/midasOutput/species/abundantSpecies.txt",
@@ -70,6 +72,6 @@ rule all:
 
 
 #include: "workflow/rules/processRawReads.smk",
-#include: "workflow/rules/runMIDAS2.smk",
-include: "workflow/rules/processMIDAS2.smk"
+include: "workflow/rules/runMIDAS2.smk",
+#include: "workflow/rules/processMIDAS2.smk"
 #include: "workflow/rules/processSNPs.smk"
