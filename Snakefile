@@ -62,7 +62,7 @@ rule all:
  #       expand("workflow/out/midas2_output/merge/snps/{species}/{species}.snps_freqs.tsv.gz", species=good_species),
        # expand("workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv",species=species_list),     
        # expand("workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv",species=species_list),  
-        expand("workflow/report/track_snps/100013/{inoculumn}_parent_freqs.csv", inoculumn=inoculumns)    
+        expand("workflow/report/track_snps/{species}/done.txt", species=species_list)    
 #  "workflow/report/calculateFixedDiffs/100013/100013_fixed_diffs.csv"
  # "workflow/out/midasOutput/species/species_profile_all_abundant.csv",
         #"workflow/out/midasOutput/species/abundantSpecies.txt",
