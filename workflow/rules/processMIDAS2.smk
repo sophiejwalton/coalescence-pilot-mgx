@@ -67,12 +67,12 @@ rule trackSNPs:
     params:
         indir="workflow/out/midas2_output/merge_{species}/snps/",
         outdir="workflow/report/track_snps/",
-        species={species}
+        #species={species}
   #  conda:
    #     "../../workflow/envs/snps_analysis_tools-no-builds.yml"
     shell:
         """
-        python3 workflow/scripts/track_snps.py --outdir {params.outdir} --indir {params.indir} --species {params.species}" # --inoculumn {wildcards.inoculumn}
+        python3 workflow/scripts/track_snps.py --outdir {params.outdir} --indir {params.indir} --species {wildcards.species}" # --inoculumn {wildcards.inoculumn}
         touch {params.outdir}/done.txt
         """
 

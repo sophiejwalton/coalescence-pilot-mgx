@@ -30,13 +30,60 @@ print(good_species)
 def get_species_list():
     df = pd.read_csv('workflow/out/midas2_output/species/species_marker_median_coverage.tsv', delimiter = '\t').set_index('species_id')
     dfgood = df>= 5
-    dfgood = dfgood.sum(axis = 1)
-
-    return list(dfgood[dfgood>5].index.values)
+    #dfgood = dfgood.sum(axis = 1)
+    
+    dfunique = pd.read_csv('workflow/out/midas2_output/species/species_unique_fraction_covered.tsv', delimiter = '\t').set_index('species_id') 
+    dfgoodunique = dfunique>= .5
+    dfgood = dfgood*dfgoodunique 
+    dfgood = dfgood.sum(axis=1)
+    fnames = glob('workflow/out/midas2_output/B4-e004Assembly-mBHI-p3/snps/*.snps.tsv.lz4')
+    species = [fname.split('/')[-1].split('.')[0] for fname in fnames]
+    return species
+    #return list(dfgood[dfgood>10].index.values)
 
 species_list = get_species_list()
-print(species_list)
-print(species_list)
+#print(species_list)
+#print(species_list)
+species_list.remove('100214')
+#all_done = glob('workflow/out/midas2_output/merge/snps/*/*.snps_freqs.tsv.lz4')
+all_done = glob('workflow/out/midas2_output/merge_*/snps/*/*.snps_freqs.tsv')
+print(all_done)
+
+#for fname in all_done:
+ #   species = fname.split('/')[-2]
+  #  if species in species_list:
+   # 	species_list.remove(fname.split('/')[-2]) 
+#species_list.remove('101367')
+#species_list.remove('101400') # make sure to add this one back in
+species_list.remove('103739')
+species_list.remove('100818')
+species_list.remove('102843')
+species_list.remove('102482')
+species_list.remove('101787')
+species_list.remove('101274')
+species_list.remove('102554')
+species_list.remove('100672')
+species_list.remove('100758')
+species_list.remove('103326')
+species_list.remove('101021')
+species_list.remove('102289')
+species_list.remove('102890')
+species_list.remove('100293')
+species_list.remove('103902')
+species_list.remove('100279')
+species_list.remove('103188')
+species_list.remove('104321')
+species_list.remove('102515')
+species_list.remove('100057')
+#species_list.remove('100196') # ADD BACK IN ROUND 2`
+#species_list.remove('102327') # make sure to add this one back
+#species_list.remove('102478') # add back in
+#species_list.remove('101346') # add back in 
+#species_list.remove('100099') #add back in 
+#species_list.remove('100196') #add back in 
+#species_list.remove('102506') # add back in
+#species_list.remove('101367') # add back in 
+print('YAAAAAYY')
 print(len(good_species))
 #species_list.remove('101346')
 #species_list.remove('102492')
@@ -60,7 +107,7 @@ rule all:
 #        "workflow/out/midas2_output/merge/snps/snps_summary.tsv",
       # "workflow/out/midas2_output/merge_bacteroides/snps/snps_summary.tsv",
       #  expand("workflow/out/midasOutput/{sample}/species/species_profile.txt",sample=samples),
-        expand("workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_freqs.tsv.lz4", species=species_list),
+        expand("workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_freqs.tsv", species=species_list),
       #  expand("workflow/out/midas2_output/merge/snps/{species}/{species}.snps_freqs.tsv.gz", species=species_list),
        # expand("workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv",species=species_list),     
        # expand("workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv",species=species_list),  
@@ -73,5 +120,5 @@ rule all:
 
 #include: "workflow/rules/processRawReads.smk",
 include: "workflow/rules/runMIDAS2.smk",
-#include: "workflow/rules/processMIDAS2.smk"
+include: "workflow/rules/processMIDAS2.smk"
 #include: "workflow/rules/processSNPs.smk"
