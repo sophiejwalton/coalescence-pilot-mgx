@@ -85,26 +85,96 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered):
     return pd.concat([freq_parent1, freq_parent2],axis=1)
 
 
-def analyze_fitness(diversity_df1,minor_strain, minor_strain_subject):
+def analyze_fitness(df_info,minor_strain, major_strain,
+                               minor_strain_subject, major_strain_subject):
     new_df = []
-    for i, type_meso in enumerate(diversity_df1['type_meso'].unique()):
-        mesos = diversity_df1.loc[diversity_df1['type_meso'] ==type_meso, 'mesocosm'].unique()
-        df_type_meso = diversity_df1.loc[diversity_df1['type_meso'] == type_meso,:]
+    for i, type_meso in enumerate(df_info['type_meso'].unique()):
+        mesos = df_info.loc[df_info['type_meso'] ==type_meso, 'mesocosm'].unique()
+        df_type_meso = df_info.loc[df_info['type_meso'] == type_meso,:]
         for mesocosm in mesos:
             
-            df_meso = diversity_df1.loc[diversity_df1['mesocosm'] == mesocosm,:]
+            df_meso = df_info.loc[df_info['mesocosm'] == mesocosm,:]
             in_sample = df_meso['inoculumn_sample'].unique()[0]
             df_meso['shift_from_inoculumn'] = np.nan
+           # df_meso[f'shift {minor_strain_subject}'] = np.nan
+            df_meso[f'opp_strain_shift_from_inoculumn'] = np.nan
             if in_sample in df_info.index.values:
                 df_meso.loc[in_sample,:] = df_info.loc[in_sample,:]
                 df_meso['shift_from_inoculumn'] = df_meso[minor_strain] - df_info.loc[in_sample,minor_strain]
+            #    df_meso[f'shift {minor_strain_subject}'] = df_meso[minor_strain] - df_info.loc[in_sample,minor_strain]
+                df_meso[f'opp_strain_shift_from_inoculumn'] = df_meso[major_strain] - df_info.loc[in_sample,major_strain]
                 
-                
+        
             df_meso = df_meso.sort_values(by = 'passage')
             new_df.append(df_meso)
             
     
     return pd.concat(new_df)
+
+def get_inoculumn_sort(x):
+    subjects = list(np.sort(x.split('-')[:-1]))
+    media =  x.split('-')[-1]
+    return '-'.join(subjects + [media])
+
+def get_in(x):
+    #print('yay',x)
+    if x in list(in_dict.keys()):
+     
+        return in_dict[x]
+    else:
+        return ''
+
+def get_species_tracking(species):
+    fnames = glob(f'/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/report/track_snps/{species}/*_parent_freqs.csv')
+    
+    all_dfs = []
+    for info_fname in np.sort(fnames): 
+       # print(info_fname)
+       # fname = f'~/git/coalescence-pilot-mgx/workflow/report/track_snps/{species}/AA-AE-mGAM_parent_freqs.csv'
+        df = pd.read_csv(info_fname).rename(columns = {'Unnamed: 0': 'sample'})
+        # print(df)
+        if len(df) ==0:
+            continue
+
+        medium_df = df.set_index('sample').median()
+        minor_strain = medium_df.index.values[0]
+        major_strain = medium_df.index.values[1]
+        # strains = df.columns.values[1:]
+        #  subjects = [e003_metadata.loc[e003_metadata['sample'] == strain,'parent_subjects'].values[0].split('-')[0] for strain in strains]
+        # print(subjects)
+
+        df_info = pd.concat([df.set_index('sample'), 
+                                e003_metadata.loc[e003_metadata['sample'].isin(df['sample'].unique()),:].set_index('sample')],axis=1)
+        df_info['inoculumn_sample'] = df_info['inoculumn'].transform(get_in)
+            #print(minor_strain)
+        minor_strain_subject =  e003_metadata.loc[e003_metadata['sample'] == minor_strain,
+                                              'parent_subjects'].values[0].split('-')[0]
+        major_strain_subject =  e003_metadata.loc[e003_metadata['sample'] == major_strain,
+                                              'parent_subjects'].values[0].split('-')[0]
+
+
+        # print(minor_strain)
+    #    p2 = analyze_diversity(df_info, minor_strain, 
+     #                           e003_metadata.loc[e003_metadata['sample'] == minor_strain,'parent_subjects'].values[0].split('-')[0])
+        df2 = analyze_fitness(df_info, minor_strain, major_strain,
+                               minor_strain_subject, major_strain_subject)
+        all_dfs.append(df2[['experiment',
+        'sub_experiment', 'comm', 'parent_subjects', 'is_inoculumn',
+        'parent_media', 'media', 'passage', 'mesocosm', 'single-subject',
+        'inoculumn', 'type_meso', 'inoculumn_sample',  'opp_strain_shift_from_inoculumn',
+        'shift_from_inoculumn']].reset_index())
+       # bokeh.io.show(p2)
+      #  plots_all.append(p2)
+
+    if len(all_dfs) == 0:
+        return 
+    df_full = pd.concat(all_dfs)
+  #  df_full_p5p7 = df_full.loc[df_full['passage'] > 3,:].sort_values(by = 'sample')
+    df_full['dir_of_shift'] = 1*(df_full['shift_from_inoculumn'] > 0.) + -1*(df_full['shift_from_inoculumn'] < 0.)
+    df_full['zero_change'] = df_full['shift_from_inoculumn'] == 0.
+    df_full['total_shift'] = np.abs(df_full['shift_from_inoculumn'] + df_full['opp_strain_shift_from_inoculumn'])
+    df_full.to_csv(f'{save_dir}/{species}_shifts.csv', index = False)
+
 
 
 if __name__ == '__main__':
@@ -136,75 +206,24 @@ if __name__ == '__main__':
        'AC/PP-AE-mBHI', 'AC/PP-AF-mBHI', 
        'AE-AF-mGAM', 'AE-AF-mBHI',
      ]
+    fnames = glob(f'{args.indir}/*/')
 
+    species_list = [fname.split('/')[-2] for fname in fnames]
+    e003_metadata = pd.read_csv('/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/analysis/e003_coal_metadata_full.csv').drop(columns = 'Unnamed: 0')
 
-    fname = '~/git/coalescence-pilot-mgx/workflow/out/midas2_output/old_species/species/metadata.tsv'
+    e003_metadata['inoculumn'] = e003_metadata['inoculumn'].transform(get_inoculumn_sort)
 
-    df_metadata= pd.read_csv(fname, delimiter = '\t')
-    df_metadata = transform_df(df_metadata)
-    df_metadata['species_id'] = df_metadata['species_id'].astype(str)
-    df_metadata = df_metadata.set_index('species_id').astype(str)
-
-    e003_metadata = pd.read_csv('workflow/analysis/e003_coal_metadata_full.csv').drop(columns = 'Unnamed: 0')
     in_df = e003_metadata.loc[e003_metadata['is_inoculumn'],:].set_index('inoculumn').copy()
 
     in_series = in_df['sample']
     in_dict = in_series.to_dict()
+ 
+    for species in species_list:
+        print(species)
+        get_species_tracking(species)
 
 
-    def get_inoculumn_sort(x):
-        subjects = list(np.sort(x.split('-')[:-1]))
-        media =  x.split('-')[-1]
-        return '-'.join(subjects + [media])
-                  
-    e003_metadata['inoculumn'] = e003_metadata['inoculumn'].transform(get_inoculumn_sort)
-                    
-    def get_in(x):
-    #print('yay',x)
-        if x in list(in_dict.keys()):
-        
-            return in_dict[x]
-        else:
-            return ''
-    for inoculumn in inoculumn_list:
-      #  print(inoculumn)
-        parent_subjects = inoculumn.split('-')[:-1]
 
-        parent_samples, child_samples = get_parent_children(inoculumn)
-       # print(parent_samples, child_samples)
-       # parent_samples = np.intersect1d(parent_samples, freq_filtered.columns.values)
-        #child_samples = np.intersect1d(child_samples, freq_filtered.columns.values)
-        full_df = []
-        inoculumn_for_fname = ''.join(inoculumn.split('/'))
-       # print(inoculumn_for_fname)
-        for fname in glob(f'{args.indir}/*/{inoculumn_for_fname}_parent_freqs.csv'):
-            df= pd.read_csv(fname).rename(columns = {'Unnamed: 0': 'sample'})
-            df['species_id'] = fname.split('/')[-2]
-            print(fname.split('/')[-2])
-            if len(df) == 0:
-                continue
-            df_info = pd.concat([df.set_index('sample'), 
-                         e003_metadata.loc[e003_metadata['sample'].isin(df['sample'].unique()),:].set_index('sample')],axis=1)
-            df_info['inoculumn_sample'] = df_info['inoculumn'].transform(get_in)
-           # print(df_info)
-            
-            df_info[f'winner {parent_subjects[0]}'] = df_info[parent_samples[0]] > .8
-            df_info[f'winner {parent_subjects[1]}'] = df_info[parent_samples[1]] > .8
-
-            df_infogr = df_info.loc[~df_info['is_inoculumn'],:].groupby(['mesocosm', 'species_id']).sum()
-            df_infogr['single_winner'] = df_infogr[f'winner {parent_subjects[0]}'].transform(lambda x: x>0) \
-                    + df_infogr[f'winner {parent_subjects[1]}'].transform(lambda x: x>0)
-            
-
-            
-            full_df.append(df_infogr.reset_index())
-        if len(full_df) ==0:
-            continue
-        full_df = pd.concat(full_df)
-        full_df.to_csv(f'{save_dir}/{inoculumn_for_fname}_winners.csv')
-
-
-       
 
 
        
