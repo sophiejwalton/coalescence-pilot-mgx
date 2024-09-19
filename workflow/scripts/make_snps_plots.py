@@ -211,9 +211,11 @@ if __name__ == '__main__':
         parent_samples, child_samples = get_parent_children(inoculumn)
         parent_samples = np.intersect1d(parent_samples, freq_filtered.columns.values)
         child_samples = np.intersect1d(child_samples, freq_filtered.columns.values)
-        freq_parents, parent1_snps, parent2_snps = get_main(species_dir,args.species, parent_samples, child_samples, freq_filtered)
+        _, freq_filtered_in = filter_sites_across_samples(depth_filtered[parent_samples + child_samples], freq_filtered[parent_samples + child_samples].copy(), )
+
+        freq_parents, parent1_snps, parent2_snps = get_main(species_dir,args.species, parent_samples, child_samples, freq_filtered_in)
        # if len(freq_parents) == 0:
-           
+          
         inoculumnstr = ''.join(inoculumn.split('/'))
         freq_parents.to_csv(f'{save_dir}/{inoculumnstr}_parent_freqs.csv')
         print(len(parent1_snps), 'party')
