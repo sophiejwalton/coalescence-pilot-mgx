@@ -12,8 +12,10 @@ warnings.filterwarnings('ignore')
 
 def get_distinguishing_snps(freq_inoculumns, thresh = .8):
     # find snps that are greater than .8 (aka alternative alleles > .8)
-    detect_df = freq_inoculumns > thresh
-    print(detect_df[freq_inoculumns.columns.values[0]])
+    detect_df = freq_inoculumns >= thresh
+    detect_df['site_present'] = freq_inoculumns[freq_inoculumns.columns.values[0]].isna() + freq_inoculumns[freq_inoculumns.columns.values[1]].isna()
+    detect_df = detect_df.loc[detect_df['site_present']==0,:]
+#    print(detect_df[freq_inoculumns.columns.values[0]])
     detect_df['diff'] = detect_df[freq_inoculumns.columns.values[0]].astype(int) - detect_df[freq_inoculumns.columns.values[1]].astype(int)
     return detect_df['diff']
 
@@ -55,7 +57,7 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered):
     # get distinguishing SNPs for inoculumns - there should be like 1k distinguishing SNPs 
     # use only Alt Allele as marker... so sites where strain allele is alt allele in one strain and not other strain
     # is the marker 
-    distinguishing_snps = get_distinguishing_snps(freq_inoculumns, thresh = .8)
+    distinguishing_snps = get_distinguishing_snps(freq_inoculumns, thresh = .999)
     print(distinguishing_snps)
     distinguishing_snps.to_csv('distinguishing_snps.csv')
     parent1_snps = distinguishing_snps[distinguishing_snps == 1].index.values
