@@ -51,7 +51,7 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered):
    # depth_filtered= depth_filtering(depth)
    # freq_filtered = freq_masked(freq, depth_filtered)
 
-   # freq_inoculumns = freq_filtered[parent_samples]
+    freq_inoculumns = freq_filtered[parent_samples]
     
     if len(freq_inoculumns.columns.values)<2:
         return pd.DataFrame()
@@ -119,7 +119,7 @@ if __name__ == '__main__':
         parent_samples, child_samples = get_parent_children(inoculumn)
         parent_samples = list(np.intersect1d(parent_samples, freq_filtered.columns.values))
         child_samples = list(np.intersect1d(child_samples, freq_filtered.columns.values))
-        _, freq_filtered_in = filter_across_samples(depth_filtered[parent_samples + child_samples], freq_filtered[parent_samples + child_samples].copy(), )
+        _, freq_filtered_in = filter_sites_across_samples(depth_filtered[parent_samples + child_samples], freq_filtered[parent_samples + child_samples].copy(), )
 
         freq_parents = get_main(species_dir,args.species, parent_samples, child_samples, freq_filtered_in)
         inoculumn = ''.join(inoculumn.split('/'))

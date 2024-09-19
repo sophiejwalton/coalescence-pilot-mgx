@@ -230,8 +230,8 @@ if __name__ == '__main__':
           #  mesocosm = ''.join(mesocosm.split('/'))
             samples = e003_metadata.loc[e003_metadata['mesocosm'] == mesocosm, :].index.values
             inoculumn_sample = get_in(inoculumn)
-            print('yay', inoculumn_sample)
-            print('wee', samples)
+#            print('yay', inoculumn_sample)
+ #           print('wee', samples)
             samples = list(samples) + [inoculumn_sample]   
            # print(freq_filtered.columns.values) 
             samples = list(np.intersect1d(samples, freq_filtered.columns.values))     
@@ -242,13 +242,13 @@ if __name__ == '__main__':
            # print('go', freq_filtered_mesocosm_rand) 
             if i == -1:
                 p = make_mesocosm_timecourse(freq_filtered_mesocosm_rand, title = mesocosm )
-           # print(p)
+            print(p)
                 freq_filtered_mesocosm_marker_parent1  = get_tidy_df(freq_filtered_mesocosm.loc[parent1_snps, :], e003_metadata)
                 freq_filtered_mesocosm_marker_parent2  = get_tidy_df(freq_filtered_mesocosm.loc[parent2_snps, :], e003_metadata)
                 p1 = make_mesocosm_timecourse(freq_filtered_mesocosm_marker_parent1 ,title = f'{mesocosm} parent1',  color = bokeh.palettes.Accent[3][1], alpha = .2 )
                 p2 = make_mesocosm_timecourse(freq_filtered_mesocosm_marker_parent2 , color = bokeh.palettes.Accent[3][2], title = f'{mesocosm} parent2', alpha = .2 )
-                mesocosm = ''.join(mesocosm.split('/'))
-                bokeh.io.export_png(bokeh.layouts.gridplot([hv.render(p), hv.render(p1), hv.render(p2)],ncols = 1), filename = f'{save_dir}/{inoculumn}_{mesocosm}_snps.png')
+                mesocosmstr = ''.join(mesocosm.split('/'))
+                bokeh.io.export_png(bokeh.layouts.gridplot([hv.render(p), hv.render(p1), hv.render(p2)],ncols = 1), filename = f'{save_dir}/{inoculumnstr}_{mesocosm}_snps.png')
             
            # plots.append([hv.render(p), hv.render(p1), hv.render(p2)])
            # print(plot, 'YAY')
