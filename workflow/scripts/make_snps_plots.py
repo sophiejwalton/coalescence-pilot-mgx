@@ -7,13 +7,24 @@ import itertools as it
 from snp_analysis_tools_sherlock import *
 from evo_changes_tools import *
 import warnings
+#import iqplot
+import bokeh.plotting
+import bokeh.io
+import holoviews as hv
+from holoviews import dim, opts
+import bokeh.models
+from bokeh.layouts import gridplot
+
+hv.extension('bokeh')
 warnings.filterwarnings('ignore')
 
 
 def get_distinguishing_snps(freq_inoculumns, thresh = .8):
     # find snps that are greater than .8 (aka alternative alleles > .8)
     detect_df = freq_inoculumns > thresh
-    print(detect_df[freq_inoculumns.columns.values[0]])
+    detect_df['site_present'] = freq_inoculumns[freq_inoculumns.columns.values[0]].isna() + freq_inoculumns[freq_inoculumns.columns.values[1]].isna()
+    detect_df = detect_df.loc[detect_df['site_present'] == 0,:]
+   # print(detect_df[freq_inoculumns.columns.values[0]])
     detect_df['diff'] = detect_df[freq_inoculumns.columns.values[0]].astype(int) - detect_df[freq_inoculumns.columns.values[1]].astype(int)
     return detect_df['diff']
 
@@ -51,11 +62,11 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered):
 
     freq_inoculumns = freq_filtered[parent_samples]
     if len(freq_inoculumns.columns.values)<2:
-        return pd.DataFrame()
+        return pd.DataFrame(), [], []
     # get distinguishing SNPs for inoculumns - there should be like 1k distinguishing SNPs 
     # use only Alt Allele as marker... so sites where strain allele is alt allele in one strain and not other strain
     # is the marker 
-    distinguishing_snps = get_distinguishing_snps(freq_inoculumns, thresh = .8)
+    distinguishing_snps = get_distinguishing_snps(freq_inoculumns, thresh = .999)
     print(distinguishing_snps)
     distinguishing_snps.to_csv('distinguishing_snps.csv')
     parent1_snps = distinguishing_snps[distinguishing_snps == 1].index.values
@@ -98,7 +109,7 @@ def subsample_and_plot(good_freq, good_depth, color = 'grey',  x_limits = (-.5, 
 def get_tidy_df(filtered_freq, e003_metadata, value_name = 'freq'):
     filtered_freq.index.name = 'site_id'
     tidy_data = filtered_freq.reset_index().melt(id_vars = ['site_id'], var_name = 'sample', value_name = value_name)
-    tidy_data = tiday_data.loc[tiday_data['sample'].isin(e003_metadata.index.values)]
+    tidy_data = tidy_data.loc[tidy_data['sample'].isin(e003_metadata.index.values)]
 
     tidy_data['passage'] = tidy_data["sample"].transform(lambda x: e003_metadata.loc[x, 'passage'])
     tidy_data['passage'] = pd.to_numeric(tidy_data['passage'])
@@ -110,6 +121,11 @@ def get_tidy_df(filtered_freq, e003_metadata, value_name = 'freq'):
     
     
     return tidy_data
+def get_inoculumn_sort(x):
+    subjects = list(np.sort(x.split('-')[:-1]))
+    media =  x.split('-')[-1]
+    return '-'.join(subjects + [media])
+
 
 
 
@@ -158,7 +174,7 @@ if __name__ == '__main__':
     save_dir = f'{args.outdir}/{args.species}'
 
 #    parent_samples, child_samples = get_parent_children(args.inoculumn)
-    e003_metadata = pd.read_csv('/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/analysis/e003_coal_metadata_full.csv').drop(columns = 'Unnamed: 0')
+    e003_metadata = pd.read_csv('workflow/analysis/e003_coal_metadata_full.csv').drop(columns = 'Unnamed: 0')
 
     e003_metadata['inoculumn'] = e003_metadata['inoculumn'].transform(get_inoculumn_sort)
 
@@ -167,7 +183,13 @@ if __name__ == '__main__':
     in_series = in_df['sample']
     in_dict = in_series.to_dict()
     e003_metadata = e003_metadata.set_index('sample')
-
+    def get_in(x):
+    #print('yay',x)
+    	if x in list(in_dict.keys()):
+     
+       		return in_dict[x]
+    	else:
+        	return ''
     if not path.isdir(save_dir):
         mkdir(save_dir) 
     info, depth, freq = load_and_sort_files(species_dir, args.species)
@@ -190,28 +212,45 @@ if __name__ == '__main__':
         parent_samples = np.intersect1d(parent_samples, freq_filtered.columns.values)
         child_samples = np.intersect1d(child_samples, freq_filtered.columns.values)
         freq_parents, parent1_snps, parent2_snps = get_main(species_dir,args.species, parent_samples, child_samples, freq_filtered)
+       # if len(freq_parents) == 0:
+           
         inoculumn = ''.join(inoculumn.split('/'))
         freq_parents.to_csv(f'{save_dir}/{inoculumn}_parent_freqs.csv')
-
-        mesocosms = e003_metadata.loc[e003_metadata['inoculumn'] == 'inoculumn', 'mesocosm'].unique()
+        print(len(parent1_snps), 'party')
+        mesocosms = e003_metadata.loc[e003_metadata['inoculumn'] == inoculumn, 'mesocosm'].unique()
+#        print(mesocosms, 'MESOCOSM')
         plots = []
-        for mesocosm in mesocosms:
-            samples = e003_metadata.loc[e003_metadata['mesocosm'] == mesocosm, 'sample'].unique()
+        parent1_snps = np.random.choice(parent1_snps, 1000)
+        parent2_snps = np.random.choice(parent2_snps, 1000)
+        for i, mesocosm in enumerate(mesocosms):
+           # if len(freq_parents) == 0:
+            #   continue 
+            samples = e003_metadata.loc[e003_metadata['mesocosm'] == mesocosm, :].index.values
             inoculumn_sample = get_in(inoculumn)
-            freq_filtered_mesocosm = freq_filtered[[inoculumn_sample] + samples]
+            print(inoculumn_sample)
+            print(samples)
+            samples = list(samples) + [inoculumn_sample]   
+           # print(freq_filtered.columns.values) 
+            samples = list(np.intersect1d(samples, freq_filtered.columns.values))     
+            freq_filtered_mesocosm = freq_filtered[samples]
             random_snps = np.random.choice(freq_filtered_mesocosm.index.values, 10000)
             freq_filtered_mesocosm_rand  = freq_filtered_mesocosm.loc[random_snps, :]
             freq_filtered_mesocosm_rand = get_tidy_df(freq_filtered_mesocosm_rand, e003_metadata, )
-            p = make_mesocosm_timecourse(freq_filtered_mesocosm_rand )
-
-            freq_filtered_mesocosm_marker_parent1  = get_tidy_df(freq_filtered_mesocosm.loc[parent1_snps, :],)
-            freq_filtered_mesocosm_marker_parent2  = get_tidy_df(freq_filtered_mesocosm.loc[parent2_snps, :],)
-            p1 = make_mesocosm_timecourse(freq_filtered_mesocosm_marker_parent1 , color = bokeh.palettes.Accent[3][1] )
-            p2 = make_mesocosm_timecourse(freq_filtered_mesocosm_marker_parent2 , color = bokeh.palettes.Accent[3][2] )
-
-            plot = hv.render(p*p1*p2)
-            plots.append(plot)
-        bokeh.io.export_png(bokeh.io.gridplots(plots, filename = f'{save_dir}/{inoculumn}_snps.png'))
+            print('go', freq_filtered_mesocosm_rand) 
+            if i == 0:
+            	p = make_mesocosm_timecourse(freq_filtered_mesocosm_rand, title = mesocosm )
+           # print(p)
+            	freq_filtered_mesocosm_marker_parent1  = get_tidy_df(freq_filtered_mesocosm.loc[parent1_snps, :], e003_metadata)
+            	freq_filtered_mesocosm_marker_parent2  = get_tidy_df(freq_filtered_mesocosm.loc[parent2_snps, :], e003_metadata)
+            	p1 = make_mesocosm_timecourse(freq_filtered_mesocosm_marker_parent1 ,title = f'{mesocosm} parent1',  color = bokeh.palettes.Accent[3][1], alpha = .2 )
+            	p2 = make_mesocosm_timecourse(freq_filtered_mesocosm_marker_parent2 , color = bokeh.palettes.Accent[3][2], title = f'{mesocosm} parent2', alpha = .2 )
+                mesocosm = ''.join(mesocosm.split('/'))
+                bokeh.io.export_png(bokeh.layouts.gridplot([hv.render(p), hv.render(p1), hv.render(p2)],ncols = 1), filename = f'{save_dir}/{inoculumn}_{mesocosm}_snps.png')
+            
+           # plots.append([hv.render(p), hv.render(p1), hv.render(p2)])
+           # print(plot, 'YAY')
+       # if len(plots)>0:
+#        bokeh.io.export_png(bokeh.layouts.gridplot(plots,ncols = 1), filename = f'{save_dir}/{inoculumn}_snps.png')
 
 
 
