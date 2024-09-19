@@ -209,8 +209,8 @@ if __name__ == '__main__':
     for inoculumn in inoculumn_list:
         print(inoculumn)
         parent_samples, child_samples = get_parent_children(inoculumn)
-        parent_samples = np.intersect1d(parent_samples, freq_filtered.columns.values)
-        child_samples = np.intersect1d(child_samples, freq_filtered.columns.values)
+        parent_samples = list(np.intersect1d(parent_samples, freq_filtered.columns.values))
+        child_samples = list(np.intersect1d(child_samples, freq_filtered.columns.values))
         _, freq_filtered_in = filter_sites_across_samples(depth_filtered[parent_samples + child_samples], freq_filtered[parent_samples + child_samples].copy(), )
 
         freq_parents, parent1_snps, parent2_snps = get_main(species_dir,args.species, parent_samples, child_samples, freq_filtered_in)
@@ -244,7 +244,7 @@ if __name__ == '__main__':
            # print('go', freq_filtered_mesocosm_rand) 
             if i == -1:
                 p = make_mesocosm_timecourse(freq_filtered_mesocosm_rand, title = mesocosm )
-            print(p)
+#            print(p)
                 freq_filtered_mesocosm_marker_parent1  = get_tidy_df(freq_filtered_mesocosm.loc[parent1_snps, :], e003_metadata)
                 freq_filtered_mesocosm_marker_parent2  = get_tidy_df(freq_filtered_mesocosm.loc[parent2_snps, :], e003_metadata)
                 p1 = make_mesocosm_timecourse(freq_filtered_mesocosm_marker_parent1 ,title = f'{mesocosm} parent1',  color = bokeh.palettes.Accent[3][1], alpha = .2 )
