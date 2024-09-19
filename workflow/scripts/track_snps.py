@@ -51,7 +51,8 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered):
    # depth_filtered= depth_filtering(depth)
    # freq_filtered = freq_masked(freq, depth_filtered)
 
-    freq_inoculumns = freq_filtered[parent_samples]
+   # freq_inoculumns = freq_filtered[parent_samples]
+    
     if len(freq_inoculumns.columns.values)<2:
         return pd.DataFrame()
     # get distinguishing SNPs for inoculumns - there should be like 1k distinguishing SNPs 
@@ -116,9 +117,11 @@ if __name__ == '__main__':
     for inoculumn in inoculumn_list:
         print(inoculumn)
         parent_samples, child_samples = get_parent_children(inoculumn)
-        parent_samples = np.intersect1d(parent_samples, freq_filtered.columns.values)
-        child_samples = np.intersect1d(child_samples, freq_filtered.columns.values)
-        freq_parents = get_main(species_dir,args.species, parent_samples, child_samples, freq_filtered)
+        parent_samples = list(np.intersect1d(parent_samples, freq_filtered.columns.values))
+        child_samples = list(np.intersect1d(child_samples, freq_filtered.columns.values))
+        _, freq_filtered_in = filter_across_samples(depth_filtered[parent_samples + child_samples], freq_filtered[parent_samples + child_samples].copy(), )
+
+        freq_parents = get_main(species_dir,args.species, parent_samples, child_samples, freq_filtered_in)
         inoculumn = ''.join(inoculumn.split('/'))
         freq_parents.to_csv(f'{save_dir}/{inoculumn}_parent_freqs.csv')
     
