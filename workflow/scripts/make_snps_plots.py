@@ -214,21 +214,24 @@ if __name__ == '__main__':
         freq_parents, parent1_snps, parent2_snps = get_main(species_dir,args.species, parent_samples, child_samples, freq_filtered)
        # if len(freq_parents) == 0:
            
-        inoculumn = ''.join(inoculumn.split('/'))
-        freq_parents.to_csv(f'{save_dir}/{inoculumn}_parent_freqs.csv')
+        inoculumnstr = ''.join(inoculumn.split('/'))
+        freq_parents.to_csv(f'{save_dir}/{inoculumnstr}_parent_freqs.csv')
         print(len(parent1_snps), 'party')
+        
         mesocosms = e003_metadata.loc[e003_metadata['inoculumn'] == inoculumn, 'mesocosm'].unique()
 #        print(mesocosms, 'MESOCOSM')
         plots = []
         parent1_snps = np.random.choice(parent1_snps, 1000)
         parent2_snps = np.random.choice(parent2_snps, 1000)
         for i, mesocosm in enumerate(mesocosms):
+            print(mesocosm)
            # if len(freq_parents) == 0:
             #   continue 
+          #  mesocosm = ''.join(mesocosm.split('/'))
             samples = e003_metadata.loc[e003_metadata['mesocosm'] == mesocosm, :].index.values
             inoculumn_sample = get_in(inoculumn)
-            print(inoculumn_sample)
-            print(samples)
+            print('yay', inoculumn_sample)
+            print('wee', samples)
             samples = list(samples) + [inoculumn_sample]   
            # print(freq_filtered.columns.values) 
             samples = list(np.intersect1d(samples, freq_filtered.columns.values))     
@@ -237,7 +240,7 @@ if __name__ == '__main__':
             freq_filtered_mesocosm_rand  = freq_filtered_mesocosm.loc[random_snps, :]
             freq_filtered_mesocosm_rand = get_tidy_df(freq_filtered_mesocosm_rand, e003_metadata, )
            # print('go', freq_filtered_mesocosm_rand) 
-            if i == 0:
+            if i == -1:
                 p = make_mesocosm_timecourse(freq_filtered_mesocosm_rand, title = mesocosm )
            # print(p)
                 freq_filtered_mesocosm_marker_parent1  = get_tidy_df(freq_filtered_mesocosm.loc[parent1_snps, :], e003_metadata)
