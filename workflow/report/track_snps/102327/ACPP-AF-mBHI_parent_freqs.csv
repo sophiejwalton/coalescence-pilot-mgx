@@ -1,6 +1,8 @@
 ,B3-e003Coalescence-Inoculumn-mBHI,D5-e003Coalescence-Inoculumn-mBHI
-B5-e003Coalescence-Inoculumn-mBHI,0.5,0.455
-B5-e003Coalescence-mBHI-p3,0.692,0.3
+B5-e003Coalescence-Inoculumn-mBHI,0.5,0.457
+B5-e003Coalescence-mBHI-p3,0.692,0.308
+B5-e003Coalescence-mBHI-p5,0.231,0.75
 B5-e003Coalescence-mBHI-p7,0.0,1.0
-D3-e003Coalescence-Inoculumn-mBHI,0.516,0.459
+D3-e003Coalescence-Inoculumn-mBHI,0.51,0.459
+D3-e003Coalescence-mBHI-p5,0.0,1.0
 D3-e003Coalescence-mBHI-p7,0.0,1.0
