@@ -134,8 +134,10 @@ def repolarize_against_reference(freq, info):
     '''
     #info2 = info.copy().reset_index().set_index('site_id')
   #  freq_polarized = freq.copy().set_index('site_id')
-    
-    freq.loc[info['ref_allele'] != info2['minor_allele'],: ] = 1 - freq.loc[info['ref_allele'] != info2['minor_allele'],: ]
+    info2 = info.reset_index()
+    info2['ref_allele'] = info2['site_id'].transform(lambda x: x.split('|')[-1])
+    info2 = info2.set_index('site_id')
+    freq.loc[info2['ref_allele'] != info2['minor_allele'],: ] = 1 - freq.loc[info2['ref_allele'] != info2['minor_allele'],: ]
 
     return freq
 
