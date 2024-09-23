@@ -102,6 +102,8 @@ if __name__ == '__main__':
     if not path.isdir(save_dir):
         mkdir(save_dir) 
     info, depth, freq = load_and_sort_files(species_dir, args.species)
+    freq = repolarize_against_reference(freq, info)
+
     med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
     good_samples = med_nonzero_depth[med_nonzero_depth>10.]
     depth = depth[good_samples.index.values]
