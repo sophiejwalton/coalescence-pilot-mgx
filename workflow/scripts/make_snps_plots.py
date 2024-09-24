@@ -193,6 +193,7 @@ if __name__ == '__main__':
     if not path.isdir(save_dir):
         mkdir(save_dir) 
     info, depth, freq = load_and_sort_files(species_dir, args.species)
+    freq = repolarize_against_reference(freq, info)
     med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
     good_samples = med_nonzero_depth[med_nonzero_depth>10.]
     depth = depth[good_samples.index.values]
@@ -242,7 +243,7 @@ if __name__ == '__main__':
             freq_filtered_mesocosm_rand  = freq_filtered_mesocosm.loc[random_snps, :]
             freq_filtered_mesocosm_rand = get_tidy_df(freq_filtered_mesocosm_rand, e003_metadata, )
            # print('go', freq_filtered_mesocosm_rand) 
-            if i == -1:
+            if i == 1:
                 p = make_mesocosm_timecourse(freq_filtered_mesocosm_rand, title = mesocosm )
 #            print(p)
                 freq_filtered_mesocosm_marker_parent1  = get_tidy_df(freq_filtered_mesocosm.loc[parent1_snps, :], e003_metadata)

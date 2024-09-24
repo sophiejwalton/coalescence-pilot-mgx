@@ -84,6 +84,7 @@ species_list.remove(100263) # add back in
 species_list.remove(100249) # add back in 
 species_list.remove(101456) # add back in 
 species_list.remove(100231)
+species_list.remove(102320) # add back in 
 #species_list.remove('103326')
 #species_list.remove('101021')
 #species_list.remove('102289')
