@@ -59,8 +59,8 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered):
     # use only Alt Allele as marker... so sites where strain allele is alt allele in one strain and not other strain
     # is the marker 
     distinguishing_snps = get_distinguishing_snps(freq_inoculumns, thresh = .999)
-    print(distinguishing_snps)
-    distinguishing_snps.to_csv('distinguishing_snps.csv')
+    print(len(distinguishing_snps))
+    #distinguishing_snps.to_csv('distinguishing_snps.csv')
     parent1_snps = distinguishing_snps[distinguishing_snps == 1].index.values
     parent2_snps = distinguishing_snps[distinguishing_snps == -1].index.values
    # print(parent1_snps)
@@ -102,12 +102,12 @@ if __name__ == '__main__':
     if not path.isdir(save_dir):
         mkdir(save_dir) 
     info, depth, freq = load_and_sort_files(species_dir, args.species)
-    print(info.columns.values)
-    print(info.index.values)
+    #print(info.columns.values)
+    #print(info.index.values)
     freq = repolarize_against_reference(freq, info)
 
     med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
-    good_samples = med_nonzero_depth[med_nonzero_depth>10.]
+    good_samples = med_nonzero_depth[med_nonzero_depth>=5.]
     depth = depth[good_samples.index.values]
     freq = freq[good_samples.index.values]
     depth_filtered= depth_filtering(depth)
