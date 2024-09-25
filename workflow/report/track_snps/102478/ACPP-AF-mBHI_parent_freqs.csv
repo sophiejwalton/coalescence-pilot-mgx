@@ -1,8 +1,9 @@
 ,B3-e003Coalescence-Inoculumn-mBHI,D5-e003Coalescence-Inoculumn-mBHI
-B5-e003Coalescence-Inoculumn-mBHI,0.64,1.0
+B5-e003Coalescence-Inoculumn-mBHI,0.647,1.0
+B5-e003Coalescence-mBHI-p3,0.556,1.0
 B5-e003Coalescence-mGAM-p3,1.0,1.0
-B5-e003Coalescence-mGAM-p5,0.714,0.64
-B5-e003Coalescence-mGAM-p7,0.765,0.714
-D3-e003Coalescence-Inoculumn-mBHI,0.639,0.854
+B5-e003Coalescence-mGAM-p5,0.719,0.667
+B5-e003Coalescence-mGAM-p7,0.767,0.727
+D3-e003Coalescence-Inoculumn-mBHI,0.644,0.867
 D3-e003Coalescence-mGAM-p3,1.0,1.0
-D3-e003Coalescence-mGAM-p5,0.605,0.585
+D3-e003Coalescence-mGAM-p5,0.61,0.595
