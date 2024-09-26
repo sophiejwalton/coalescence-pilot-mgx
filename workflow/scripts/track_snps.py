@@ -107,7 +107,7 @@ if __name__ == '__main__':
     freq = repolarize_against_reference(freq, info)
 
     med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
-    good_samples = med_nonzero_depth[med_nonzero_depth>=5.]
+    good_samples = med_nonzero_depth[med_nonzero_depth>=3.]
     depth = depth[good_samples.index.values]
     freq = freq[good_samples.index.values]
     depth_filtered= depth_filtering(depth)
