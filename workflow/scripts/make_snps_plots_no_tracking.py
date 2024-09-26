@@ -85,6 +85,17 @@ def get_inoculumn_sort(x):
     media =  x.split('-')[-1]
     return '-'.join(subjects + [media])
 
+def prepare_freq_for_plotting(freq, polarize_sample):
+    freq = polarize_by_sample(freq, polarize_sample)
+
+    fixed_snps0 = freq < 1e-3
+    fixed_snps0 = fixed_snps0.sum(axis = 1)
+    freq = freq.loc[fixed_snps0 == len(freq.columns.values),:]
+    fixed_snps1 = freq > 1-1e-3
+    fixed_snps1 = fixed_snps1.sum(axis = 1)
+    freq = freq.loc[fixed_snps1 == len(freq.columns.values),:]
+   # freq = freq.loc[freq[fixed]]
+    return freq
 
 
 def make_mesocosm_timecourse(tidy_data, title = '',
@@ -173,6 +184,7 @@ if __name__ == '__main__':
         parent_samples = list(np.intersect1d(parent_samples, freq_filtered.columns.values))
         child_samples = list(np.intersect1d(child_samples, freq_filtered.columns.values))
         _, freq_filtered_in = filter_sites_across_samples(depth_filtered[parent_samples + child_samples], freq_filtered[parent_samples + child_samples].copy(), )
+
           
         inoculumnstr = ''.join(inoculumn.split('/'))
         mesocosms = e003_metadata.loc[e003_metadata['inoculumn'] == inoculumn, 'mesocosm'].unique()
@@ -191,6 +203,7 @@ if __name__ == '__main__':
            # print(freq_filtered.columns.values) 
             samples = list(np.intersect1d(samples, freq_filtered.columns.values))     
             freq_filtered_mesocosm = freq_filtered[samples]
+            freq_filtered_mesocosm = prepare_freq_for_plotting(freq_filtered_mesocosm)
             random_snps = np.random.choice(freq_filtered_mesocosm.index.values, 10000)
             freq_filtered_mesocosm_rand  = freq_filtered_mesocosm.loc[random_snps, :]
             freq_filtered_mesocosm_rand = get_tidy_df(freq_filtered_mesocosm_rand, e003_metadata, )
