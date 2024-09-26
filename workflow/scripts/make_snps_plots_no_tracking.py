@@ -200,7 +200,7 @@ if __name__ == '__main__':
             plots.append(hv.render(p))
 #            print(p)
                
-        bokeh.io.export_png(plots,ncols = 1), filename = f'{save_dir}/{inoculumnstr}_snps.png')
+        bokeh.io.export_png(bokeh.layouts.gridplot(plots,ncols = 1), filename = f'{save_dir}/{inoculumnstr}_snps.png')
             
            # plots.append([hv.render(p), hv.render(p1), hv.render(p2)])
            # print(plot, 'YAY')
