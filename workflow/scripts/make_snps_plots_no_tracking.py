@@ -33,6 +33,9 @@ def get_frequency_parent(freq_children, parent_snps):
 
     return median_freq 
 
+def polarize_by_sample(freq, sample):
+    freq.loc[freq[sample] > .5, :] = 1- freq.loc[freq[sample] > .5, :]
+    return freq 
 
 def get_parent_children(inoculumn):
     metadata = pd.read_csv('config/e003_coal_metadata_full.csv')
@@ -87,14 +90,16 @@ def get_inoculumn_sort(x):
 
 def prepare_freq_for_plotting(freq, polarize_sample):
     freq = polarize_by_sample(freq, polarize_sample)
-
+    print(len(freq))
     fixed_snps0 = freq < 1e-3
     fixed_snps0 = fixed_snps0.sum(axis = 1)
-    freq = freq.loc[fixed_snps0 == len(freq.columns.values),:]
+    freq = freq.loc[fixed_snps0 < len(freq.columns.values),:]
+    print(len(freq))
     fixed_snps1 = freq > 1-1e-3
     fixed_snps1 = fixed_snps1.sum(axis = 1)
-    freq = freq.loc[fixed_snps1 == len(freq.columns.values),:]
+    freq = freq.loc[fixed_snps1 < len(freq.columns.values),:]
    # freq = freq.loc[freq[fixed]]
+    print(len(freq))
     return freq
 
 
@@ -203,14 +208,18 @@ if __name__ == '__main__':
            # print(freq_filtered.columns.values) 
             samples = list(np.intersect1d(samples, freq_filtered.columns.values))     
             freq_filtered_mesocosm = freq_filtered[samples]
-            freq_filtered_mesocosm = prepare_freq_for_plotting(freq_filtered_mesocosm)
-            random_snps = np.random.choice(freq_filtered_mesocosm.index.values, 10000)
-            freq_filtered_mesocosm_rand  = freq_filtered_mesocosm.loc[random_snps, :]
-            freq_filtered_mesocosm_rand = get_tidy_df(freq_filtered_mesocosm_rand, e003_metadata, )
-           # print('go', freq_filtered_mesocosm_rand) 
+            freq_filtered_mesocosm = prepare_freq_for_plotting(freq_filtered_mesocosm, inoculumn_sample)
+            if len(freq_filtered_mesocosm) > 10000:
+            	random_snps = np.random.choice(freq_filtered_mesocosm.index.values, 10000)
+            	freq_filtered_mesocosm  = freq_filtered_mesocosm.loc[random_snps, :]
+            freq_filtered_mesocosm = get_tidy_df(freq_filtered_mesocosm, e003_metadata, )
+            if len(freq_filtered_mesocosm) > 0:
+	#	continue            
+# print('go', freq_filtered_mesocosm_rand) 
            # if i == 1:
-            p = make_mesocosm_timecourse(freq_filtered_mesocosm_rand, title = mesocosm )
-            plots.append(hv.render(p))
+            	p = make_mesocosm_timecourse(freq_filtered_mesocosm, title = mesocosm )
+            #print(len(freq_filtered_mesocosm))
+            	plots.append(hv.render(p))
 #            print(p)
                
         bokeh.io.export_png(bokeh.layouts.gridplot(plots,ncols = 1), filename = f'{save_dir}/{inoculumnstr}_snps.png')
