@@ -213,14 +213,19 @@ if __name__ == '__main__':
             	random_snps = np.random.choice(freq_filtered_mesocosm.index.values, 10000)
             	freq_filtered_mesocosm  = freq_filtered_mesocosm.loc[random_snps, :]
             freq_filtered_mesocosm = get_tidy_df(freq_filtered_mesocosm, e003_metadata, )
-            if len(freq_filtered_mesocosm) > 0:
-	#	continue            
+            print(len(freq_filtered_mesocosm), 'yay')
+            print(f'{save_dir}/{inoculumnstr}_snps.png')
+            p = make_mesocosm_timecourse(freq_filtered_mesocosm, title = mesocosm )
+            print(f'{save_dir}/{inoculumnstr}_snps.png')
+            plots.append(hv.render(p))
+#print(len(freq_filtered_mesocosm), 'yay')
+#	    print(f'{save_dir}/{inoculumnstr}_snps.png')           
 # print('go', freq_filtered_mesocosm_rand) 
            # if i == 1:
-            	p = make_mesocosm_timecourse(freq_filtered_mesocosm, title = mesocosm )
+           # 	p = make_mesocosm_timecourse(freq_filtered_mesocosm, title = mesocosm )
             #print(len(freq_filtered_mesocosm))
-            	plots.append(hv.render(p))
-#            print(p)
+            #	plots.append(hv.render(p))
+#          #  print(p)
                
         bokeh.io.export_png(bokeh.layouts.gridplot(plots,ncols = 1), filename = f'{save_dir}/{inoculumnstr}_snps.png')
             
