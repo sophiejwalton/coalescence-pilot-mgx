@@ -173,7 +173,7 @@ if __name__ == '__main__':
     freq = freq[good_samples.index.values]
     depth_filtered= depth_filtering(depth)
     freq_filtered = freq_masked(freq, depth_filtered)
-    inoculumn_list = ['AE-AE-mGAM', #'AA-AA-mGAM', 'AA-AA-mBHI', 
+    inoculumn_list = ['AC/PP-AF-mBHI','AC/PP-AF-mGAM','AE-AE-mGAM', #'AA-AA-mGAM', 'AA-AA-mBHI', 
    # 'AC/PP-AC/PP-mGAM', 'AC/PP-AC/PP-mBHI', 
      'AE-AE-mBHI', 'AF-AF-mGAM', 'AF-AF-mBHI'
         'AA-AE-mGAM', 'AA-AF-mGAM', 
