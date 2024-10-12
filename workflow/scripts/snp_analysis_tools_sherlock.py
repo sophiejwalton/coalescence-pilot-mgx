@@ -132,22 +132,14 @@ def repolarize_against_reference(freq, info):
     '''
     Repolarize so that all allele frequencies are the frequency of the alternative allele 
     '''
-    info2 = info.reset_index().copy()
-    info2['site_id_adjust'] = info2['site_id'] 
-    info2 = info2.set_index('site_id_adjust')
-    repolarize = info2['ref_allele'] == info2['minor_allele']
+    #info2 = info.copy().reset_index().set_index('site_id')
+  #  freq_polarized = freq.copy().set_index('site_id')
+    info2 = info.reset_index()
+    info2['ref_allele'] = info2['site_id'].transform(lambda x: x.split('|')[-1])
+    info2 = info2.set_index('site_id')
+    freq.loc[info2['ref_allele'] == info2['minor_allele'],: ] = 1 - freq.loc[info2['ref_allele'] == info2['minor_allele'],: ]
 
-    repolarized = repolarize.copy()
-    repolarized[:] = False
-    
-    repolarized_index = repolarize.loc[repolarize == True].index 
-   
-    repolarized[repolarized_index] = True
-    
-    freq_polarized = freq.copy().set_index('site_id')
-    
-    freq_polarized.loc[repolarized,: ] = 1 - freq_polarized.loc[repolarized,: ]
-    return freq_polarized,repolarized, repolarize
+    return freq
 
     
 
