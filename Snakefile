@@ -83,6 +83,7 @@ species_list.remove(100033) # add back in
 species_list.remove(100263) # add back in 
 species_list.remove(100249) # add back in 
 species_list.remove(101456) # add back in 
+
 species_list.remove(100231)
 #species_list.remove('103326')
 #species_list.remove('101021')
@@ -127,11 +128,11 @@ rule all:
 #        "workflow/out/midas2_output/merge/snps/snps_summary.tsv",
       # "workflow/out/midas2_output/merge_bacteroides/snps/snps_summary.tsv",
       #  expand("workflow/out/midasOutput/{sample}/species/species_profile.txt",sample=samples),
- #       expand("workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_freqs.tsv", species=species_list),
+        expand("workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_freqs.tsv", species=species_list),
       #  expand("workflow/out/midas2_output/merge/snps/{species}/{species}.snps_freqs.tsv.gz", species=species_list),
        # expand("workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv",species=species_list),     
        # expand("workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv",species=species_list),  
-        expand("workflow/report/track_snps/{species}/done.txt", species=species_list)    
+#        expand("workflow/report/track_snps/{species}/done.txt", species=species_list)    
 #  "workflow/report/calculateFixedDiffs/100013/100013_fixed_diffs.csv"
  # "workflow/out/midasOutput/species/species_profile_all_abundant.csv",
         #"workflow/out/midasOutput/species/abundantSpecies.txt",
@@ -139,6 +140,6 @@ rule all:
 
 
 #include: "workflow/rules/processRawReads.smk",
-#include: "workflow/rules/runMIDAS2.smk",
+include: "workflow/rules/runMIDAS2.smk",
 include: "workflow/rules/processMIDAS2.smk"
 #include: "workflow/rules/processSNPs.smk"
