@@ -3,8 +3,10 @@ import pandas as pd
 # Run the MIDAS species module to generate species profiles.
 rule identifySpecies:
     input:
-        r1=join(config["concate_dir"],"{sample}-filtered.1.fastq.gz"),
-        r2=join(config["concate_dir"],"{sample}-filtered.2.fastq.gz")
+#	r1=join(config["filterdir"],"{sample}-filtered.1.fastq.gz"),
+#	r2=join(config["filterdir"],"{sample}-filtered.2.fastq.gz")
+        r1=join(config["filterdir"],"{sample}-filtered.1.fastq.gz"),
+        r2=join(config["filterdir"],"{sample}-filtered.2.fastq.gz")
     output:
         profile="workflow/out/midas2_output/{sample}/species/species_profile.tsv"
     params:
@@ -42,9 +44,9 @@ def get_abundance_species():
 
 rule identifySNVs:
     input:
-        r1=join(config["concate_dir"],"{sample}-filtered.1.fastq.gz"),
-        r2=join(config["concate_dir"],"{sample}-filtered.2.fastq.gz"),
-        good_species='workflow/out/midas2_output/species/abundant_species.csv',
+        r1=join(config["filterdir"],"{sample}-filtered.1.fastq.gz"),
+        r2=join(config["filterdir"],"{sample}-filtered.2.fastq.gz"),
+       # good_species='workflow/out/midas2_output/species/abundant_species.csv', #just on the first two replicates... 
         species="workflow/out/midas2_output/{sample}/species/species_profile.tsv"
     output:
         profile="workflow/out/midas2_output/{sample}/snps/snps_summary.tsv"

@@ -1,4 +1,8 @@
 # Use skewer to trim adapters from raw reads.
+#print(df)
+#print(df.index.values)
+print(samples)
+print('yay')
 rule trimAdapters:
 	input:
 		r1=lambda wildcards: df.loc[str(wildcards.sample), 'read1'],

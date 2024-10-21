@@ -9,8 +9,11 @@ df=pd.read_csv('config/sample_fnames_round2.csv')
 
 # Parse sample names from df and generate sample list 
 #df['SampleLane'] = df['Sample'].transform(lambda x: f'{x}_L002')
-samples=list(set(df['Sample'].sort_values().tolist()))
+samples=list(df['Sample'].values.astype(str))
+print(samples)
 df = df.set_index('Sample')
+
+#print(df.head())
 #samples = ['A5-e003Coalescence-mBHI-p7']
 #f = df.loc[df['SampleLane'] != 'D4-e003Coalescence-mBHI-p5_S175_L003',:]
 #df = df.loc[df['Sample'].isin(samples),:]
@@ -42,21 +45,27 @@ def get_species_list():
    # return species
     return list(dfgood[dfgood>5].index.values)
 
+#print(samples[:10])
+#print(df.index.values[:10])
+#print('G4-e003Coalescence-mBHI-p5_S27' in samples)
 
-inoculumns = ['AA-AE-mGAM', 'AA-AF-mGAM', 
-       'AA-AC/PP-mGAM', 'AA-AC/PP-mBHI', 'AA-AE-mBHI', 'AA-AF-mBHI',
-       'AC/PP-AE-mGAM', 'AC/PP-AF-mGAM', 
-       'AC/PP-AE-mBHI', 'AC/PP-AF-mBHI', 
-       'AE-AF-mGAM', 'AE-AF-mBHI',
-     ]
+
+#print('G4-e003Coalescence-mBHI-p5_S27' in df.index.values)
+
+#inoculumns = ['AA-AE-mGAM', 'AA-AF-mGAM', 
+ #      'AA-AC/PP-mGAM', 'AA-AC/PP-mBHI', 'AA-AE-mBHI', 'AA-AF-mBHI',
+  #     'AC/PP-AE-mGAM', 'AC/PP-AF-mGAM', 
+   #    'AC/PP-AE-mBHI', 'AC/PP-AF-mBHI', 
+    #   'AE-AF-mGAM', 'AE-AF-mBHI',]
+#samples.remove('H5-e003Coalescence-mGAM-p7_S184')
 rule all:
     input:
         expand("workflow/out/trimmed/{sample}-trimmed-pair1.fastq.gz",sample=samples),
         expand("workflow/out/filter/{sample}-filtered.1.fastq.gz",sample=samples),
    #     expand("workflow/out/concat/{sample}-filtered.1.fastq.gz",sample=samples),
-   #     expand("workflow/out/midas2_output/{sample}/species/species_profile.tsv",sample=samples),
+        expand("workflow/out/midas2_output/{sample}/species/species_profile.tsv",sample=samples),
   #      "workflow/out/midas2_output/species/abundant_species.csv",
-       # expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples),
+        expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples),
 #        "workflow/out/midas2_output/merge/snps/snps_summary.tsv",
       # "workflow/out/midas2_output/merge_bacteroides/snps/snps_summary.tsv",
       #  expand("workflow/out/midasOutput/{sample}/species/species_profile.txt",sample=samples),
@@ -70,9 +79,8 @@ rule all:
         #"workflow/out/midasOutput/species/abundantSpecies.txt",
        # expand("workflow/out/midasOutput/species/abundantSpecies_{subject}.txt", subject=subjects),
 
-
 include: "workflow/rules/processRawReads_no_concatenation.smk",
 #include: "workflow/rules/processRawReads.smk",
-#include: "workflow/rules/runMIDAS2.smk",
+include: "workflow/rules/runMIDAS2.smk",
 #include: "workflow/rules/processMIDAS2.smk"
 #include: "workflow/rules/processSNPs.smk"

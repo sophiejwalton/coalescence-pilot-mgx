@@ -58,7 +58,7 @@ if __name__ == '__main__':
     df['filter1'] = df['trim1'].transform(get_filter1)
     df['filter2'] = df['trim1'].transform(get_filter2)
    # df['SampleLane'] = df['read1'].transform(get_sampleLane)
-    df['Sample'] = df['trim1'].transform(lambda x: x.split('_')[0])
+    df['Sample'] = df['trim1'].transform(lambda x: x.split('-trimmed')[0][len('workflow/out/trimmed/'):])
 
 
     #df = pd.DataFrame(data = {'Sample': sample_names, 'read1': read1 , 'read2': read2, 'trim1': trim1, 'trim2': trim2})
