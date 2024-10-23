@@ -6,10 +6,13 @@ configfile: "config/config.yaml"
 
 # Convert list of samples to a dataframe.
 df=pd.read_csv('config/sample_fnames_round2.csv')
+df2 = pd.read_csv('samples_fnames.csv')
 
 # Parse sample names from df and generate sample list 
 #df['SampleLane'] = df['Sample'].transform(lambda x: f'{x}_L002')
 samples=list(df['Sample'].values.astype(str))
+samples2=list(df2['Sample'].values.astype(str))
+samples = samples + samples2
 print(samples)
 df = df.set_index('Sample')
 
@@ -79,8 +82,9 @@ rule all:
         #"workflow/out/midasOutput/species/abundantSpecies.txt",
        # expand("workflow/out/midasOutput/species/abundantSpecies_{subject}.txt", subject=subjects),
 
-include: "workflow/rules/processRawReads_no_concatenation.smk",
+#include: "workflow/rules/processRawReads_no_concatenation.smk",
 #include: "workflow/rules/processRawReads.smk",
-include: "workflow/rules/runMIDAS2.smk",
+#include: "workflow/rules/runMIDAS2.smk",
+include: "workflow/rules/runMIDAS2_population.smk"
 #include: "workflow/rules/processMIDAS2.smk"
 #include: "workflow/rules/processSNPs.smk"
