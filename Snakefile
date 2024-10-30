@@ -6,7 +6,7 @@ configfile: "config/config.yaml"
 
 # Convert list of samples to a dataframe.
 df=pd.read_csv('config/sample_fnames_round2.csv')
-df2 = pd.read_csv('samples_fnames.csv')
+df2 = pd.read_csv('sample_fnames.csv')
 
 # Parse sample names from df and generate sample list 
 #df['SampleLane'] = df['Sample'].transform(lambda x: f'{x}_L002')
@@ -51,7 +51,7 @@ def get_species_list():
 #print(samples[:10])
 #print(df.index.values[:10])
 #print('G4-e003Coalescence-mBHI-p5_S27' in samples)
-
+species_list = [101346,102478, 100099]
 
 #print('G4-e003Coalescence-mBHI-p5_S27' in df.index.values)
 
@@ -63,16 +63,16 @@ def get_species_list():
 samples.remove('H5-e003Coalescence-mGAM-p7_S184') # ADD BACK AFTER FIRST QUICK CHECK 
 rule all:
     input:
-        expand("workflow/out/trimmed/{sample}-trimmed-pair1.fastq.gz",sample=samples),
-        expand("workflow/out/filter/{sample}-filtered.1.fastq.gz",sample=samples),
+#        expand("workflow/out/trimmed/{sample}-trimmed-pair1.fastq.gz",sample=samples),
+ #       expand("workflow/out/filter/{sample}-filtered.1.fastq.gz",sample=samples),
    #     expand("workflow/out/concat/{sample}-filtered.1.fastq.gz",sample=samples),
         expand("workflow/out/midas2_output/{sample}/species/species_profile.tsv",sample=samples),
   #      "workflow/out/midas2_output/species/abundant_species.csv",
-        expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples),
+  #      expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples),
 #        "workflow/out/midas2_output/merge/snps/snps_summary.tsv",
       # "workflow/out/midas2_output/merge_bacteroides/snps/snps_summary.tsv",
       #  expand("workflow/out/midasOutput/{sample}/species/species_profile.txt",sample=samples),
-     #   expand("workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_freqs.tsv", species=species_list),
+        expand("workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.tsv.lz4", species=species_list),
       #  expand("workflow/out/midas2_output/merge/snps/{species}/{species}.snps_freqs.tsv.gz", species=species_list),
        # expand("workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv",species=species_list),     
        # expand("workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv",species=species_list),  
