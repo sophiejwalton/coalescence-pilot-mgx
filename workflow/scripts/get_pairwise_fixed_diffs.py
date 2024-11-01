@@ -9,17 +9,29 @@ from evo_changes_tools import *
 import warnings
 warnings.filterwarnings('ignore')
 
-def get_samples_to_test():
-    pass 
+
+def get_haplotype(sample_freq_filtered,sample):
+    good_sites_lower = sample_freq_filtered.loc[sample_freq_filtered[sample] < .2]
+    good_sites_upper = sample_freq_filtered.loc[sample_freq_filtered[sample] > .8]
+    all_good_sites = pd.concat([good_sites_lower, good_sites_upper])
+    all_good_sites = all_good_sites.loc[~np.isnan(all_good_sites[sample]),:]
+    all_good_sites['Allele'] = 1*(all_good_sites[sample] > .5)
+    return all_good_sites
 
 
-def get_distinguishing_snps(freq_inoculumns, thresh = .8):
-    detect_df = freq_inoculumns.copy()
-    detect_df = np.nan 
-    detect_df[freq_inoculumns < 1- thresh] = 1 # alt allele 
-    detect_df[freq_inoculumns > thresh] = 0 # ref allele 
-    diffs = detect_df.diff(axis = 1)[freq_incolumns.columns.values[1]]
-    diffs = diffs[diffs.abs() ==1] # both sites present 
+
+
+def get_pairwise_divergence(sample1_haplotype, sample2_haplotype):
+   # print(sample1_haplotype, sample2_haplotype) 
+    shared_sites = np.intersect1d(sample1_haplotype.index.values, sample2_haplotype.index.values)
+    sample1_haplotype_shared_site = sample1_haplotype.loc[shared_sites, :].copy()
+    sample2_haplotype_shared_site = sample2_haplotype.loc[shared_sites, :].copy()
+    same_allele = sample1_haplotype_shared_site['Allele'] == sample2_haplotype_shared_site['Allele']
+    
+    fixed_differences = len(same_allele) - same_allele.sum()
+    divergence = fixed_differences/len(same_allele)
+    return fixed_differences, divergence, len(same_allele)
+    
 
 
 good_inoculumns = {'AA-mBHI': 'A2-e003Coalescence-mBHI-inoculumn-redo',
@@ -47,13 +59,9 @@ def get_main(species_dir, save_dir, species, parent_subjects_media):
     inoculumns = [good_inoculumns[f'{parent_subjects[0]}-{media}', f'{parent_subjects[1]}-{media}']]
     freq_inoculumns = freq_filtered[inoculumns]
 
+   # = get_haplotype(freq_filtered, inoculumns[0])
 
-
-    samples_to_test = get_samples_to_test()
-
-    haplotype1 = get_haplotype(freq_filtered, inoculumns[0])
-
-    haplotype2 = get_haplotype(freq_filtered, inoculumns[1])
+   # haplotype2 = get_haplotype(freq_filtered, inoculumns[1])
 
 
     for i, s1 in enumerate(good_inoculumns):
