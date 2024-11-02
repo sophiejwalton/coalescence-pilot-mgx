@@ -56,7 +56,7 @@ def get_main(species_dir, save_dir, species, parent_subjects_media):
     depth_filtered= depth_filtering(depth)
     freq_filtered = freq_masked(freq, depth_filtered)
 
-    inoculumns = [good_inoculumns[f'{parent_subjects[0]}-{media}', f'{parent_subjects[1]}-{media}']]
+    inoculumns = [good_inoculumns[f'{parent_subjects[0]}-{media}'], good_inoculumns[f'{parent_subjects[1]}-{media}']]
     freq_inoculumns = freq_filtered[inoculumns]
 
    # = get_haplotype(freq_filtered, inoculumns[0])
@@ -104,7 +104,7 @@ if __name__ == '__main__':
     save_dir = f'{args.outdir}/{args.species}'
     if not path.isdir(save_dir):
         mkdir(save_dir)
-    get_main(species_dir, save_dir, args.species, args.parent_subjects_media)
+    get_main(species_dir, save_dir, args.species, args.parent_subjects)
     
 
 
