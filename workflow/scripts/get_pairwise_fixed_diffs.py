@@ -71,8 +71,8 @@ good_inoculumns = {'AA-AA-mBHI': ['A2-e003Coalescence-mBHI-inoculumn-redo',
 
  
 def get_main(species_dir, save_dir, species, parent_subjects_media):
-    parent_subjects_media = parent_subjects_media.split('-')
-    media = parent_subjects_media[-1]
+#    parent_subjects_media = parent_subjects_media.split('-')
+ #   media = parent_subjects_media[-1]
     parent_subject = parent_subjects_media[:-1]
     info, depth, freq = load_and_sort_files(species_dir, species)
     med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
@@ -81,17 +81,20 @@ def get_main(species_dir, save_dir, species, parent_subjects_media):
     freq = freq[good_samples.index.values]  
     depth_filtered= depth_filtering(depth)
     freq_filtered = freq_masked(freq, depth_filtered)
-
-    inoculumns = good_inoculumns[f'{parent_subject[0]}-{media}']
+    print(good_samples)
+    inoculumns = good_inoculumns[parent_subjects_media]
  #   freq_inoculumns = freq_filtered[inoculumns]
 
    # = get_haplotype(freq_filtered, inoculumns[0])
 
    # haplotype2 = get_haplotype(freq_filtered, inoculumns[1])
 
-
-    for i, s1 in enumerate(good_inoculumns):
+    s1s = []
+    s2s = []
+    snps_switch = []
+    for i, s1 in enumerate(inoculumns):
         print(i, s1)
+        
         if s1 not in good_samples.index.values:
             continue 
 
@@ -102,9 +105,10 @@ def get_main(species_dir, save_dir, species, parent_subjects_media):
             freq_small = freq_filtered[[s1,s2]].copy()
             depth_small =  depth_filtered[[s1,s2]].copy()
             freq_small = polarize_species(freq_small.copy(), s1)
-            freq_polarized_transition = get_transition_frequency_snps(freq_small, depth_small)
-            depth_small = depth_small.loc[freq_polarized_transition.index.values, ]
-            freq_transition_filter = filter_transition_frequency(freq_polarized_transition.copy(), depth_small, med_nonzero_depth[[s1,s2]])
+                     
+  # freq_polarized_transition = get_transition_frequency_snps(freq_small, depth_small)
+           # depth_small = depth_small.loc[freq_polarized_transition.index.values, ]
+           # freq_transition_filter = filter_transition_frequency(freq_polarized_transition.copy(), depth_small, med_nonzero_depth[[s1,s2]])
             snps_switch.append(len(freq_transition_filter))
             s1s.append(s1)
             s2s.append(s2)
@@ -113,7 +117,7 @@ def get_main(species_dir, save_dir, species, parent_subjects_media):
     ss_df['Strain Shift'] = ss_df['fixed_diffs'] > 1000
     if '/' in parent_subjects_media:
         parent_subjects_media = ''.join(parent_subjects_media.split('/'))
-    ss_df.to_csv(f'{save_dir}/{species}_{parent_subjects_media}_fixed_diffs.csv')
+    ss_df.to_csv(f'{save_dir}/{species}_fixed_diffs.csv')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='basic filtering of sites')
@@ -125,14 +129,14 @@ if __name__ == '__main__':
                        help = 'location where to get stuff from')
     parser.add_argument('--species', action = 'store', 
                        help = 'species to perform analysis on')
-    parser.add_argument('--parent_subject-media', action = 'store', 
+    parser.add_argument('--parent_subject_media', action = 'store', 
                        help = 'parent_subject-media')
     args = parser.parse_args()
     species_dir = f'{args.indir}/{args.species}'
     save_dir = f'{args.outdir}/{args.species}'
     if not path.isdir(save_dir):
         mkdir(save_dir)
-    get_main(species_dir, save_dir, args.species, args.parent_subject-media)
+    get_main(species_dir, save_dir, args.species, args.parent_subject_media)
     
 
 
