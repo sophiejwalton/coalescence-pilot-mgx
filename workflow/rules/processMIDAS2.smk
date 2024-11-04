@@ -4,13 +4,13 @@
 
 rule decompresslz4: 
     input:
-        snpsDepth="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_depth.tsv.lz4",
-        snpsFreq="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_freqs.tsv.lz4",
-        snpsInfo="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_info.tsv.lz4",
+        snpsDepth="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_depth.tsv.lz4",
+        snpsFreq="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.tsv.lz4",
+        snpsInfo="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_info.tsv.lz4",
     output:
-        snpsDepth="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_depth.tsv",
-        snpsFreq="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_freqs.tsv",
-        snpsInfo="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_info.tsv",
+        snpsDepth="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_depth.tsv",
+        snpsFreq="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.tsv",
+        snpsInfo="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_info.tsv",
     shell:
         """
         lz4 -d --rm {input.snpsDepth} {output.snpsDepth}
