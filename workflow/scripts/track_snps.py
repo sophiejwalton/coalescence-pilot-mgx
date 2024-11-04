@@ -26,12 +26,13 @@ def get_frequency_parent(freq_children, parent_snps):
 
 
 def get_parent_children(inoculumn):
-    metadata = pd.read_csv('config/e003_coal_metadata_full.csv')
+    metadata = pd.read_csv('config/e003_metadata_cultures_round2.csv')
     child_samples = list(metadata.loc[metadata['inoculumn'] == inoculumn, 'sample'].values)
     parent_subjects = inoculumn.split('-')[:-1]
     parent_media = inoculumn.split('-')[-1]
     ins = metadata.loc[metadata['is_inoculumn'],:]
     ins = ins.loc[ins['parent_media'] == parent_media,:]
+    print(ins)
     ins1 = ins.loc[ins['parent_subjects'] == parent_subjects[0] + '-' +  parent_subjects[0],:]
 
     ins2 = ins.loc[ins['parent_subjects'] == parent_subjects[1] + '-' +  parent_subjects[1],:]
@@ -121,6 +122,8 @@ if __name__ == '__main__':
     for inoculumn in inoculumn_list:
         print(inoculumn)
         parent_samples, child_samples = get_parent_children(inoculumn)
+        print(parent_samples)
+#        print(freq_filtered.columns.values)
         parent_samples = list(np.intersect1d(parent_samples, freq_filtered.columns.values))
         child_samples = list(np.intersect1d(child_samples, freq_filtered.columns.values))
         _, freq_filtered_in = filter_sites_across_samples(depth_filtered[parent_samples + child_samples], freq_filtered[parent_samples + child_samples].copy(), )

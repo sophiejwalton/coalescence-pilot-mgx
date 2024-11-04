@@ -19,6 +19,15 @@ def load_and_sort_files(species_dir,species):
 
     return info, depth, freq
 
+def get_haplotype(sample_freq_filtered):
+    good_sites_lower = sample_freq_filtered[sample_freq_filtered < .2]
+    good_sites_upper = sample_freq_filtered[sample_freq_filtered > .8]
+    all_good_sites = pd.concat([good_sites_lower, good_sites_upper])
+    return all_good_sites
+
+
+
+
 
 
 def depth_filtering(depth):

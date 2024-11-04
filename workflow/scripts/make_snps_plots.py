@@ -35,7 +35,8 @@ def get_frequency_parent(freq_children, parent_snps):
 
 
 def get_parent_children(inoculumn):
-    metadata = pd.read_csv('config/e003_coal_metadata_full.csv')
+#    metadata = pd.read_csv('config/e003_coal_metadata_full.csv')
+    metadata = pd.read_csv('config/e003_metadata_cultures_round2.csv')
     child_samples = list(metadata.loc[metadata['inoculumn'] == inoculumn, 'sample'].values)
     parent_subjects = inoculumn.split('-')[:-1]
     parent_media = inoculumn.split('-')[-1]
@@ -224,8 +225,10 @@ if __name__ == '__main__':
         mesocosms = e003_metadata.loc[e003_metadata['inoculumn'] == inoculumn, 'mesocosm'].unique()
 #        print(mesocosms, 'MESOCOSM')
         plots = []
-        parent1_snps = np.random.choice(parent1_snps, 1000)
-        parent2_snps = np.random.choice(parent2_snps, 1000)
+        if len(parent1_snps) >1000:
+            parent1_snps = np.random.choice(parent1_snps, 1000)
+        if len(parent2_snps)>1000:
+            parent2_snps = np.random.choice(parent2_snps, 1000)
         for i, mesocosm in enumerate(mesocosms):
             print(mesocosm)
            # if len(freq_parents) == 0:
