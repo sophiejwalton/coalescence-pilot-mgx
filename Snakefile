@@ -59,9 +59,8 @@ species_list.remove('101346')
 species_list.remove('100099')
 species_list.remove('103686') #actuallly remove
 #print('G4-e003Coalescence-mBHI-p5_S27' in df.index.values)
-species_list = [103117,100013, 101349,  101346,102478, 100099, 102279, 100146, 102438, 
-100196, 102506, 100120, 102528, 101294, 102327, 102279]
-species_list = [102279]
+species_list = [103117,100013, 101349,  101346,102478, 100099, 102279, 100146, 102438, 100196, 102506, 100120, 102528, 101294, 102327, 102279]
+#species_list = [102279]
 #inoculumns = ['AA-AE-mGAM', 'AA-AF-mGAM', 
  #      'AA-AC/PP-mGAM', 'AA-AC/PP-mBHI', 'AA-AE-mBHI', 'AA-AF-mBHI',
   #     'AC/PP-AE-mGAM', 'AC/PP-AF-mGAM', 
@@ -92,6 +91,6 @@ rule all:
 #include: "workflow/rules/processRawReads_no_concatenation.smk",
 #include: "workflow/rules/processRawReads.smk",
 #include: "workflow/rules/runMIDAS2.smk",
-include: "workflow/rules/runMIDAS2_population.smk"
+#include: "workflow/rules/runMIDAS2_population.smk"
 include: "workflow/rules/processMIDAS2.smk"
 #include: "workflow/rules/processSNPs.smk"
