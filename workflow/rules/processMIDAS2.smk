@@ -18,6 +18,21 @@ rule decompresslz4:
         lz4 -d --rm {input.snpsInfo} {output.snpsInfo}
         """
 
+rule decompresslz4: 
+    input:
+        snpsDepth="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_depth.tsv",
+        snpsFreq="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.tsv",
+        snpsInfo="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_info.tsv",
+    output:
+        snpsDepth="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_depth.tsv.gz",
+        snpsFreq="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.ts.gz",
+        snpsInfo="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_info.tsv.gz",
+    shell:
+        """
+        gzip {input.snpsDepth} {output.snpsDepth}
+        gzip {input.snpsFreq} {output.snpsFreq}
+        gzip {input.snpsInfo} {output.snpsInfo}
+        """
 
 rule calculateDiversity:
     input:
