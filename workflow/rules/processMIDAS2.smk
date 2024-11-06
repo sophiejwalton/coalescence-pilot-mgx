@@ -2,22 +2,6 @@
 # Process the SNP calls, plot the SFS,
 # and calculate the number of fixed differences between pairs of samples.
 
-rule decompresslz4: 
-    input:
-        snpsDepth="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_depth.tsv.lz4",
-        snpsFreq="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.tsv.lz4",
-        snpsInfo="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_info.tsv.lz4",
-    output:
-        snpsDepth="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_depth.tsv",
-        snpsFreq="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.tsv",
-        snpsInfo="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_info.tsv",
-    shell:
-        """
-        lz4 -d --rm {input.snpsDepth} {output.snpsDepth}
-        lz4 -d --rm {input.snpsFreq} {output.snpsFreq}
-        lz4 -d --rm {input.snpsInfo} {output.snpsInfo}
-        """
-
 rule compressgz: 
     input:
         snpsDepth="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_depth.tsv",
