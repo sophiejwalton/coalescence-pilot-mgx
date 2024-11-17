@@ -38,7 +38,7 @@ def polarize_by_sample(freq, sample):
     return freq 
 
 def get_parent_children(inoculumn):
-    metadata = pd.read_csv('config/e003_coal_metadata_full.csv')
+    metadata = pd.read_csv('config/e003_metadata_cultures_round2.csv')
     child_samples = list(metadata.loc[metadata['inoculumn'] == inoculumn, 'sample'].values)
     parent_subjects = inoculumn.split('-')[:-1]
     parent_media = inoculumn.split('-')[-1]
@@ -147,7 +147,7 @@ if __name__ == '__main__':
     save_dir = f'{args.outdir}/{args.species}'
 
 #    parent_samples, child_samples = get_parent_children(args.inoculumn)
-    e003_metadata = pd.read_csv('workflow/analysis/e003_coal_metadata_full.csv').drop(columns = 'Unnamed: 0')
+    e003_metadata = pd.read_csv('workflow/analysis/e003_metadata_cultures_round2.csv').drop(columns = 'Unnamed: 0')
 
     e003_metadata['inoculumn'] = e003_metadata['inoculumn'].transform(get_inoculumn_sort)
 
@@ -182,6 +182,7 @@ if __name__ == '__main__':
        'AC/PP-AE-mBHI', 'AC/PP-AF-mBHI', 
        'AE-AF-mGAM', 'AE-AF-mBHI',
      ]
+    inoculumn_list = ['AE-AF-mBHI']
     plots = []
     for inoculumn in inoculumn_list:
         print(inoculumn)

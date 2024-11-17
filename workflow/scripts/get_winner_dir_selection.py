@@ -24,7 +24,7 @@ def get_frequency_parent(freq_children, parent_snps):
 
 
 def get_parent_children(inoculumn):
-    metadata = pd.read_csv('config/e003_coal_metadata_full.csv')
+    metadata = pd.read_csv('config/e003_metadata_cultures_round2.csv')
     child_samples = list(metadata.loc[metadata['inoculumn'] == inoculumn, 'sample'].values)
     parent_subjects = inoculumn.split('-')[:-1]
     parent_media = inoculumn.split('-')[-1]
@@ -125,7 +125,7 @@ def get_in(x):
         return ''
 
 def get_species_tracking(species):
-    fnames = glob(f'/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/report/track_snps/{species}/*_parent_freqs.csv')
+    fnames = glob(f'/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/report/track_snpsv2/{species}/*_parent_freqs.csv')
     
     all_dfs = []
     for info_fname in np.sort(fnames): 
@@ -146,6 +146,7 @@ def get_species_tracking(species):
         df_info = pd.concat([df.set_index('sample'), 
                                 e003_metadata.loc[e003_metadata['sample'].isin(df['sample'].unique()),:].set_index('sample')],axis=1)
         df_info['inoculumn_sample'] = df_info['inoculumn'].transform(get_in)
+        print(df['sample'].unique())
             #print(minor_strain)
         minor_strain_subject =  e003_metadata.loc[e003_metadata['sample'] == minor_strain,
                                               'parent_subjects'].values[0].split('-')[0]
@@ -158,9 +159,9 @@ def get_species_tracking(species):
      #                           e003_metadata.loc[e003_metadata['sample'] == minor_strain,'parent_subjects'].values[0].split('-')[0])
         df2 = analyze_fitness(df_info, minor_strain, major_strain,
                                minor_strain_subject, major_strain_subject)
-        all_dfs.append(df2[['experiment',
-        'sub_experiment', 'comm', 'parent_subjects', 'is_inoculumn',
-        'parent_media', 'media', 'passage', 'mesocosm', 'single-subject',
+        print(df2['comm'].unique())
+        all_dfs.append(df2[['comm', 'parent_subjects', 'is_inoculumn',
+        'parent_media', 'media', 'passage', 'mesocosm',
         'inoculumn', 'type_meso', 'inoculumn_sample',  'opp_strain_shift_from_inoculumn',
         'shift_from_inoculumn']].reset_index())
        # bokeh.io.show(p2)
@@ -173,6 +174,7 @@ def get_species_tracking(species):
     df_full['dir_of_shift'] = 1*(df_full['shift_from_inoculumn'] > 0.) + -1*(df_full['shift_from_inoculumn'] < 0.)
     df_full['zero_change'] = df_full['shift_from_inoculumn'] == 0.
     df_full['total_shift'] = np.abs(df_full['shift_from_inoculumn'] + df_full['opp_strain_shift_from_inoculumn'])
+    print(df_full['comm'].unique())
     df_full.to_csv(f'{save_dir}/{species}_shifts.csv', index = False)
 
 
@@ -209,10 +211,10 @@ if __name__ == '__main__':
     fnames = glob(f'{args.indir}/*/')
 
     species_list = [fname.split('/')[-2] for fname in fnames]
-    e003_metadata = pd.read_csv('/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/analysis/e003_coal_metadata_full.csv').drop(columns = 'Unnamed: 0')
+    e003_metadata = pd.read_csv('/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/analysis/e003_metadata_cultures_round2.csv').drop(columns = 'Unnamed: 0')
 
     e003_metadata['inoculumn'] = e003_metadata['inoculumn'].transform(get_inoculumn_sort)
-
+    e003_metadata['type_meso'] = e003_metadata['type_mesocosm']
     in_df = e003_metadata.loc[e003_metadata['is_inoculumn'],:].set_index('inoculumn').copy()
 
     in_series = in_df['sample']
