@@ -234,6 +234,7 @@ if __name__ == '__main__':
             parent2_snps = np.random.choice(parent2_snps, 1000)
         for i, mesocosm in enumerate(mesocosms):
             print(mesocosm)
+            
            # if len(freq_parents) == 0:
             #   continue 
           #  mesocosm = ''.join(mesocosm.split('/'))
@@ -249,16 +250,18 @@ if __name__ == '__main__':
             freq_filtered_mesocosm_rand  = freq_filtered_mesocosm.loc[random_snps, :]
             freq_filtered_mesocosm_rand = get_tidy_df(freq_filtered_mesocosm_rand, e003_metadata, )
            # print('go', freq_filtered_mesocosm_rand) 
-            if i == 1:
+            if 'G5-AE-AF-mBHI-mBHI' == mesocosm:
                 p = make_mesocosm_timecourse(freq_filtered_mesocosm_rand, title = mesocosm )
 #            print(p)
                 freq_filtered_mesocosm_marker_parent1  = get_tidy_df(freq_filtered_mesocosm.loc[parent1_snps, :], e003_metadata)
                 freq_filtered_mesocosm_marker_parent2  = get_tidy_df(freq_filtered_mesocosm.loc[parent2_snps, :], e003_metadata)
-                p1 = make_mesocosm_timecourse(freq_filtered_mesocosm_marker_parent1 ,title = f'{mesocosm} parent1',  color = bokeh.palettes.Accent[3][1], alpha = .2 )
-                p2 = make_mesocosm_timecourse(freq_filtered_mesocosm_marker_parent2 , color = bokeh.palettes.Accent[3][2], title = f'{mesocosm} parent2', alpha = .2 )
+                p1 = make_mesocosm_timecourse(freq_filtered_mesocosm_marker_parent1 ,title = f'{mesocosm} parent1',  color = bokeh.palettes.Set2[8][0], alpha = .2 )
+                
+                p2 = make_mesocosm_timecourse(freq_filtered_mesocosm_marker_parent2 , color =  bokeh.palettes.Set2[8][1], title = f'{mesocosm} parent2', alpha = .2 )
                 mesocosmstr = ''.join(mesocosm.split('/'))
                 bokeh.io.export_png(bokeh.layouts.gridplot([hv.render(p), hv.render(p1), hv.render(p2)],ncols = 1), filename = f'{save_dir}/{inoculumnstr}_{mesocosm}_snps.png')
-            
+                freq_filtered_mesocosm_marker_parent1.to_csv(f'{save_dir}/{inoculumnstr}_parent1_snps.csv')
+                freq_filtered_mesocosm_marker_parent2.to_csv(f'{save_dir}/{inoculumnstr}_parent2_snps.csv')
            # plots.append([hv.render(p), hv.render(p1), hv.render(p2)])
            # print(plot, 'YAY')
        # if len(plots)>0:
