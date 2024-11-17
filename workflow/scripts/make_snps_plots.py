@@ -38,10 +38,12 @@ def get_parent_children(inoculumn):
 #    metadata = pd.read_csv('config/e003_coal_metadata_full.csv')
     metadata = pd.read_csv('config/e003_metadata_cultures_round2.csv')
     child_samples = list(metadata.loc[metadata['inoculumn'] == inoculumn, 'sample'].values)
+
     parent_subjects = inoculumn.split('-')[:-1]
     parent_media = inoculumn.split('-')[-1]
     ins = metadata.loc[metadata['is_inoculumn'],:]
     ins = ins.loc[ins['parent_media'] == parent_media,:]
+    print(parent_subjects)
     ins1 = ins.loc[ins['parent_subjects'] == parent_subjects[0] + '-' +  parent_subjects[0],:]
 
     ins2 = ins.loc[ins['parent_subjects'] == parent_subjects[1] + '-' +  parent_subjects[1],:]
@@ -207,7 +209,7 @@ if __name__ == '__main__':
        'AC/PP-AE-mBHI', 'AC/PP-AF-mBHI', 
        'AE-AF-mGAM', 'AE-AF-mBHI',
      ]
-    inoculumn_list  = 'AE-AF-mBHI'
+    inoculumn_list  = ['AE-AF-mBHI']
     plots = []
     for inoculumn in inoculumn_list:
         print(inoculumn)
