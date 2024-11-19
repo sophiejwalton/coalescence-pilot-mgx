@@ -57,3 +57,19 @@ rule compute_populationSNVs_prominent:
         midas2 merge_snps --samples_list workflow/out/list_of_samples.tsv  --midasdb_name {params.midasdb} --species_list 101346 --site_depth 1  --site_prev 0.0 --snp_maf 0.01  --advanced --midasdb_dir {params.midasdb_dir} --snp_type any --genome_depth 10 --genome_coverage 0.5  --robust_chunk  --num_cores {threads} workflow/out/midas2_output/merge_bacteroides
         """
 
+
+rule decompresslz4: 
+    input:
+        snpsDepth="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_depth.tsv.lz4",
+        snpsFreq="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.tsv.lz4",
+        snpsInfo="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_info.tsv.lz4",
+    output:
+        snpsDepth="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_depth.tsv",
+        snpsFreq="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.tsv",
+        snpsInfo="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_info.tsv",
+    shell:
+        """
+        lz4 -d --rm {input.snpsDepth} {output.snpsDepth}
+        lz4 -d --rm {input.snpsFreq} {output.snpsFreq}
+        lz4 -d --rm {input.snpsInfo} {output.snpsInfo}
+        """
