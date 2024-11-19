@@ -54,12 +54,16 @@ def get_species_list():
 species_list = [101346,102478, 100099]
 fnames = glob('workflow/out/midas2_output/merge_10*/snps/10*/10*.snps_freqs.tsv*')
 species_list = [fname.split('/')[-2] for fname in fnames]
-species_list.remove('102478')
-species_list.remove('101346')
-species_list.remove('100099')
+#species_list.remove('102478')
+#species_list.remove('101346')
+#species_list.remove('100099')
 species_list.remove('103686') #actuallly remove
 #print('G4-e003Coalescence-mBHI-p5_S27' in df.index.values)
-species_list = [103117,100013, 101349,  101346,102478, 100099, 102279, 100146, 102438, 100196, 102506, 100120, 102528, 101294, 102327, 102279]
+species_list2 = [103117,100013, 101349,  101346,102478, 100099, 102279, 100146, 102438, 100196, 102506, 100120, 102528, 101294, 102327]
+for species in species_list2: 
+    print(species)
+    species_list.remove(str(species))
+species_list.remove('103439') # add back
 #species_list = [102279]
 #inoculumns = ['AA-AE-mGAM', 'AA-AF-mGAM', 
  #      'AA-AC/PP-mGAM', 'AA-AC/PP-mBHI', 'AA-AE-mBHI', 'AA-AF-mBHI',
@@ -78,7 +82,7 @@ rule all:
 #        "workflow/out/midas2_output/merge/snps/snps_summary.tsv",
       # "workflow/out/midas2_output/merge_bacteroides/snps/snps_summary.tsv",
       #  expand("workflow/out/midasOutput/{sample}/species/species_profile.txt",sample=samples),
-        expand("workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.tsv", species=species_list),
+        expand("workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.tsv.gz", species=species_list),
       #  expand("workflow/out/midas2_output/merge/snps/{species}/{species}.snps_freqs.tsv.gz", species=species_list),
        # expand("workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv",species=species_list),     
        # expand("workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv",species=species_list),  
@@ -91,6 +95,6 @@ rule all:
 #include: "workflow/rules/processRawReads_no_concatenation.smk",
 #include: "workflow/rules/processRawReads.smk",
 #include: "workflow/rules/runMIDAS2.smk",
-#include: "workflow/rules/runMIDAS2_population.smk"
+include: "workflow/rules/runMIDAS2_population.smk"
 include: "workflow/rules/processMIDAS2.smk"
 #include: "workflow/rules/processSNPs.smk"
