@@ -108,6 +108,7 @@ if __name__ == '__main__':
     freq = repolarize_against_reference(freq, info)
 
     med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
+    med_nonzero_depth.to_csv(f'{save_dir}/{args.species}_median_depths.csv')
     good_samples = med_nonzero_depth[med_nonzero_depth>=3.]
     depth = depth[good_samples.index.values]
     freq = freq[good_samples.index.values]
@@ -127,7 +128,7 @@ if __name__ == '__main__':
         parent_samples = list(np.intersect1d(parent_samples, freq_filtered.columns.values))
         child_samples = list(np.intersect1d(child_samples, freq_filtered.columns.values))
         _, freq_filtered_in = filter_sites_across_samples(depth_filtered[parent_samples + child_samples], freq_filtered[parent_samples + child_samples].copy(), )
-
+        
         freq_parents = get_main(species_dir,args.species, parent_samples, child_samples, freq_filtered_in)
         inoculumn = ''.join(inoculumn.split('/'))
         freq_parents.to_csv(f'{save_dir}/{inoculumn}_parent_freqs.csv')

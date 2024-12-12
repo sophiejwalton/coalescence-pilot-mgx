@@ -106,6 +106,8 @@ def analyze_fitness(df_info,minor_strain, major_strain,
                 
         
             df_meso = df_meso.sort_values(by = 'passage')
+            df_meso['strain_freq'] = df_meso[minor_strain] 
+            df_meso['opp_strain_freq'] = df_meso[major_strain]
             new_df.append(df_meso)
             
     
@@ -163,6 +165,7 @@ def get_species_tracking(species):
         all_dfs.append(df2[['comm', 'parent_subjects', 'is_inoculumn',
         'parent_media', 'media', 'passage', 'mesocosm',
         'inoculumn', 'type_meso', 'inoculumn_sample',  'opp_strain_shift_from_inoculumn',
+        'strain_freq', 'opp_strain_freq',
         'shift_from_inoculumn']].reset_index())
        # bokeh.io.show(p2)
       #  plots_all.append(p2)
