@@ -42,8 +42,13 @@ def get_parent_children(inoculumn):
     return parent_samples, child_samples
     
 
+def get_depth_parent(depth_children, parent_snps):
+    sum_freq = depth_children.loc[parent_snps,:].sum(axis = 0,skipna=True)
 
-def get_main(species_dir,species, parent_samples, child_samples, freq_filtered):
+    return sum_freq 
+
+
+def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, depth_filtered):
   #  info, depth, freq = load_and_sort_files(species_dir, species)
    # med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
    # good_samples = med_nonzero_depth[med_nonzero_depth>10.]
@@ -67,19 +72,23 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered):
    # print(parent1_snps)
     #print(parent2_snps)
     freq_children = freq_filtered[child_samples]
+    depth_children = depth_filtered[child_samples]
 
     freq_parent1 = get_frequency_parent(freq_children, parent1_snps)
+    depth_parent1 = get_depth_parent(depth_children, parent1_snps)
 #    print(freq_parent1)
     freq_parent1 = pd.DataFrame(freq_parent1).rename(columns = {0: parent_samples[0]})
+    depth_parent1 = pd.DataFrame(depth_parent1).rename(columns = {0: parent_samples[0]})
    # print(freq_parent1)
-    freq_parent1.to_csv('freq_parent1.csv')
   #  freq_parent1['parent'] = parent_samples[0]
     freq_parent2 = get_frequency_parent(freq_children, parent2_snps)
+    depth_parent2 = get_depth_parent(depth_children, parent2_snps)
     freq_parent2 = pd.DataFrame(freq_parent2).rename(columns = {0: parent_samples[1]})  
+    depth_parent2 = pd.DataFrame(depth_parent2).rename(columns = {0: parent_samples[0]})
 # freq_parent2 = freq_parent2.T
    # freq_parent2['parent'] = parent_samples[1]
    # print(freq_parent2)
-    return pd.concat([freq_parent1, freq_parent2],axis=1) 
+    return pd.concat([freq_parent1, freq_parent2],axis=1), pd.concat([depth_parent1, depth_parent2],axis=2)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='basic filtering of sites')
@@ -127,11 +136,12 @@ if __name__ == '__main__':
 #        print(freq_filtered.columns.values)
         parent_samples = list(np.intersect1d(parent_samples, freq_filtered.columns.values))
         child_samples = list(np.intersect1d(child_samples, freq_filtered.columns.values))
-        _, freq_filtered_in = filter_sites_across_samples(depth_filtered[parent_samples + child_samples], freq_filtered[parent_samples + child_samples].copy(), )
+        depth_filtered_in, freq_filtered_in = filter_sites_across_samples(depth_filtered[parent_samples + child_samples], freq_filtered[parent_samples + child_samples].copy(), )
         
-        freq_parents = get_main(species_dir,args.species, parent_samples, child_samples, freq_filtered_in)
+        freq_parents, depth_parents = get_main(species_dir,args.species, parent_samples, child_samples, freq_filtered_in,  depth_filtered_in)
         inoculumn = ''.join(inoculumn.split('/'))
         freq_parents.to_csv(f'{save_dir}/{inoculumn}_parent_freqs.csv')
+        depth_parents.to_csv(f'{save_dir}/{inoculumn}_parent_depths.csv')
     
 
 

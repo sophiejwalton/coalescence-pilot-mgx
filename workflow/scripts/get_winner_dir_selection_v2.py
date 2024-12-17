@@ -95,13 +95,11 @@ def analyze_fitness(df_info,minor_strain, major_strain,
             
             df_meso = df_info.loc[df_info['mesocosm'] == mesocosm,:]
             in_sample = df_meso['inoculumn_sample'].unique()[0]
-            print('woo',df_meso['inoculumn_sample'].unique())
             df_meso['shift_from_inoculumn'] = np.nan
            # df_meso[f'shift {minor_strain_subject}'] = np.nan
             df_meso[f'opp_strain_shift_from_inoculumn'] = np.nan
             if in_sample in df_info.index.values:
                 df_meso.loc[in_sample,:] = df_info.loc[in_sample,:]
-              #  print('yay', in_sample, mesocosm)
                 df_meso['shift_from_inoculumn'] = df_meso[minor_strain] - df_info.loc[in_sample,minor_strain]
             #    df_meso[f'shift {minor_strain_subject}'] = df_meso[minor_strain] - df_info.loc[in_sample,minor_strain]
                 df_meso[f'opp_strain_shift_from_inoculumn'] = df_meso[major_strain] - df_info.loc[in_sample,major_strain]
@@ -149,7 +147,7 @@ def get_species_tracking(species):
 
         df_info = pd.concat([df.set_index('sample'), 
                                 e003_metadata.loc[e003_metadata['sample'].isin(df['sample'].unique()),:].set_index('sample')],axis=1)
-       # df_info['inoculumn_sample'] = df_info['inoculumn'].transform(get_in)
+        df_info['inoculumn_sample'] = df_info['inoculumn'].transform(get_in)
         print(df['sample'].unique())
             #print(minor_strain)
         minor_strain_subject =  e003_metadata.loc[e003_metadata['sample'] == minor_strain,
@@ -216,14 +214,14 @@ if __name__ == '__main__':
     fnames = glob(f'{args.indir}/*/')
 
     species_list = [fname.split('/')[-2] for fname in fnames]
-    e003_metadata = pd.read_csv('/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/analysis/e003_metadata_cultures_round2.csv') #.drop(columns = 'Unnamed: 0')
+    e003_metadata = pd.read_csv('/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/analysis/e003_metadata_cultures_round2.csv').drop(columns = 'Unnamed: 0')
 
-    #e003_metadata['inoculumn'] = e003_metadata['inoculumn'].transform(get_inoculumn_sort)
+    e003_metadata['inoculumn'] = e003_metadata['inoculumn'].transform(get_inoculumn_sort)
     e003_metadata['type_meso'] = e003_metadata['type_mesocosm']
-    #in_df = e003_metadata.loc[e003_metadata['is_inoculumn'],:].set_index('inoculumn').copy()
+    in_df = e003_metadata.loc[e003_metadata['is_inoculumn'],:].set_index('inoculumn').copy()
 
-   # in_series = in_df['sample']
-   # in_dict = in_series.to_dict()
+    in_series = in_df['sample']
+    in_dict = in_series.to_dict()
  
     for species in species_list:
         print(species)
