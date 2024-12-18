@@ -84,7 +84,7 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
     freq_parent2 = get_frequency_parent(freq_children, parent2_snps)
     depth_parent2 = get_depth_parent(depth_children, parent2_snps)
     freq_parent2 = pd.DataFrame(freq_parent2).rename(columns = {0: parent_samples[1]})  
-    depth_parent2 = pd.DataFrame(depth_parent2).rename(columns = {0: parent_samples[0]})
+    depth_parent2 = pd.DataFrame(depth_parent2).rename(columns = {0: parent_samples[1]})
 # freq_parent2 = freq_parent2.T
    # freq_parent2['parent'] = parent_samples[1]
    # print(freq_parent2)

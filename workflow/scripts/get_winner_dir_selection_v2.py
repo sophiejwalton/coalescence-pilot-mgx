@@ -46,45 +46,6 @@ def transform_df(df_abundance):
     df_abundance['phyla'] = df_abundance['Lineage'].transform(lambda x: x.split(';')[1])
     return df_abundance
 
-
-def get_main(species_dir,species, parent_samples, child_samples, freq_filtered):
-  #  info, depth, freq = load_and_sort_files(species_dir, species)
-   # med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
-   # good_samples = med_nonzero_depth[med_nonzero_depth>10.]
-   # depth = depth[good_samples.index.values]
-   # freq = freq[good_samples.index.values]  
-   # depth_filtered= depth_filtering(depth)
-   # freq_filtered = freq_masked(freq, depth_filtered)
-
-    freq_inoculumns = freq_filtered[parent_samples]
-    if len(freq_inoculumns.columns.values)<2:
-        return pd.DataFrame()
-    # get distinguishing SNPs for inoculumns - there should be like 1k distinguishing SNPs 
-    # use only Alt Allele as marker... so sites where strain allele is alt allele in one strain and not other strain
-    # is the marker 
-    distinguishing_snps = get_distinguishing_snps(freq_inoculumns, thresh = .8)
-    #print(distinguishing_snps)
-    distinguishing_snps.to_csv('distinguishing_snps.csv')
-    parent1_snps = distinguishing_snps[distinguishing_snps == 1].index.values
-    parent2_snps = distinguishing_snps[distinguishing_snps == -1].index.values
-   # print(parent1_snps)
-    #print(parent2_snps)
-    freq_children = freq_filtered[child_samples]
-
-    freq_parent1 = get_frequency_parent(freq_children, parent1_snps)
-#    print(freq_parent1)
-    freq_parent1 = pd.DataFrame(freq_parent1).rename(columns = {0: parent_samples[0]})
-   # print(freq_parent1)
-    freq_parent1.to_csv('freq_parent1.csv')
-  #  freq_parent1['parent'] = parent_samples[0]
-    freq_parent2 = get_frequency_parent(freq_children, parent2_snps)
-    freq_parent2 = pd.DataFrame(freq_parent2).rename(columns = {0: parent_samples[1]})  
-# freq_parent2 = freq_parent2.T
-   # freq_parent2['parent'] = parent_samples[1]
-   # print(freq_parent2)
-    return pd.concat([freq_parent1, freq_parent2],axis=1)
-
-
 def analyze_fitness(df_info,minor_strain, major_strain,
                                minor_strain_subject, major_strain_subject):
     new_df = []
@@ -216,12 +177,12 @@ if __name__ == '__main__':
     species_list = [fname.split('/')[-2] for fname in fnames]
     e003_metadata = pd.read_csv('/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/analysis/e003_metadata_cultures_round2.csv').drop(columns = 'Unnamed: 0')
 
-    e003_metadata['inoculumn'] = e003_metadata['inoculumn'].transform(get_inoculumn_sort)
+   # e003_metadata['inoculumn'] = e003_metadata['inoculumn'].transform(get_inoculumn_sort)
     e003_metadata['type_meso'] = e003_metadata['type_mesocosm']
     in_df = e003_metadata.loc[e003_metadata['is_inoculumn'],:].set_index('inoculumn').copy()
 
-    in_series = in_df['sample']
-    in_dict = in_series.to_dict()
+    #in_series = in_df['sample']
+    #in_dict = in_series.to_dict()
  
     for species in species_list:
         print(species)
