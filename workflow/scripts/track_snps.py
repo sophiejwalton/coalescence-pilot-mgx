@@ -60,7 +60,7 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
     freq_inoculumns = freq_filtered[parent_samples]
     
     if len(freq_inoculumns.columns.values)<2:
-        return pd.DataFrame()
+        return pd.DataFrame(), pd.DataFrame()
     # get distinguishing SNPs for inoculumns - there should be like 1k distinguishing SNPs 
     # use only Alt Allele as marker... so sites where strain allele is alt allele in one strain and not other strain
     # is the marker 
@@ -88,7 +88,7 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
 # freq_parent2 = freq_parent2.T
    # freq_parent2['parent'] = parent_samples[1]
    # print(freq_parent2)
-    return pd.concat([freq_parent1, freq_parent2],axis=1), pd.concat([depth_parent1, depth_parent2],axis=2)
+    return pd.concat([freq_parent1, freq_parent2],axis=1), pd.concat([depth_parent1, depth_parent2],axis=1)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='basic filtering of sites')
