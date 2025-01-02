@@ -47,14 +47,18 @@ def transform_df(df_abundance):
     return df_abundance
 
 def analyze_fitness(df_info,minor_strain, major_strain,
-                               minor_strain_subject, major_strain_subject):
+                               minor_strain_subject, major_strain_subject, df_depth):
     new_df = []
+    
     for i, type_meso in enumerate(df_info['type_meso'].unique()):
         mesos = df_info.loc[df_info['type_meso'] ==type_meso, 'mesocosm'].unique()
         df_type_meso = df_info.loc[df_info['type_meso'] == type_meso,:]
+        df_depth_type_meso = df_depth.loc[df_depth['type_meso'] == type_meso, :]
         for mesocosm in mesos:
             
             df_meso = df_info.loc[df_info['mesocosm'] == mesocosm,:]
+            df_depth_meso = df_depth.loc[df_depth['mesocosm'] == mesocosm,:]
+
             in_sample = df_meso['inoculumn_sample'].unique()[0]
             df_meso['shift_from_inoculumn'] = np.nan
            # df_meso[f'shift {minor_strain_subject}'] = np.nan
@@ -64,11 +68,17 @@ def analyze_fitness(df_info,minor_strain, major_strain,
                 df_meso['shift_from_inoculumn'] = df_meso[minor_strain] - df_info.loc[in_sample,minor_strain]
             #    df_meso[f'shift {minor_strain_subject}'] = df_meso[minor_strain] - df_info.loc[in_sample,minor_strain]
                 df_meso[f'opp_strain_shift_from_inoculumn'] = df_meso[major_strain] - df_info.loc[in_sample,major_strain]
+                df_meso['p0_freq'] = df_info.loc[in_sample,minor_strain]
+                df_meso['opp_p0_freq'] = df_info.loc[in_sample,major_strain]
                 
         
             df_meso = df_meso.sort_values(by = 'passage')
             df_meso['strain_freq'] = df_meso[minor_strain] 
+            
+            
             df_meso['opp_strain_freq'] = df_meso[major_strain]
+            df_meso['strain_depth'] = df_depth_meso[minor_strain]
+            df_meso['opp_strain_depth'] = df_depth_meso[major_strain]
             new_df.append(df_meso)
             
     
@@ -95,6 +105,9 @@ def get_species_tracking(species):
        # print(info_fname)
        # fname = f'~/git/coalescence-pilot-mgx/workflow/report/track_snps/{species}/AA-AE-mGAM_parent_freqs.csv'
         df = pd.read_csv(info_fname).rename(columns = {'Unnamed: 0': 'sample'})
+        df_depth = pd.read_csv(info_fname.replace('parent_freqs', 'parent_depths')).rename(columns = {'Unnamed: 0': 'sample'})
+      #  print()
+        #depth_df = 
         # print(df)
         if len(df) ==0:
             continue
@@ -108,8 +121,10 @@ def get_species_tracking(species):
 
         df_info = pd.concat([df.set_index('sample'), 
                                 e003_metadata.loc[e003_metadata['sample'].isin(df['sample'].unique()),:].set_index('sample')],axis=1)
-        df_info['inoculumn_sample'] = df_info['inoculumn'].transform(get_in)
-        print(df['sample'].unique())
+        df_depth = pd.concat([df_depth.set_index('sample'), 
+                                e003_metadata.loc[e003_metadata['sample'].isin(df['sample'].unique()),:].set_index('sample')],axis=1)
+      #  df_info['inoculumn_sample'] = df_info['inoculumn'].transform(get_in)
+       # print(df['sample'].unique())
             #print(minor_strain)
         minor_strain_subject =  e003_metadata.loc[e003_metadata['sample'] == minor_strain,
                                               'parent_subjects'].values[0].split('-')[0]
@@ -121,13 +136,13 @@ def get_species_tracking(species):
     #    p2 = analyze_diversity(df_info, minor_strain, 
      #                           e003_metadata.loc[e003_metadata['sample'] == minor_strain,'parent_subjects'].values[0].split('-')[0])
         df2 = analyze_fitness(df_info, minor_strain, major_strain,
-                               minor_strain_subject, major_strain_subject)
-        print(df2['comm'].unique())
+                               minor_strain_subject, major_strain_subject, df_depth)
+  
         all_dfs.append(df2[['comm', 'parent_subjects', 'is_inoculumn',
         'parent_media', 'media', 'passage', 'mesocosm',
         'inoculumn', 'type_meso', 'inoculumn_sample',  'opp_strain_shift_from_inoculumn',
         'strain_freq', 'opp_strain_freq',
-        'shift_from_inoculumn']].reset_index())
+        'shift_from_inoculumn', 'strain_depth', 'opp_strain_depth','p0_freq', 'opp_p0_freq']].reset_index())
        # bokeh.io.show(p2)
       #  plots_all.append(p2)
 
@@ -138,7 +153,7 @@ def get_species_tracking(species):
     df_full['dir_of_shift'] = 1*(df_full['shift_from_inoculumn'] > 0.) + -1*(df_full['shift_from_inoculumn'] < 0.)
     df_full['zero_change'] = df_full['shift_from_inoculumn'] == 0.
     df_full['total_shift'] = np.abs(df_full['shift_from_inoculumn'] + df_full['opp_strain_shift_from_inoculumn'])
-    print(df_full['comm'].unique())
+   # print(df_full['comm'].unique())
     df_full.to_csv(f'{save_dir}/{species}_shifts.csv', index = False)
 
 
@@ -175,11 +190,11 @@ if __name__ == '__main__':
     fnames = glob(f'{args.indir}/*/')
 
     species_list = [fname.split('/')[-2] for fname in fnames]
-    e003_metadata = pd.read_csv('/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/analysis/e003_metadata_cultures_round2.csv').drop(columns = 'Unnamed: 0')
+    e003_metadata = pd.read_csv('/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/analysis/e003_metadata_cultures_round2.csv') #.drop(columns = 'Unnamed: 0')
 
    # e003_metadata['inoculumn'] = e003_metadata['inoculumn'].transform(get_inoculumn_sort)
     e003_metadata['type_meso'] = e003_metadata['type_mesocosm']
-    in_df = e003_metadata.loc[e003_metadata['is_inoculumn'],:].set_index('inoculumn').copy()
+   # in_df = e003_metadata.loc[e003_metadata['is_inoculumn'],:].set_index('inoculumn').copy()
 
     #in_series = in_df['sample']
     #in_dict = in_series.to_dict()
