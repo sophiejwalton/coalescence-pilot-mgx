@@ -40,12 +40,12 @@ def cleanup_and_polarize(freq, median_depth_series, diversity_series, subject):
     return freq_polarized, good_samples
 
 
-def filter_sites_across_samples(good_depth, good_freq):
+def filter_sites_across_samples(good_depth, good_freq, thresh = .8):
     
     good_samples = good_depth.columns
     counts = good_depth.count(axis = 1)
     
-    mintimes = round(len(good_samples)*.8)
+    mintimes = round(len(good_samples)*thresh) # has to be fully present
     passing_sites = counts[counts > mintimes]
        # print(len(good_freq))
     good_freq = good_freq.loc[passing_sites.index.values, :]

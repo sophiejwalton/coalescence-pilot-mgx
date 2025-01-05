@@ -228,18 +228,6 @@ def cleanup_and_polarize(freq, median_depth_series, diversity_series, subject):
     return freq_polarized, good_samples
 
 
-def filter_sites_across_samples(good_depth, good_freq):
-    
-    good_samples = good_depth.columns
-    counts = good_depth.count(axis = 1)
-    
-    mintimes = round(len(good_samples)*.8)
-    passing_sites = counts[counts > mintimes]
-       # print(len(good_freq))
-    good_freq = good_freq.loc[passing_sites.index.values, :]
-    good_depth = good_depth.loc[passing_sites.index.values, :]
-       # print(len(good_freq))
-    return good_depth, good_freq
 
 def get_transition_frequency_snps(freq_polarized, depth_filtered):
     # only get intermediate frequency snps for plotting

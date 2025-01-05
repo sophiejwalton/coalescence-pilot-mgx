@@ -70,7 +70,7 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
     # get distinguishing SNPs for inoculumns - there should be like 1k distinguishing SNPs 
     # use only Alt Allele as marker... so sites where strain allele is alt allele in one strain and not other strain
     # is the marker 
-    distinguishing_snps = get_distinguishing_snps(freq_inoculumns, thresh = .999)
+    distinguishing_snps = get_distinguishing_snps(freq_inoculumns, thresh = .8)
     print(len(distinguishing_snps))
     #distinguishing_snps.to_csv('distinguishing_snps.csv')
     parent1_snps = distinguishing_snps[distinguishing_snps == 1].index.values
@@ -137,13 +137,14 @@ if __name__ == '__main__':
        'AE-AF-mGAM', 'AE-AF-mBHI',
      ]
     for inoculumn in inoculumn_list:
-        print(inoculumn)
+        #print(inoculumn)
         parent_samples, child_samples = get_parent_children(inoculumn)
-        print(parent_samples)
+      #  print(parent_samples)
 #        print(freq_filtered.columns.values)
         parent_samples = list(np.intersect1d(parent_samples, freq_filtered.columns.values))
         child_samples = list(np.intersect1d(child_samples, freq_filtered.columns.values))
-        depth_filtered_in, freq_filtered_in = filter_sites_across_samples(depth_filtered[parent_samples + child_samples], freq_filtered[parent_samples + child_samples].copy(), )
+        depth_filtered_in, freq_filtered_in = filter_sites_across_samples(depth_filtered[parent_samples + child_samples], 
+        freq_filtered[parent_samples + child_samples].copy(),thresh=.95)
         
         freq_parents, depth_parents = get_main(species_dir,args.species, parent_samples, child_samples, freq_filtered_in,  depth_filtered_in)
         inoculumn = ''.join(inoculumn.split('/'))

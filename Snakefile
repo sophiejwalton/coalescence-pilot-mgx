@@ -72,6 +72,7 @@ for species in species_list2:
    #    'AC/PP-AE-mBHI', 'AC/PP-AF-mBHI', 
     #   'AE-AF-mGAM', 'AE-AF-mBHI',]
 samples.remove('H5-e003Coalescence-mGAM-p7_S184') # ADD BACK AFTER FIRST QUICK CHECK 
+species_list = species_list2
 rule all:
     input:
 #        expand("workflow/out/trimmed/{sample}-trimmed-pair1.fastq.gz",sample=samples),
