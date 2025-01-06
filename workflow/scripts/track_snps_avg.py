@@ -95,7 +95,7 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
 # freq_parent2 = freq_parent2.T
    # freq_parent2['parent'] = parent_samples[1]
    # print(freq_parent2)
-    return pd.concat([freq_parent1, freq_parent2],axis=1), pd.concat([depth_parent1, depth_parent2],axis=1)
+    return pd.concat([freq_parent1, freq_parent2],axis=1), pd.concat([depth_parent1, depth_parent2],axis=1), distinguishing_snps
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='basic filtering of sites')
@@ -146,10 +146,12 @@ if __name__ == '__main__':
         depth_filtered_in, freq_filtered_in = filter_sites_across_samples(depth_filtered[parent_samples + child_samples], 
         freq_filtered[parent_samples + child_samples].copy(),thresh=.95)
         
-        freq_parents, depth_parents = get_main(species_dir,args.species, parent_samples, child_samples, freq_filtered_in,  depth_filtered_in)
+        freq_parents, depth_parents, distinguishing_snps = get_main(species_dir,args.species, parent_samples, child_samples, freq_filtered_in,  depth_filtered_in)
         inoculumn = ''.join(inoculumn.split('/'))
         freq_parents.to_csv(f'{save_dir}/{inoculumn}_parent_freqs.csv')
         depth_parents.to_csv(f'{save_dir}/{inoculumn}_parent_depths.csv')
+        freq_filtered_in.loc[distinguishing_snps,:].to_csv(f'{save_dir}/{inoculumn}_distinguishing_snps_freq.csv.gz',compression = 'gzip')
+        depth_filtered_in.loc[distinguishing_snps,:].to_csv(f'{save_dir}/{inoculumn}_distinguishing_snps_depth.csv.gz',compression='gzip')
     
 
 

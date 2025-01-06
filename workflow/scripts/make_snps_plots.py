@@ -209,14 +209,14 @@ if __name__ == '__main__':
        'AC/PP-AE-mBHI', 'AC/PP-AF-mBHI', 
        'AE-AF-mGAM', 'AE-AF-mBHI',
      ]
-    inoculumn_list  = ['AE-AF-mBHI']
+    inoculumn_list  = ['AC/PP-AF-mBHI','AC/PP-AF-mGAM','AE-AF-mBHI', 'AE-AF-mGAM']
     plots = []
     for inoculumn in inoculumn_list:
         print(inoculumn)
         parent_samples, child_samples = get_parent_children(inoculumn)
         parent_samples = list(np.intersect1d(parent_samples, freq_filtered.columns.values))
         child_samples = list(np.intersect1d(child_samples, freq_filtered.columns.values))
-        _, freq_filtered_in = filter_sites_across_samples(depth_filtered[parent_samples + child_samples], freq_filtered[parent_samples + child_samples].copy(), )
+        _, freq_filtered_in = filter_sites_across_samples(depth_filtered[parent_samples + child_samples], freq_filtered[parent_samples + child_samples].copy(), thresh=.95)
 
         freq_parents, parent1_snps, parent2_snps = get_main(species_dir,args.species, parent_samples, child_samples, freq_filtered_in)
        # if len(freq_parents) == 0:
@@ -250,7 +250,7 @@ if __name__ == '__main__':
             freq_filtered_mesocosm_rand  = freq_filtered_mesocosm.loc[random_snps, :]
             freq_filtered_mesocosm_rand = get_tidy_df(freq_filtered_mesocosm_rand, e003_metadata, )
            # print('go', freq_filtered_mesocosm_rand) 
-            if 'G5-AE-AF-mBHI-mBHI' == mesocosm:
+            if len(mesocosm)>0:
                 p = make_mesocosm_timecourse(freq_filtered_mesocosm_rand, title = mesocosm )
 #            print(p)
                 freq_filtered_mesocosm_marker_parent1  = get_tidy_df(freq_filtered_mesocosm.loc[parent1_snps, :], e003_metadata)
@@ -265,7 +265,7 @@ if __name__ == '__main__':
                # p2.circle(median2['passage'].values, median2['freq'].values, size = 5)
                # p2.line(median2['passage'].values, median2['freq'].values, line_width= 5)
                 mesocosmstr = ''.join(mesocosm.split('/'))
-                bokeh.io.export_png(bokeh.layouts.gridplot([hv.render(p), hv.render(p1), hv.render(p2), hv.render(p1*p2)],ncols = 1), filename = f'{save_dir}/{inoculumnstr}_{mesocosm}_snps.png')
+                bokeh.io.export_png(bokeh.layouts.gridplot([hv.render(p), hv.render(p1), hv.render(p2), hv.render(p1*p2)],ncols = 1), filename = f'{save_dir}/{inoculumnstr}_{mesocosm[:2]}_snps.png')
                 freq_filtered_mesocosm_marker_parent1.to_csv(f'{save_dir}/{inoculumnstr}_parent1_snps.csv')
                 freq_filtered_mesocosm_marker_parent2.to_csv(f'{save_dir}/{inoculumnstr}_parent2_snps.csv')
            # plots.append([hv.render(p), hv.render(p1), hv.render(p2)])
