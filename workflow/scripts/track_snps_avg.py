@@ -151,8 +151,8 @@ if __name__ == '__main__':
         inoculumn = ''.join(inoculumn.split('/'))
         freq_parents.to_csv(f'{save_dir}/{inoculumn}_parent_freqs.csv')
         depth_parents.to_csv(f'{save_dir}/{inoculumn}_parent_depths.csv')
-        freq_filtered_in.loc[distinguishing_snps.index.values,:].to_csv(f'{save_dir}/{inoculumn}_distinguishing_snps_freq.csv.gz',compression = 'gzip')
-        depth_filtered_in.loc[distinguishing_snps.index.values,:].to_csv(f'{save_dir}/{inoculumn}_distinguishing_snps_depth.csv.gz',compression='gzip')
+        freq_filtered_in.loc[distinguishing_snps.index.values,:].to_csv(f'{in_dir}/{inoculumn}_distinguishing_snps_freq.csv.gz',compression = 'gzip')
+        depth_filtered_in.loc[distinguishing_snps.index.values,:].to_csv(f'{in_dir}/{inoculumn}_distinguishing_snps_depth.csv.gz',compression='gzip')
     
 
 
