@@ -198,10 +198,10 @@ if __name__ == '__main__':
     info, depth, freq = load_and_sort_files(species_dir, args.species)
     freq = repolarize_against_reference(freq, info)
     med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
-    good_samples = med_nonzero_depth[med_nonzero_depth>10.]
+    good_samples = med_nonzero_depth[med_nonzero_depth>3.]
     depth = depth[good_samples.index.values]
     freq = freq[good_samples.index.values]
-    depth_filtered= depth_filtering(depth)
+    depth_filtered= depth_filtering(depth, depth_thresh=2)
     freq_filtered = freq_masked(freq, depth_filtered)
     inoculumn_list = ['AA-AE-mGAM', 'AA-AF-mGAM', 
        'AA-AC/PP-mGAM', 'AA-AC/PP-mBHI', 'AA-AE-mBHI', 'AA-AF-mBHI',
@@ -211,14 +211,15 @@ if __name__ == '__main__':
      ]
     inoculumn_list  = ['AC/PP-AF-mBHI','AC/PP-AF-mGAM','AE-AF-mBHI', 'AE-AF-mGAM']
     plots = []
+    _, freq_filtered_in = filter_sites_across_samples(depth_filtered, freq_filtered.copy(), thresh=.95)
     for inoculumn in inoculumn_list:
         print(inoculumn)
         parent_samples, child_samples = get_parent_children(inoculumn)
         parent_samples = list(np.intersect1d(parent_samples, freq_filtered.columns.values))
         child_samples = list(np.intersect1d(child_samples, freq_filtered.columns.values))
-        _, freq_filtered_in = filter_sites_across_samples(depth_filtered[parent_samples + child_samples], freq_filtered[parent_samples + child_samples].copy(), thresh=.95)
+       # _, freq_filtered_in = filter_sites_across_samples(depth_filtered[parent_samples + child_samples], freq_filtered[parent_samples + child_samples].copy(), thresh=.95)
 
-        freq_parents, parent1_snps, parent2_snps = get_main(species_dir,args.species, parent_samples, child_samples, freq_filtered_in)
+        freq_parents, parent1_snps, parent2_snps = get_main(species_dir,args.species, parent_samples, child_samples, freq_filtered_in[parent_samples + child_samples])
        # if len(freq_parents) == 0:
           
         inoculumnstr = ''.join(inoculumn.split('/'))

@@ -30,12 +30,12 @@ def get_haplotype(sample_freq_filtered):
 
 
 
-def depth_filtering(depth):
+def depth_filtering(depth, depth_thresh=2.5):
     depth_no_site = depth.copy()
     med = depth_no_site.replace(0, np.nan).median(axis = 0,skipna=True)
-    depth_masked_1 = depth_no_site.mask((depth_no_site > 2.5 * med),axis = 0)
-    depth_masked = depth_masked_1.mask((depth_masked_1 < med / 2.5),axis = 0)
-    depth_masked_absolute = depth_masked.mask(depth_masked < 5)
+    depth_masked_1 = depth_no_site.mask((depth_no_site > depth_thresh * med),axis = 0)
+    depth_masked = depth_masked_1.mask((depth_masked_1 < med / depth_thresh),axis = 0)
+    depth_masked_absolute = depth_masked #.mask(depth_masked < 5) DO WE ABSOLUTE MAX THIS 
     return depth_masked_absolute
 
 def freq_masked(freq, depth_filtered):

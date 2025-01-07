@@ -128,7 +128,7 @@ if __name__ == '__main__':
     good_samples = med_nonzero_depth[med_nonzero_depth>=3.]
     depth = depth[good_samples.index.values]
     freq = freq[good_samples.index.values]
-    depth_filtered= depth_filtering(depth)
+    depth_filtered= depth_filtering(depth, depth_thresh = 2.)
     freq_filtered = freq_masked(freq, depth_filtered)
     inoculumn_list = ['AA-AE-mGAM', 'AA-AF-mGAM', 
        'AA-AC/PP-mGAM', 'AA-AC/PP-mBHI', 'AA-AE-mBHI', 'AA-AF-mBHI',
@@ -136,6 +136,8 @@ if __name__ == '__main__':
        'AC/PP-AE-mBHI', 'AC/PP-AF-mBHI', 
        'AE-AF-mGAM', 'AE-AF-mBHI',
      ]
+    depth_filtered_in, freq_filtered_in = filter_sites_across_samples(depth_filtered, 
+        freq_filtered.copy(),thresh=.95)
     for inoculumn in inoculumn_list:
         #print(inoculumn)
         parent_samples, child_samples = get_parent_children(inoculumn)
@@ -143,15 +145,14 @@ if __name__ == '__main__':
 #        print(freq_filtered.columns.values)
         parent_samples = list(np.intersect1d(parent_samples, freq_filtered.columns.values))
         child_samples = list(np.intersect1d(child_samples, freq_filtered.columns.values))
-        depth_filtered_in, freq_filtered_in = filter_sites_across_samples(depth_filtered[parent_samples + child_samples], 
-        freq_filtered[parent_samples + child_samples].copy(),thresh=.95)
+
         
-        freq_parents, depth_parents, distinguishing_snps = get_main(species_dir,args.species, parent_samples, child_samples, freq_filtered_in,  depth_filtered_in)
+        freq_parents, depth_parents, distinguishing_snps = get_main(species_dir,args.species, parent_samples, child_samples, freq_filtered_in[parent_samples + child_samples],  depth_filtered_in[parent_samples + child_samples])
         inoculumn = ''.join(inoculumn.split('/'))
         freq_parents.to_csv(f'{save_dir}/{inoculumn}_parent_freqs.csv')
         depth_parents.to_csv(f'{save_dir}/{inoculumn}_parent_depths.csv')
-        freq_filtered_in.loc[distinguishing_snps,:].to_csv(f'{save_dir}/{inoculumn}_distinguishing_snps_freq.csv.gz',compression = 'gzip')
-        depth_filtered_in.loc[distinguishing_snps,:].to_csv(f'{save_dir}/{inoculumn}_distinguishing_snps_depth.csv.gz',compression='gzip')
+        freq_filtered_in.loc[distinguishing_snps.index.values,:].to_csv(f'{save_dir}/{inoculumn}_distinguishing_snps_freq.csv.gz',compression = 'gzip')
+        depth_filtered_in.loc[distinguishing_snps.index.values,:].to_csv(f'{save_dir}/{inoculumn}_distinguishing_snps_depth.csv.gz',compression='gzip')
     
 
 
