@@ -143,6 +143,7 @@ if __name__ == '__main__':
         parent_samples, child_samples = get_parent_children(inoculumn)
       #  print(parent_samples)
 #        print(freq_filtered.columns.values)
+#AAAA
         parent_samples = list(np.intersect1d(parent_samples, freq_filtered.columns.values))
         child_samples = list(np.intersect1d(child_samples, freq_filtered.columns.values))
 
