@@ -13,13 +13,29 @@ warnings.filterwarnings('ignore')
 def get_distinguishing_snps(freq_inoculumns, thresh = .8):
     # find snps that are greater than .8 (aka alternative alleles > .8)
     detect_df = freq_inoculumns >= thresh
-    print(detect_df)
-    print(freq_inoculumns.columns.values)
+    
     detect_df['site_present'] = freq_inoculumns[freq_inoculumns.columns.values[0]].isna() + freq_inoculumns[freq_inoculumns.columns.values[1]].isna()
     detect_df = detect_df.loc[detect_df['site_present']==0,:]
 #    print(detect_df[freq_inoculumns.columns.values[0]])
     detect_df['diff'] = detect_df[freq_inoculumns.columns.values[0]].astype(int) - detect_df[freq_inoculumns.columns.values[1]].astype(int)
     return detect_df['diff']
+
+def filter_distinguishing_snps(freq_children, parent_snps, thresh = .5, sample_thresh=1.):
+    med = freq_children.loc[parent_snps,:].median(axis = 0) 
+    diff_from_med = freq_children - med
+   # print(med)
+    #print('PARTY')
+    #print(diff_from_med)
+    freq_masked = freq_children.mask((diff_from_med.abs() > thresh),axis=0)
+
+    min_samples = round(len(freq_children.columns.values)*sample_thresh)
+    passing_sites = freq_masked.count(axis = 1)
+    passing_sites = passing_sites[passing_sites>= min_samples].index.values
+    parent_snps_good = np.intersect1d(passing_sites, parent_snps)
+
+    return parent_snps_good
+
+
 
 def get_frequency_parent(freq_children, parent_snps):
     median_freq = freq_children.loc[parent_snps,:].median(axis = 0)
@@ -56,11 +72,11 @@ def get_parent_children(inoculumn):
     media = inoculumn.split('-')[-1]
     in_parent1 = f'{parent_subjects[0]}-{parent_subjects[0]}-{media}'
     in_parent2 = f'{parent_subjects[1]}-{parent_subjects[1]}-{media}'
-    print(in_parent1, in_parent2)
+  #  print(in_parent1, in_parent2)
     child_samples_parent1_ss =  list(metadata.loc[metadata['inoculumn'] == in_parent1, 'sample'].values)
     child_samples_parent2_ss =  list(metadata.loc[metadata['inoculumn'] == in_parent2, 'sample'].values)
-    print(child_samples + child_samples_parent1_ss + child_samples_parent2_ss )
-    child_samples_all = child_samples + child_samples_parent1_ss + child_samples_parent2_ss 
+    #print(child_samples + child_samples_parent1_ss + child_samples_parent2_ss )
+    child_samples_all = child_samples # + child_samples_parent1_ss + child_samples_parent2_ss 
     return parent_samples, child_samples_all
      
 
@@ -87,15 +103,21 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
     # get distinguishing SNPs for inoculumns - there should be like 1k distinguishing SNPs 
     # use only Alt Allele as marker... so sites where strain allele is alt allele in one strain and not other strain
     # is the marker 
-    distinguishing_snps = get_distinguishing_snps(freq_inoculumns, thresh = .9)
-    print(len(distinguishing_snps))
+    distinguishing_snps = get_distinguishing_snps(freq_inoculumns, thresh = .95)
+   # print(len(distinguishing_snps))
     #distinguishing_snps.to_csv('distinguishing_snps.csv')
     parent1_snps = distinguishing_snps[distinguishing_snps == 1].index.values
     parent2_snps = distinguishing_snps[distinguishing_snps == -1].index.values
-   # print(parent1_snps)
-    #print(parent2_snps)
     freq_children = freq_filtered[child_samples]
     depth_children = depth_filtered[child_samples]
+   
+    print('before', len(parent1_snps), len(parent2_snps))
+    parent1_snps = filter_distinguishing_snps(freq_children, parent1_snps, thresh = .5, sample_thresh=.8)
+    parent2_snps = filter_distinguishing_snps(freq_children, parent2_snps, thresh = .5, sample_thresh=.8)
+    print('after', len(parent1_snps), len(parent2_snps))
+   # print(parent1_snps)
+    #print(parent2_snps)
+
 
     freq_parent1 = get_frequency_parent_avg(freq_children, depth_children, parent1_snps)
     depth_parent1 = get_depth_parent(depth_children, parent1_snps)

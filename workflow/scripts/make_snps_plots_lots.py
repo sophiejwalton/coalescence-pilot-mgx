@@ -60,6 +60,20 @@ def get_parent_children(inoculumn):
     
 
 
+def filter_distinguishing_snps(freq_children, parent_snps, thresh = .5, sample_thresh=1.):
+    med = freq_children.loc[parent_snps,:].median(axis = 0) 
+    diff_from_med = freq_children - med
+   # print(med)
+    #print('PARTY')
+    #print(diff_from_med)
+    freq_masked = freq_children.mask((diff_from_med.abs() > thresh),axis=0)
+
+    min_samples = round(len(freq_children.columns.values)*sample_thresh)
+    passing_sites = freq_masked.count(axis = 1)
+    passing_sites = passing_sites[passing_sites>= min_samples].index.values
+    parent_snps_good = np.intersect1d(passing_sites, parent_snps)
+
+    return parent_snps_good
 def get_main(species_dir,species, parent_samples, child_samples, freq_filtered):
   #  info, depth, freq = load_and_sort_files(species_dir, species)
    # med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
@@ -80,9 +94,14 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered):
     distinguishing_snps.to_csv('distinguishing_snps.csv')
     parent1_snps = distinguishing_snps[distinguishing_snps == 1].index.values
     parent2_snps = distinguishing_snps[distinguishing_snps == -1].index.values
+    freq_children = freq_filtered[child_samples]
+    print('before', len(parent1_snps), len(parent2_snps))
+    parent1_snps = filter_distinguishing_snps(freq_children, parent1_snps, thresh = .5, sample_thresh=.8)
+    parent2_snps = filter_distinguishing_snps(freq_children, parent2_snps, thresh = .5, sample_thresh=.8)
+    print('after', len(parent1_snps), len(parent2_snps))
    # print(parent1_snps)
     #print(parent2_snps)
-    freq_children = freq_filtered[child_samples]
+   
 
     freq_parent1 = get_frequency_parent(freq_children, parent1_snps)
 #    print(freq_parent1)

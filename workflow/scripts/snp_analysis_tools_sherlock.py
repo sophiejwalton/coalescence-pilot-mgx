@@ -43,6 +43,20 @@ def freq_masked(freq, depth_filtered):
     return freq.copy()*depth_filtered_na 
 
 
+def filter_sites_across_samples(good_depth, good_freq, thresh = .8):
+    
+    good_samples = good_depth.columns
+    counts = good_depth.count(axis = 1)
+    
+    mintimes = round(len(good_samples)*thresh) # has to be fully present
+    passing_sites = counts[counts > mintimes]
+       # print(len(good_freq))
+    good_freq = good_freq.loc[passing_sites.index.values, :]
+    good_depth = good_depth.loc[passing_sites.index.values, :]
+       # print(len(good_freq))
+    return good_depth, good_freq
+
+    
 def get_diversity_series(freq_filtered, thresh=.2):
     temp_freq = freq_filtered[freq_filtered.notna()].replace(np.nan, .5)
     less_than_thresh = temp_freq < thresh
