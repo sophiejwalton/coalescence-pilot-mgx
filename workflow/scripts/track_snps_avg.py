@@ -16,6 +16,7 @@ def get_distinguishing_snps(freq_inoculumns, thresh = .8):
     
     detect_df['site_present'] = freq_inoculumns[freq_inoculumns.columns.values[0]].isna() + freq_inoculumns[freq_inoculumns.columns.values[1]].isna()
     detect_df = detect_df.loc[detect_df['site_present']==0,:]
+    print(detect_df)
 #    print(detect_df[freq_inoculumns.columns.values[0]])
     detect_df['diff'] = detect_df[freq_inoculumns.columns.values[0]].astype(int) - detect_df[freq_inoculumns.columns.values[1]].astype(int)
     return detect_df['diff']
@@ -39,18 +40,32 @@ def filter_distinguishing_snps(freq_children, parent_snps, thresh = .5, sample_t
 
 def get_frequency_parent(freq_children, parent_snps):
     median_freq = freq_children.loc[parent_snps,:].median(axis = 0)
-
+  
     return median_freq 
 
 def get_frequency_parent_avg(freq_children, depth_children, parent_snps, freq_thresh = 1.5):
-    med = freq_children.loc[parent_snps,:].median(axis = 0)
-    freq_masked = freq_children.mask((freq_children > freq_thresh * med),axis = 0)
-    freq_masked = freq_masked .mask((freq_masked  < med / freq_thresh),axis = 0)
+    #med = freq_children.loc[parent_snps,:].median(axis = 0)
+    #freq_masked = freq_children.mask((freq_children > freq_thresh * med),axis = 0)
+   # freq_masked = freq_masked .mask((freq_masked  < med / freq_thresh),axis = 0)
+    freq_avg = (freq_children.loc[parent_snps,:].sum(axis = 0))/(len(parent_snps))
 
-    depth_sum = depth_children.loc[parent_snps,:].sum(axis = 0,skipna=True)
-    freq_depth = (freq_masked.loc[parent_snps,:]*depth_children.loc[parent_snps,:]).sum(axis = 0)
-    return freq_depth/depth_sum
+    return freq_avg
 
+def get_frac_zero(freq_children, parent_snps):
+    frac_zero = (freq_children.loc[parent_snps,:] == 0).sum(axis=0)/len(parent_snps)
+    return frac_zero 
+
+
+def fix_zeros(freq_parent,  depth_parent, freq_children, parent_snps):
+    freq_parent_fix = freq_parent.copy()
+    frac_zero_parent= get_frac_zero(freq_children, parent_snps)
+    print(frac_zero_parent,'w0')
+    freq_parent_fix[freq_parent==0] = -np.log(frac_zero_parent[freq_parent==0])/depth_parent[freq_parent==0]
+    print(np.log(1-frac_zero_parent[freq_parent==0]))
+    freq_parent_pol = 1-freq_parent.copy()
+    frac_one_parent= get_frac_zero(1-freq_children.copy(), parent_snps)
+    freq_parent_fix[freq_parent_pol==0] = 1 + np.log(frac_one_parent[freq_parent_pol==0])/depth_parent[freq_parent_pol ==0]
+    return freq_parent_fix
 
 def get_parent_children(inoculumn):
 #    metadata = pd.read_csv('config/e003_coal_metadata_full.csv')
@@ -103,7 +118,7 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
     # get distinguishing SNPs for inoculumns - there should be like 1k distinguishing SNPs 
     # use only Alt Allele as marker... so sites where strain allele is alt allele in one strain and not other strain
     # is the marker 
-    distinguishing_snps = get_distinguishing_snps(freq_inoculumns, thresh = .95)
+    distinguishing_snps = get_distinguishing_snps(freq_inoculumns, thresh = .8)
    # print(len(distinguishing_snps))
     #distinguishing_snps.to_csv('distinguishing_snps.csv')
     parent1_snps = distinguishing_snps[distinguishing_snps == 1].index.values
@@ -112,29 +127,41 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
     depth_children = depth_filtered[child_samples]
    
     print('before', len(parent1_snps), len(parent2_snps))
-    parent1_snps = filter_distinguishing_snps(freq_children, parent1_snps, thresh = .5, sample_thresh=.8)
-    parent2_snps = filter_distinguishing_snps(freq_children, parent2_snps, thresh = .5, sample_thresh=.8)
+    parent1_snps = filter_distinguishing_snps(freq_children, parent1_snps, thresh = .5, sample_thresh=.7)
+    parent2_snps = filter_distinguishing_snps(freq_children, parent2_snps, thresh = .5, sample_thresh=.7)
     print('after', len(parent1_snps), len(parent2_snps))
+    med_depth_children = depth_children.copy().replace(0, np.nan).median(skipna=True)
    # print(parent1_snps)
     #print(parent2_snps)
 
 
-    freq_parent1 = get_frequency_parent_avg(freq_children, depth_children, parent1_snps)
+    freq_parent1 = get_frequency_parent(freq_children, parent1_snps)
     depth_parent1 = get_depth_parent(depth_children, parent1_snps)
+    frac_zero_parent1 = get_frac_zero(freq_children, parent1_snps)
+    freq_parent1 = fix_zeros(freq_parent1,  med_depth_children, freq_children, parent1_snps)
 #    print(freq_parent1)
     freq_parent1 = pd.DataFrame(freq_parent1).rename(columns = {0: parent_samples[0]})
     depth_parent1 = pd.DataFrame(depth_parent1).rename(columns = {0: parent_samples[0]})
+    frac_zero_parent1  = pd.DataFrame(frac_zero_parent1).rename(columns = {0: parent_samples[0]})
+
    # print(freq_parent1)
   #  freq_parent1['parent'] = parent_samples[0]
     
     depth_parent2 = get_depth_parent(depth_children, parent2_snps)
-    freq_parent2 = get_frequency_parent_avg(freq_children, depth_children, parent2_snps)
+    freq_parent2 = get_frequency_parent(freq_children, parent2_snps)
+    frac_zero_parent2 = get_frac_zero(freq_children, parent2_snps) 
+    print(freq_parent2)
+    print(med_depth_children)
+    freq_parent2 = fix_zeros(freq_parent2,  med_depth_children, freq_children, parent2_snps)
+    print(freq_parent2)
+
     freq_parent2 = pd.DataFrame(freq_parent2).rename(columns = {0: parent_samples[1]})  
     depth_parent2 = pd.DataFrame(depth_parent2).rename(columns = {0: parent_samples[1]})
+    frac_zero_parent2  = pd.DataFrame(frac_zero_parent2).rename(columns = {0: parent_samples[1]})
 # freq_parent2 = freq_parent2.T
    # freq_parent2['parent'] = parent_samples[1]
    # print(freq_parent2)
-    return pd.concat([freq_parent1, freq_parent2],axis=1), pd.concat([depth_parent1, depth_parent2],axis=1), distinguishing_snps
+    return pd.concat([freq_parent1, freq_parent2],axis=1), pd.concat([depth_parent1, depth_parent2],axis=1), pd.concat([frac_zero_parent1, frac_zero_parent2]), distinguishing_snps
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='basic filtering of sites')
@@ -164,10 +191,10 @@ if __name__ == '__main__':
 
     med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
     med_nonzero_depth.to_csv(f'{save_dir}/{args.species}_median_depths.csv')
-    good_samples = med_nonzero_depth[med_nonzero_depth>=3.]
+    good_samples = med_nonzero_depth[med_nonzero_depth>=5.]
     depth = depth[good_samples.index.values]
     freq = freq[good_samples.index.values]
-    depth_filtered= depth_filtering(depth, depth_thresh = 2.)
+    depth_filtered= depth_filtering(depth, depth_thresh = 2.5)
     freq_filtered = freq_masked(freq, depth_filtered)
     inoculumn_list = ['AA-AE-mGAM', 'AA-AF-mGAM', 
        'AA-AC/PP-mGAM', 'AA-AC/PP-mBHI', 'AA-AE-mBHI', 'AA-AF-mBHI',
@@ -176,7 +203,7 @@ if __name__ == '__main__':
        'AE-AF-mGAM', 'AE-AF-mBHI',
      ]
     depth_filtered_in, freq_filtered_in = filter_sites_across_samples(depth_filtered, 
-        freq_filtered.copy(),thresh=.95)
+        freq_filtered.copy(),thresh=.75)
     for inoculumn in inoculumn_list:
         #print(inoculumn)
         parent_samples, child_samples = get_parent_children(inoculumn)
@@ -187,16 +214,20 @@ if __name__ == '__main__':
         child_samples = list(np.intersect1d(child_samples, freq_filtered_in.columns.values))
         print(parent_samples)
         print(child_samples)
+        if len(parent_samples) < 2:
+            continue
         if parent_samples[1] in child_samples:
             child_samples.remove(parent_samples[1])
         if parent_samples[0] in child_samples:
             child_samples.remove(parent_samples[0])
 
         
-        freq_parents, depth_parents, distinguishing_snps = get_main(species_dir,args.species, parent_samples, child_samples, freq_filtered_in[parent_samples + child_samples],  depth_filtered_in[parent_samples + child_samples])
+        freq_parents, depth_parents, frac_zero_parents, distinguishing_snps = get_main(species_dir,args.species, parent_samples, child_samples, freq_filtered_in[parent_samples + child_samples],  depth_filtered_in[parent_samples + child_samples])
         inoculumn = ''.join(inoculumn.split('/'))
         freq_parents.to_csv(f'{save_dir}/{inoculumn}_parent_freqs.csv')
         depth_parents.to_csv(f'{save_dir}/{inoculumn}_parent_depths.csv')
+        frac_zero_parents.to_csv(f'{save_dir}/{inoculumn}_frac_zero_parents.csv')
+        distinguishing_snps.to_csv(f'{save_dir}/{inoculumn}_distinguishing_snps.csv')
        # freq_filtered_in.loc[distinguishing_snps.index.values,:].to_csv(f'{species_dir}/{inoculumn}_distinguishing_snps_freq.csv.gz',compression = 'gzip')
         #depth_filtered_in.loc[distinguishing_snps.index.values,:].to_csv(f'{species_dir}/{inoculumn}_distinguishing_snps_depth.csv.gz',compression='gzip')
     

@@ -56,7 +56,7 @@ def get_parent_children(inoculumn):
     in_parent2 = f'{parent_subjects[1]}-{parent_subjects[1]}-{media}'
     child_samples_parent1_ss =  list(metadata.loc[metadata['inoculumn'] == in_parent1, 'sample'].values)
     child_samples_parent2_ss =  list(metadata.loc[metadata['inoculumn'] == in_parent2, 'sample'].values)
-    return parent_samples, child_samples + child_samples_parent1_ss + child_samples_parent2_ss 
+    return parent_samples, child_samples # + child_samples_parent1_ss + child_samples_parent2_ss 
     
 
 
@@ -89,15 +89,15 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered):
     # get distinguishing SNPs for inoculumns - there should be like 1k distinguishing SNPs 
     # use only Alt Allele as marker... so sites where strain allele is alt allele in one strain and not other strain
     # is the marker 
-    distinguishing_snps = get_distinguishing_snps(freq_inoculumns, thresh = .999)
+    distinguishing_snps = get_distinguishing_snps(freq_inoculumns, thresh = .8)
     print(distinguishing_snps)
     distinguishing_snps.to_csv('distinguishing_snps.csv')
     parent1_snps = distinguishing_snps[distinguishing_snps == 1].index.values
     parent2_snps = distinguishing_snps[distinguishing_snps == -1].index.values
     freq_children = freq_filtered[child_samples]
     print('before', len(parent1_snps), len(parent2_snps))
-    parent1_snps = filter_distinguishing_snps(freq_children, parent1_snps, thresh = .5, sample_thresh=.8)
-    parent2_snps = filter_distinguishing_snps(freq_children, parent2_snps, thresh = .5, sample_thresh=.8)
+    parent1_snps = filter_distinguishing_snps(freq_children, parent1_snps, thresh = .5, sample_thresh=.7)
+    parent2_snps = filter_distinguishing_snps(freq_children, parent2_snps, thresh = .5, sample_thresh=.7)
     print('after', len(parent1_snps), len(parent2_snps))
    # print(parent1_snps)
     #print(parent2_snps)
@@ -236,7 +236,7 @@ if __name__ == '__main__':
      ]
     inoculumn_list  = ['AC/PP-AF-mBHI','AC/PP-AF-mGAM','AE-AF-mBHI', 'AE-AF-mGAM']
     plots = []
-    _, freq_filtered_in = filter_sites_across_samples(depth_filtered, freq_filtered.copy(), thresh=.95)
+    _, freq_filtered_in = filter_sites_across_samples(depth_filtered, freq_filtered.copy(), thresh=.75)
     for inoculumn in inoculumn_list:
         print(inoculumn)
         parent_samples, child_samples = get_parent_children(inoculumn)

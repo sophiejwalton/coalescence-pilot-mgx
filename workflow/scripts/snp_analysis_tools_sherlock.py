@@ -56,7 +56,7 @@ def filter_sites_across_samples(good_depth, good_freq, thresh = .8):
        # print(len(good_freq))
     return good_depth, good_freq
 
-    
+
 def get_diversity_series(freq_filtered, thresh=.2):
     temp_freq = freq_filtered[freq_filtered.notna()].replace(np.nan, .5)
     less_than_thresh = temp_freq < thresh
