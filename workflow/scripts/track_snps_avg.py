@@ -43,7 +43,7 @@ def get_frequency_parent(freq_children, parent_snps):
   
     return median_freq 
 
-def get_frequency_parent_avg(freq_children, depth_children, parent_snps, freq_thresh = 1.5):
+def get_frequency_parent_avg(freq_children, parent_snps, freq_thresh = 1.5):
     #med = freq_children.loc[parent_snps,:].median(axis = 0)
     #freq_masked = freq_children.mask((freq_children > freq_thresh * med),axis = 0)
    # freq_masked = freq_masked .mask((freq_masked  < med / freq_thresh),axis = 0)
@@ -59,9 +59,9 @@ def get_frac_zero(freq_children, parent_snps):
 def fix_zeros(freq_parent,  depth_parent, freq_children, parent_snps):
     freq_parent_fix = freq_parent.copy()
     frac_zero_parent= get_frac_zero(freq_children, parent_snps)
-    print(frac_zero_parent,'w0')
+   # print(frac_zero_parent,'w0')
     freq_parent_fix[freq_parent==0] = -np.log(frac_zero_parent[freq_parent==0])/depth_parent[freq_parent==0]
-    print(np.log(1-frac_zero_parent[freq_parent==0]))
+    #print(np.log(1-frac_zero_parent[freq_parent==0]))
     freq_parent_pol = 1-freq_parent.copy()
     frac_one_parent= get_frac_zero(1-freq_children.copy(), parent_snps)
     freq_parent_fix[freq_parent_pol==0] = 1 + np.log(frac_one_parent[freq_parent_pol==0])/depth_parent[freq_parent_pol ==0]
@@ -127,8 +127,8 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
     depth_children = depth_filtered[child_samples]
    
     print('before', len(parent1_snps), len(parent2_snps))
-    parent1_snps = filter_distinguishing_snps(freq_children, parent1_snps, thresh = .5, sample_thresh=.7)
-    parent2_snps = filter_distinguishing_snps(freq_children, parent2_snps, thresh = .5, sample_thresh=.7)
+    parent1_snps = filter_distinguishing_snps(freq_children, parent1_snps, thresh = .5, sample_thresh=.75)
+    parent2_snps = filter_distinguishing_snps(freq_children, parent2_snps, thresh = .5, sample_thresh=.75)
     print('after', len(parent1_snps), len(parent2_snps))
     med_depth_children = depth_children.copy().replace(0, np.nan).median(skipna=True)
    # print(parent1_snps)
@@ -150,10 +150,10 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
     avg_parent2= get_frequency_parent_avg(freq_children, parent2_snps)
     freq_parent2 = get_frequency_parent(freq_children, parent2_snps)
     frac_zero_parent2 = get_frac_zero(freq_children, parent2_snps) 
-    print(freq_parent2)
-    print(med_depth_children)
+
+ #   print(med_depth_children)
     freq_parent2 = fix_zeros(freq_parent2,  med_depth_children, freq_children, parent2_snps)
-    print(freq_parent2)
+
 
     freq_parent2 = pd.DataFrame(freq_parent2).rename(columns = {0: parent_samples[1]})  
     avg_parent2= pd.DataFrame(avg_parent2).rename(columns = {0: parent_samples[1]})
