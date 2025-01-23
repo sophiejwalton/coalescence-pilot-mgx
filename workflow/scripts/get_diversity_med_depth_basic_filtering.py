@@ -14,7 +14,7 @@ warnings.filterwarnings('ignore')
 def get_main(species_dir, save_dir, species):
     info, depth, freq = load_and_sort_files(species_dir, species)
     med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
-    good_samples = med_nonzero_depth[med_nonzero_depth>5.]
+    good_samples = med_nonzero_depth[med_nonzero_depth>=5.]
     depth = depth[good_samples.index.values]
 
     freq = freq[good_samples.index.values]  
