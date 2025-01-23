@@ -47,17 +47,17 @@ def transform_df(df_abundance):
     return df_abundance
 
 def analyze_fitness(df_info,minor_strain, major_strain,
-                               minor_strain_subject, major_strain_subject, df_depth):
+                               minor_strain_subject, major_strain_subject,):
     new_df = []
     
     for i, type_meso in enumerate(df_info['type_meso'].unique()):
         mesos = df_info.loc[df_info['type_meso'] ==type_meso, 'mesocosm'].unique()
         df_type_meso = df_info.loc[df_info['type_meso'] == type_meso,:]
-        df_depth_type_meso = df_depth.loc[df_depth['type_meso'] == type_meso, :]
+       
         for mesocosm in mesos:
             
             df_meso = df_info.loc[df_info['mesocosm'] == mesocosm,:]
-            df_depth_meso = df_depth.loc[df_depth['mesocosm'] == mesocosm,:]
+            #df_depth_meso = df_depth.loc[df_depth['mesocosm'] == mesocosm,:]
 
             in_sample = df_meso['inoculumn_sample'].unique()[0]
             df_meso['shift_from_inoculumn'] = np.nan
@@ -77,8 +77,8 @@ def analyze_fitness(df_info,minor_strain, major_strain,
             
             
             df_meso['opp_strain_freq'] = df_meso[major_strain]
-            df_meso['strain_depth'] = df_depth_meso[minor_strain]
-            df_meso['opp_strain_depth'] = df_depth_meso[major_strain]
+          #  df_meso['strain_depth'] = df_depth_meso[minor_strain]
+           # df_meso['opp_strain_depth'] = df_depth_meso[major_strain]
             new_df.append(df_meso)
             
     
@@ -98,14 +98,14 @@ def get_in(x):
         return ''
 
 def get_species_tracking(species):
-    fnames = glob(f'/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/report/track_snpsv2/{species}/*_parent_freqs.csv')
+    fnames = glob(f'/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/report/track_snpsavg/{species}/*_parent_freqs.csv')
     
     all_dfs = []
     for info_fname in np.sort(fnames): 
        # print(info_fname)
        # fname = f'~/git/coalescence-pilot-mgx/workflow/report/track_snps/{species}/AA-AE-mGAM_parent_freqs.csv'
         df = pd.read_csv(info_fname).rename(columns = {'Unnamed: 0': 'sample'})
-        df_depth = pd.read_csv(info_fname.replace('parent_freqs', 'parent_depths')).rename(columns = {'Unnamed: 0': 'sample'})
+     #   df_depth = pd.read_csv(info_fname.replace('parent_freqs', 'parent_depths')).rename(columns = {'Unnamed: 0': 'sample'})
       #  print()
         #depth_df = 
         # print(df)
@@ -121,8 +121,8 @@ def get_species_tracking(species):
 
         df_info = pd.concat([df.set_index('sample'), 
                                 e003_metadata.loc[e003_metadata['sample'].isin(df['sample'].unique()),:].set_index('sample')],axis=1)
-        df_depth = pd.concat([df_depth.set_index('sample'), 
-                                e003_metadata.loc[e003_metadata['sample'].isin(df['sample'].unique()),:].set_index('sample')],axis=1)
+       # df_depth = pd.concat([df_depth.set_index('sample'), 
+        #                        e003_metadata.loc[e003_metadata['sample'].isin(df['sample'].unique()),:].set_index('sample')],axis=1)
       #  df_info['inoculumn_sample'] = df_info['inoculumn'].transform(get_in)
        # print(df['sample'].unique())
             #print(minor_strain)
@@ -135,14 +135,15 @@ def get_species_tracking(species):
         # print(minor_strain)
     #    p2 = analyze_diversity(df_info, minor_strain, 
      #                           e003_metadata.loc[e003_metadata['sample'] == minor_strain,'parent_subjects'].values[0].split('-')[0])
+        print(df_info)
         df2 = analyze_fitness(df_info, minor_strain, major_strain,
-                               minor_strain_subject, major_strain_subject, df_depth)
+                               minor_strain_subject, major_strain_subject, )
   
         all_dfs.append(df2[['comm', 'parent_subjects', 'is_inoculumn',
         'parent_media', 'media', 'passage', 'mesocosm',
         'inoculumn', 'type_meso', 'inoculumn_sample',  'opp_strain_shift_from_inoculumn',
         'strain_freq', 'opp_strain_freq',
-        'shift_from_inoculumn', 'strain_depth', 'opp_strain_depth','p0_freq', 'opp_p0_freq']].reset_index())
+        'shift_from_inoculumn', 'p0_freq', 'opp_p0_freq']].reset_index())
        # bokeh.io.show(p2)
       #  plots_all.append(p2)
 

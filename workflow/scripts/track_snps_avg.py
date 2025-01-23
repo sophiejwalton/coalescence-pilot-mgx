@@ -161,7 +161,7 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
 # freq_parent2 = freq_parent2.T
    # freq_parent2['parent'] = parent_samples[1]
    # print(freq_parent2)
-    return pd.concat([freq_parent1, freq_parent2],axis=1), pd.concat([avg_parent1, avg_parent2],axis=1), pd.concat([frac_zero_parent1, frac_zero_parent2]), distinguishing_snps
+    return pd.concat([freq_parent1, freq_parent2],axis=1), pd.concat([avg_parent1, avg_parent2],axis=1), pd.concat([frac_zero_parent1, frac_zero_parent2],axis=1), distinguishing_snps
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='basic filtering of sites')
