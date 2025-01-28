@@ -1,0 +1,7 @@
+,s1,s2,fixed_diffs,num_sites,Species
+0,A2-e003Coalescence-Inoculumn-mGAM,A4-e003Coalescence-Inoculumn-mGAM,219,1349445,102546
+1,A2-e003Coalescence-Inoculumn-mGAM,C2-e003Coalescence-Inoculumn-mGAM,248,641073,102546
+2,A4-e003Coalescence-Inoculumn-mGAM,A2-e003Coalescence-Inoculumn-mGAM,220,1349445,102546
+3,A4-e003Coalescence-Inoculumn-mGAM,C2-e003Coalescence-Inoculumn-mGAM,285,971074,102546
+4,C2-e003Coalescence-Inoculumn-mGAM,A2-e003Coalescence-Inoculumn-mGAM,248,641073,102546
+5,C2-e003Coalescence-Inoculumn-mGAM,A4-e003Coalescence-Inoculumn-mGAM,281,971074,102546

@@ -1,0 +1,13 @@
+,s1,s2,fixed_diffs,num_sites,Species
+0,D3-e003Coalescence-Inoculumn-mBHI,D4-e003Coalescence-Inoculumn-mBHI,12,581498,101489
+1,D3-e003Coalescence-Inoculumn-mBHI,D5-e003Coalescence-Inoculumn-mBHI,10,911463,101489
+2,D3-e003Coalescence-Inoculumn-mBHI,D5-e003Coalescence-Inoculumn-mGAM,11,526841,101489
+3,D4-e003Coalescence-Inoculumn-mBHI,D3-e003Coalescence-Inoculumn-mBHI,12,581498,101489
+4,D4-e003Coalescence-Inoculumn-mBHI,D5-e003Coalescence-Inoculumn-mBHI,8,1052438,101489
+5,D4-e003Coalescence-Inoculumn-mBHI,D5-e003Coalescence-Inoculumn-mGAM,6,605976,101489
+6,D5-e003Coalescence-Inoculumn-mBHI,D3-e003Coalescence-Inoculumn-mBHI,10,911463,101489
+7,D5-e003Coalescence-Inoculumn-mBHI,D4-e003Coalescence-Inoculumn-mBHI,8,1052438,101489
+8,D5-e003Coalescence-Inoculumn-mBHI,D5-e003Coalescence-Inoculumn-mGAM,5,938179,101489
+9,D5-e003Coalescence-Inoculumn-mGAM,D3-e003Coalescence-Inoculumn-mBHI,11,526841,101489
+10,D5-e003Coalescence-Inoculumn-mGAM,D4-e003Coalescence-Inoculumn-mBHI,6,605976,101489
+11,D5-e003Coalescence-Inoculumn-mGAM,D5-e003Coalescence-Inoculumn-mBHI,5,938179,101489
