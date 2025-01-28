@@ -24,9 +24,13 @@ def get_main(species_dir, save_dir, species):
     freq_filtered = freq_masked(freq, depth_filtered)
    # freq_filtered.to_csv(f'{save_dir}/{species}_freq_filtered.csv.gz',compression='gzip')
     #snps_info.to_csv(f'{save_dir}/{species}_snps_info.csv.gz',compression='gzip')
-    num_int_sites, diversity = get_diversity_series(freq_filtered, thresh=.2)
-    diversity_df = pd.DataFrame(diversity.reset_index()).rename(columns = {0:'diversity','index':'sample'})
-    diversity_df.to_csv(f'{save_dir}/{species}_diversity_df.csv')
+    num_int_sites1, diversity1 = get_diversity_series(freq_filtered, thresh=.1)
+    num_int_sites2, diversity2 = get_diversity_series(freq_filtered, thresh=.2)
+   # diversity_df = pd.DataFrame(diversity.reset_index()).rename(columns = {0:'diversity','index':'sample'})
+    diversity_df1.to_csv(f'{save_dir}/{species}_diversity_df1.csv')
+    diversity_df2.to_csv(f'{save_dir}/{species}_diversity_df2.csv')
+    num_int_sites1.to_csv(f'{save_dir}/{species}_num_int_sites1.csv')
+    num_int_sites2.to_csv(f'{save_dir}/{species}_num_int_sites2.csv')
     med_nonzero_depth.to_csv(f'{save_dir}/{species}_med_depth_df.csv')
 
 if __name__ == '__main__':

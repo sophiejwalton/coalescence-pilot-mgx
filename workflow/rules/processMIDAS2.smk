@@ -22,7 +22,7 @@ rule calculateDiversity:
     input:
         snpsFreq="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.tsv.gz",
     output:
-        "workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv"
+        "workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df1.csv" 
     params:
         indir="workflow/out/midas2_output/mergev2_{species}/snps/",
         outdir="workflow/report/calculateDiversityDepth/",
@@ -45,7 +45,7 @@ rule calculateFixedDiffs:
   #  conda:
    #     "../../workflow/envs/snps_analysis_tools-no-builds.yml"
     shell:
-        "python3 workflow/scripts/get_pairwise_fixed_diffs_ony_in.py --outdir {params.outdir} --indir {params.indir} --species {params.species}"
+        "python3 workflow/scripts/get_pairwise_fixed_diffs_only_in.py --outdir {params.outdir} --indir {params.indir} --species {params.species}"
 
 
 

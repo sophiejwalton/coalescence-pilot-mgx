@@ -20,9 +20,10 @@ def get_haplotype(sample_freq_filtered,sample):
  
 def get_main(species_dir, save_dir, species,):
     metadata = pd.read_csv('config/e003_metadata_cultures_round2.csv')
-    in_samples = metadata.loc[metadata['passage'] == 0,:]
+    in_samples = metadata.loc[metadata['passage'] == 0,'sample'].values
+
  #   media = parent_subjects_media[-1]
-    parent_subject = parent_subjects_media[:-1]
+   # parent_subject = parent_subjects_media[:-1]
     info, depth, freq = load_and_sort_files(species_dir, species)
 
     med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
@@ -36,12 +37,12 @@ def get_main(species_dir, save_dir, species,):
     s2s = []
     snps_switch = []
     num_sites = []
-    good_ins = np.intersect1d(in_samples, good_samples)
-    depth_filtered = depth_filered[good_inds]
+    good_ins = np.intersect1d(in_samples, good_samples.index.values)
+    depth_filtered = depth_filtered[good_ins]
     freq_filtered = freq_filtered[good_ins]
     for i, s1 in enumerate(good_ins):
         print(i, s1)
-        for s2 in good_samples.index.values: 
+        for s2 in good_ins: 
             print(s2)
             if s1 == s2:
                 continue 
@@ -53,7 +54,7 @@ def get_main(species_dir, save_dir, species,):
             freq_small = freq_small.loc[good_sites,:]
             depth_small = depth_small.loc[good_sites,:]
             freq_polarized_transition = get_transition_frequency_snps(freq_small, depth_small)
-            snps_switch.append(len(freq_transition_filter))
+            snps_switch.append(len(freq_polarized_transition))
             num_sites.append(len(good_sites))
 
 
@@ -76,14 +77,15 @@ if __name__ == '__main__':
                        help = 'location where to get stuff from')
     parser.add_argument('--species', action = 'store', 
                        help = 'species to perform analysis on')
-    parser.add_argument('--parent_subject_media', action = 'store', 
-                       help = 'parent_subject-media')
+
+#    parser.add_argument('--parent_subject_media', action = 'store', 
+ #                      help = 'parent_subject-media')
     args = parser.parse_args()
     species_dir = f'{args.indir}/{args.species}'
     save_dir = f'{args.outdir}/{args.species}'
     if not path.isdir(save_dir):
         mkdir(save_dir)
-    get_main(species_dir, save_dir, args.species, args.parent_subject_media)
+    get_main(species_dir, save_dir, args.species, )
     
 
 
