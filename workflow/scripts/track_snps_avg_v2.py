@@ -110,7 +110,7 @@ def get_depth_parent(depth_children, parent_snps):
 
 def get_count(freq_children, parent_snps):
     count_parent = freq_children.loc[parent_snps,:].count(axis=0)
-    return cout_parent
+    return count_parent
 
 def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, depth_filtered):
   #  info, depth, freq = load_and_sort_files(species_dir, species)
@@ -179,9 +179,7 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
 # freq_parent2 = freq_parent2.T
    # freq_parent2['parent'] = parent_samples[1]
    # print(freq_parent2)
-    return pd.concat([freq_parent1, freq_parent2],axis=1), pd.concat([avg_parent1, avg_parent2],axis=1), \ 
-        pd.concat([frac_zero_parent1, frac_zero_parent2],axis=1), pd.concat([count_parent1, count_parent2],axis=1),  \
-        pd.concat([q_low_parent1, q_low_parent2],axis=1), pd.concat([q_high_parent1, q_high_parent2],axis=1), distinguishing_snps
+    return pd.concat([freq_parent1, freq_parent2],axis=1), pd.concat([avg_parent1, avg_parent2],axis=1),pd.concat([frac_zero_parent1, frac_zero_parent2],axis=1), pd.concat([count_parent1, count_parent2],axis=1),pd.concat([q_low_parent1, q_low_parent2],axis=1), pd.concat([q_high_parent1, q_high_parent2],axis=1), distinguishing_snps
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='basic filtering of sites')
@@ -250,7 +248,7 @@ if __name__ == '__main__':
         count_parents.to_csv(f'{save_dir}/{inoculumn}_count_parents.csv')
         qlow.to_csv(f'{save_dir}/{inoculumn}_qlow.csv')
         qhigh.to_csv(f'{save_dir}/{inoculumn}_qhigh.csv')
-        
+        count_parents.to_csv(f'{save_dir}/{inoculumn}_distinguishing_snps.csv')    
 
       #  distinguishing_snps.to_csv(f'{save_dir}/{inoculumn}_distinguishing_snps.csv')
        # freq_filtered_in.loc[distinguishing_snps.index.values,:].to_csv(f'{species_dir}/{inoculumn}_distinguishing_snps_freq.csv.gz',compression = 'gzip')

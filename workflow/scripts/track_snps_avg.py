@@ -110,7 +110,7 @@ def get_depth_parent(depth_children, parent_snps):
 
 def get_count(freq_children, parent_snps):
     count_parent = freq_children.loc[parent_snps,:].count(axis=0)
-    return cout_parent
+    return count_parent
 
 def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, depth_filtered):
   #  info, depth, freq = load_and_sort_files(species_dir, species)
