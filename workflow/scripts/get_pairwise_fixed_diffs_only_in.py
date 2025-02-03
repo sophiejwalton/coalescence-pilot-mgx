@@ -51,6 +51,7 @@ def get_main(species_dir, save_dir, species,):
             freq_small = polarize_species(freq_small.copy(), s1)   
             isna_sites= depth_small.isna().sum(axis=1)
             good_sites = isna_sites[isna_sites==0].index.values
+            
             freq_small = freq_small.loc[good_sites,:]
             depth_small = depth_small.loc[good_sites,:]
             freq_polarized_transition = get_transition_frequency_snps(freq_small, depth_small)
