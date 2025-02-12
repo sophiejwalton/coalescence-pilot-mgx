@@ -86,7 +86,7 @@ rule trackSNPsAVG:
    #     "../../workflow/envs/snps_analysis_tools-no-builds.yml"
     shell:
         """
-        python3 workflow/scripts/track_snps_avg.py --outdir {params.outdir} --indir {params.indir} --species {wildcards.species}
+        python3 workflow/scripts/track_snps_avg_v2.py --outdir {params.outdir} --indir {params.indir} --species {wildcards.species}
         touch {params.outdir}/{wildcards.species}/done.txt
         """
 

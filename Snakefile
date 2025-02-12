@@ -86,10 +86,10 @@ rule all:
       #  expand("workflow/out/midasOutput/{sample}/species/species_profile.txt",sample=samples),
         expand("workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.tsv.gz", species=species_list),
       #  expand("workflow/out/midas2_output/merge/snps/{species}/{species}.snps_freqs.tsv.gz", species=species_list),
-        #expand("workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df1.csv",species=species_list),     
+        expand("workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df1.csv",species=species_list),     
        # expand("workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv",species=species_list),  
        # expand("workflow/report/track_snpsv2/{species}/done.txt", species=species_list),   
-       # expand("workflow/report/track_snpsavg/{species}/done.txt", species=species_list) 
+        expand("workflow/report/track_snpsavg/{species}/done.txt", species=species_list), 
         expand("workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv",species=species_list),
       #  workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv
 #  "workflow/report/calculateFixedDiffs/100013/100013_fixed_diffs.csv"
