@@ -2,6 +2,7 @@ from os.path import join
 import pandas as pd
 import os
 from glob import glob
+import numpy as np
 configfile: "config/config.yaml"
 
 # Convert list of samples to a dataframe.
@@ -13,8 +14,8 @@ df2 = pd.read_csv('sample_fnames.csv')
 #df['SampleLane'] = df['Sample'].transform(lambda x: f'{x}_L002')
 samples=list(df['Sample'].values.astype(str))
 samples2=list(df2['Sample'].values.astype(str))
-samples = samples + samples2
-print(samples)
+samples = samples #+ samples2
+#print(samples)
 df = df.set_index('Sample')
 
 #print(df.head())
@@ -72,8 +73,10 @@ for species in species_list2:
   #     'AC/PP-AE-mGAM', 'AC/PP-AF-mGAM', 
    #    'AC/PP-AE-mBHI', 'AC/PP-AF-mBHI', 
     #   'AE-AF-mGAM', 'AE-AF-mBHI',]
-samples.remove('H5-e003Coalescence-mGAM-p7_S184') # ADD BACK AFTER FIRST QUICK CHECK 
+#samples.remove('H5-e003Coalescence-mGAM-p7_S184') # ADD BACK AFTER FIRST QUICK CHECK 
 #species_list = species_list2
+print(df.head())
+print('wee',np.sort(samples))
 rule all:
     input:
         expand("workflow/out/trimmed/{sample}-trimmed-pair1.fastq.gz",sample=samples),
@@ -98,8 +101,8 @@ rule all:
         #"workflow/out/midasOutput/species/abundantSpecies.txt",
        # expand("workflow/out/midasOutput/species/abundantSpecies_{subject}.txt", subject=subjects),
 
-#include: "workflow/rules/processRawReads_no_concatenation.smk",
-include: "workflow/rules/processRawReads.smk",
+include: "workflow/rules/processRawReads_no_concatenation.smk",
+#include: "workflow/rules/processRawReads.smk",
 #include: "workflow/rules/runMIDAS2.smk",
 #include: "workflow/rules/runMIDAS2_population.smk"
 #include: "workflow/rules/processMIDAS2.smk"
