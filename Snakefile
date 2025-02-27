@@ -7,18 +7,18 @@ configfile: "config/config.yaml"
 
 # Convert list of samples to a dataframe.
 df=pd.read_csv('config/sample_fnamesr3.csv')
-samples = df['Sample'].values #+ samples2
+samples = df['SampleLane'].values #+ samples2
 print(np.sort(samples))
-df = df.set_index('Sample')
-
+df = df.set_index('SampleLane')
+print('B10-e003Coalescence-mGAM-p1_S769' in samples)
 rule all:
     input:
         expand("workflow/out/trimmed/{sample}-trimmed-pair1.fastq.gz",sample=samples),
         expand("workflow/out/filter/{sample}-filtered.1.fastq.gz",sample=samples),
    #     expand("workflow/out/concat/{sample}-filtered.1.fastq.gz",sample=samples),
-      #  expand("workflow/out/midas2_output/{sample}/species/species_profile.tsv",sample=samples),
+        expand("workflow/out/midas2_output/{sample}/species/species_profile.tsv",sample=samples),
       # "workflow/out/midas2_output/mergev2/species/species_prevalence.tsv",
-  #      expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples),
+       # expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples),
 #        "workflow/out/midas2_output/merge/snps/snps_summary.tsv",
       # "workflow/out/midas2_output/merge_bacteroides/snps/snps_summary.tsv",
       #  expand("workflow/out/midasOutput/{sample}/species/species_profile.txt",sample=samples),
@@ -37,7 +37,7 @@ rule all:
 
 include: "workflow/rules/processRawReads_no_concatenation.smk",
 #include: "workflow/rules/processRawReads.smk",
-#include: "workflow/rules/runMIDAS2.smk",
+include: "workflow/rules/runMIDAS2.smk",
 #include: "workflow/rules/runMIDAS2_population.smk"
 #include: "workflow/rules/processMIDAS2.smk"
 #include: "workflow/rules/processSNPs.smk"
