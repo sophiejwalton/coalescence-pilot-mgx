@@ -18,7 +18,7 @@ rule all:
    #     expand("workflow/out/concat/{sample}-filtered.1.fastq.gz",sample=samples),
         expand("workflow/out/midas2_output/{sample}/species/species_profile.tsv",sample=samples),
       # "workflow/out/midas2_output/mergev2/species/species_prevalence.tsv",
-       # expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples),
+        expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples),
 #        "workflow/out/midas2_output/merge/snps/snps_summary.tsv",
       # "workflow/out/midas2_output/merge_bacteroides/snps/snps_summary.tsv",
       #  expand("workflow/out/midasOutput/{sample}/species/species_profile.txt",sample=samples),
