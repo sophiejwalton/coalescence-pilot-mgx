@@ -145,7 +145,7 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
    # print(parent1_snps)
     #print(parent2_snps)
 
-
+    freq_children = freq_filtered.copy()
     freq_parent1 = get_frequency_parent(freq_children, parent1_snps)
     avg_parent1 = get_frequency_parent_avg(freq_children, parent1_snps)
     frac_zero_parent1 = get_frac_zero(freq_children, parent1_snps)
@@ -230,7 +230,7 @@ if __name__ == '__main__':
 #AAAA
         parent_samples = list(np.intersect1d(parent_samples, freq_filtered_in.columns.values))
         child_samples = list(np.intersect1d(child_samples, freq_filtered_in.columns.values))
-        child_samples = freq_filtered_in.columns.values
+        #child_samples = freq_filtered_in.columns.values
         print(parent_samples)
         print(child_samples)
         if len(parent_samples) < 2:
