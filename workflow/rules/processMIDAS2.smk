@@ -57,10 +57,10 @@ rule trackSNPs:
        # snpsInfo="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_info.tsv.gz",
        # wo="workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv"
     output:
-        "workflow/report/track_snpsv2/{species}/done.txt"
+        "workflow/report/track_snpsv2_ALL/{species}/done.txt"
     params:
         indir="workflow/out/midas2_output/mergev2_{species}/snps/",
-        outdir="workflow/report/track_snpsv2/",
+        outdir="workflow/report/track_snpsv2_ALL/",
         #species={species}
   #  conda:
    #     "../../workflow/envs/snps_analysis_tools-no-builds.yml"
@@ -77,10 +77,10 @@ rule trackSNPsAVG:
        # snpsInfo="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_info.tsv.gz",
        # wo="workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv"
     output:
-        "workflow/report/track_snpsavg/{species}/done.txt"
+        "workflow/report/track_snpsv2_ALL/{species}/done.txt"
     params:
         indir="workflow/out/midas2_output/mergev2_{species}/snps/",
-        outdir="workflow/report/track_snpsavg/",
+        outdir="workflow/report/track_snpsv2_ALL/",
         #species={species}
   #  conda:
    #     "../../workflow/envs/snps_analysis_tools-no-builds.yml"

@@ -230,6 +230,7 @@ if __name__ == '__main__':
 #AAAA
         parent_samples = list(np.intersect1d(parent_samples, freq_filtered_in.columns.values))
         child_samples = list(np.intersect1d(child_samples, freq_filtered_in.columns.values))
+        child_samples = freq_filtered_in.columns.values
         print(parent_samples)
         print(child_samples)
         if len(parent_samples) < 2:
