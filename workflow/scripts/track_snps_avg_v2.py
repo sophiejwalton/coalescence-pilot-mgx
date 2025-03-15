@@ -134,24 +134,26 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
     #distinguishing_snps.to_csv('distinguishing_snps.csv')
     parent1_snps = distinguishing_snps[distinguishing_snps == 1].index.values
     parent2_snps = distinguishing_snps[distinguishing_snps == -1].index.values
-    freq_children = freq_filtered[child_samples]
-    depth_children = depth_filtered[child_samples]
+   # freq_children = freq_filtered[child_samples]
+   # depth_children = depth_filtered[child_samples]
    
     print('before', len(parent1_snps), len(parent2_snps))
-    parent1_snps = filter_distinguishing_snps(freq_children, parent1_snps, thresh = .5, sample_thresh=.75)
-    parent2_snps = filter_distinguishing_snps(freq_children, parent2_snps, thresh = .5, sample_thresh=.75)
+    parent1_snps = filter_distinguishing_snps(freq_filtered[child_samples], parent1_snps, thresh = .5, sample_thresh=.75)
+    parent2_snps = filter_distinguishing_snps(freq_filtered[child_samples], parent2_snps, thresh = .5, sample_thresh=.75)
     print('after', len(parent1_snps), len(parent2_snps))
     med_depth_children = depth_children.copy().replace(0, np.nan).median(skipna=True)
    # print(parent1_snps)
     #print(parent2_snps)
 
-    freq_children = freq_filtered.copy()
-    freq_parent1 = get_frequency_parent(freq_children, parent1_snps)
-    avg_parent1 = get_frequency_parent_avg(freq_children, parent1_snps)
-    frac_zero_parent1 = get_frac_zero(freq_children, parent1_snps)
-    freq_parent1 = fix_zeros(freq_parent1,  med_depth_children, freq_children, parent1_snps)
-    q_high_parent1 = pd.DataFrame(get_quantile_parent(freq_children, parent1_snps, q= .975)).rename(columns = {0: parent_samples[0]})  
-    q_low_parent1 = pd.DataFrame(get_quantile_parent(freq_children, parent1_snps, q= .025)).rename(columns = {0: parent_samples[0]})  
+ #   freq_children = freq_filtered.copy()
+
+
+    freq_parent1 = get_frequency_parent(freq_filteredn, parent1_snps)
+    avg_parent1 = get_frequency_parent_avg(freq_filtered, parent1_snps)
+    frac_zero_parent1 = get_frac_zero(freq_filtered, parent1_snps)
+    freq_parent1 = fix_zeros(freq_parent1,  med_depth_children, freq_filtered, parent1_snps)
+    q_high_parent1 = pd.DataFrame(get_quantile_parent(freq_filtered, parent1_snps, q= .975)).rename(columns = {0: parent_samples[0]})  
+    q_low_parent1 = pd.DataFrame(get_quantile_parent(freq_filtered, parent1_snps, q= .025)).rename(columns = {0: parent_samples[0]})  
 #    print(freq_parent1)
     freq_parent1 = pd.DataFrame(freq_parent1).rename(columns = {0: parent_samples[0]})
     avg_parent1 = pd.DataFrame(avg_parent1).rename(columns = {0: parent_samples[0]})
@@ -160,22 +162,22 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
    # print(freq_parent1)
   #  freq_parent1['parent'] = parent_samples[0]
     
-    avg_parent2= get_frequency_parent_avg(freq_children, parent2_snps)
-    freq_parent2 = get_frequency_parent(freq_children, parent2_snps)
-    frac_zero_parent2 = get_frac_zero(freq_children, parent2_snps) 
+    avg_parent2= get_frequency_parent_avg(freq_filtered, parent2_snps)
+    freq_parent2 = get_frequency_parent(freq_filtered, parent2_snps)
+    frac_zero_parent2 = get_frac_zero(freq_filtered, parent2_snps) 
 
  #   print(med_depth_children)
-    freq_parent2 = fix_zeros(freq_parent2,  med_depth_children, freq_children, parent2_snps)
-    q_high_parent2 = pd.DataFrame(get_quantile_parent(freq_children, parent2_snps, q= .975)).rename(columns = {0: parent_samples[1]})  
-    q_low_parent2 = pd.DataFrame(get_quantile_parent(freq_children, parent2_snps, q= .025)).rename(columns = {0: parent_samples[1]})  
+    freq_parent2 = fix_zeros(freq_parent2,  med_depth_children, freq_filtered, parent2_snps)
+    q_high_parent2 = pd.DataFrame(get_quantile_parent(freq_filtered, parent2_snps, q= .975)).rename(columns = {0: parent_samples[1]})  
+    q_low_parent2 = pd.DataFrame(get_quantile_parent(freq_filtered, parent2_snps, q= .025)).rename(columns = {0: parent_samples[1]})  
 
 
     freq_parent2 = pd.DataFrame(freq_parent2).rename(columns = {0: parent_samples[1]})  
     avg_parent2= pd.DataFrame(avg_parent2).rename(columns = {0: parent_samples[1]})
     frac_zero_parent2  = pd.DataFrame(frac_zero_parent2).rename(columns = {0: parent_samples[1]})
 
-    count_parent1 = pd.DataFrame(get_count(freq_children, parent1_snps)).rename(columns = {0: parent_samples[0]})  
-    count_parent2 = pd.DataFrame(get_count(freq_children, parent2_snps)).rename(columns = {0: parent_samples[1]})  
+    count_parent1 = pd.DataFrame(get_count(freq_filtered, parent1_snps)).rename(columns = {0: parent_samples[0]})  
+    count_parent2 = pd.DataFrame(get_count(freq_filtered, parent2_snps)).rename(columns = {0: parent_samples[1]})  
 # freq_parent2 = freq_parent2.T
    # freq_parent2['parent'] = parent_samples[1]
    # print(freq_parent2)
@@ -221,7 +223,7 @@ if __name__ == '__main__':
        'AE-AF-mGAM', 'AE-AF-mBHI',
      ]
     depth_filtered_in, freq_filtered_in = filter_sites_across_samples(depth_filtered, 
-        freq_filtered.copy(),thresh=.75)
+        freq_filtered,thresh=.75)
     for inoculumn in inoculumn_list:
         #print(inoculumn)
         parent_samples, child_samples = get_parent_children(inoculumn)
@@ -241,7 +243,8 @@ if __name__ == '__main__':
             child_samples.remove(parent_samples[0])
 
         
-        freq_parents, freq_avg_parents, frac_zero_parents, count_parents,qlow,qhigh, distinguishing_snps = get_main(species_dir,args.species, parent_samples, child_samples, freq_filtered_in[parent_samples + child_samples],  depth_filtered_in[parent_samples + child_samples])
+        freq_parents, freq_avg_parents, frac_zero_parents, count_parents,qlow,qhigh, distinguishing_snps = get_main(species_dir,args.species, parent_samples, child_samples, 
+            freq_filtered_in,  depth_filtered_in)
         inoculumn = ''.join(inoculumn.split('/'))
         freq_parents.to_csv(f'{save_dir}/{inoculumn}_parent_freqs.csv')
         freq_avg_parents.to_csv(f'{save_dir}/{inoculumn}_parent_freqs_avg.csv')
