@@ -95,7 +95,7 @@ rule all:
        # expand("workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv",species=species_list),  
         expand("workflow/report/track_snpsv2_ALL/{species}/done.txt", species=species_list),   
        # expand("workflow/report/track_snpsavg/{species}/done.txt", species=species_list), 
-        #expand("workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv",species=species_list),
+        expand("workflow/report/calculateFixedDiffsFast/{species}/{species}_fixed_diffs.csv",species=species_list),
       #  workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv
 #  "workflow/report/calculateFixedDiffs/100013/100013_fixed_diffs.csv"
  # "workflow/out/midasOutput/species/species_profile_all_abundant.csv",
