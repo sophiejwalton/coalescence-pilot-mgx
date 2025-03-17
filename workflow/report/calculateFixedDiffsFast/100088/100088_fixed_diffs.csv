@@ -1,0 +1,10 @@
+,index,fixed_diffs,num_int_sites,sample1,species_id
+0,D5-e003Assembly-mBHI-p5,0.0,1338163,D5-e003Assembly-mBHI-p5,100088
+1,C5-e003Assembly-mBHI-p3,3.0,1579866,D5-e003Assembly-mBHI-p5,100088
+2,e004-inoculumn-fecal-AR,5.0,1595554,D5-e003Assembly-mBHI-p5,100088
+0,D5-e003Assembly-mBHI-p5,0.0,1338163,C5-e003Assembly-mBHI-p3,100088
+1,C5-e003Assembly-mBHI-p3,0.0,1579866,C5-e003Assembly-mBHI-p3,100088
+2,e004-inoculumn-fecal-AR,5.0,1595554,C5-e003Assembly-mBHI-p3,100088
+0,D5-e003Assembly-mBHI-p5,7.0,1338163,e004-inoculumn-fecal-AR,100088
+1,C5-e003Assembly-mBHI-p3,6.0,1579866,e004-inoculumn-fecal-AR,100088
+2,e004-inoculumn-fecal-AR,0.0,1595554,e004-inoculumn-fecal-AR,100088

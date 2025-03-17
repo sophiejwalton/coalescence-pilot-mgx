@@ -1,0 +1,5 @@
+,index,fixed_diffs,num_int_sites,sample1,species_id
+0,BB-Fecal,0,2152759,BB-Fecal,102293
+1,BG-Fecal,1616,2065361,BB-Fecal,102293
+0,BB-Fecal,3696,2152759,BG-Fecal,102293
+1,BG-Fecal,0,2065361,BG-Fecal,102293

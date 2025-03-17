@@ -11,17 +11,18 @@ warnings.filterwarnings('ignore')
 
 
 def get_fixed_diffs(freq_filtered,sample):
-    freq_filtered_sample = freq_filtered[sample].copy()
+    freq_filtered_sample = freq_filtered[[sample]].copy()
 
     good_sites_lower = freq_filtered_sample.loc[freq_filtered_sample[sample] < .2].index.values
     fixed_diffs_lower_snps = freq_filtered.loc[good_sites_lower,:] >.8 
-    fixed_diffs_lower_snps = fixed_diffs_lower_snps.sum(axis=1)
-
+    print(fixed_diffs_lower_snps)
+    fixed_diffs_lower_snps = fixed_diffs_lower_snps.sum(axis=0)
+    print(fixed_diffs_lower_snps)
     good_sites_upper = freq_filtered_sample.loc[freq_filtered_sample[sample] > .8].index.values
     fixed_diffs_upper_snps = freq_filtered.loc[good_sites_upper,:] <.8 
-    fixed_diffs_upper_snps = fixed_diffs_upper_snps.sum(axis=1)
+    fixed_diffs_upper_snps = fixed_diffs_upper_snps.sum(axis=0)
 
-    num_sites_non_int = (freq_filtered >.8).sum(axis=1) + (freq_filtered <.2).sum(axis=1) 
+    num_sites_non_int = (freq_filtered >.8).sum(axis=0) + (freq_filtered <.2).sum(axis=0) 
     fixed_diffs = fixed_diffs_upper_snps+fixed_diffs_lower_snps
     fixed_diffs = fixed_diffs.rename('fixed_diffs')
     num_sites_non_int = num_sites_non_int.rename('num_int_sites')
@@ -49,7 +50,7 @@ def get_main(species_dir, save_dir, species,):
     num_sites = []
     all_dfs = []
     for i, s1 in enumerate(freq_filtered.columns.values):
-        fixed_diffs= get_fixed_diffs(freq_filtered,sample).reset_index()
+        fixed_diffs= get_fixed_diffs(freq_filtered,s1).reset_index()
         fixed_diffs['sample1'] = s1
         fixed_diffs['species_id'] = species
         all_dfs.append(fixed_diffs)

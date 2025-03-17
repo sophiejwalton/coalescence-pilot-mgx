@@ -64,7 +64,7 @@ species_list.remove('103686') #actuallly remove
 species_list2 = [103117,100013, 101349,  101346,102478, 100099, 102279, 100146, 102438, 100196, 102506, 100120, 102528, 101294, 102327]
 
 species_list2 = [102506,102528,101349,  100196,102327]
-#species_list = [100099, 102320]
+#species_list = [100099, 101346,102320]
 species_list2 = []
 for species in species_list2: 
     print(species)

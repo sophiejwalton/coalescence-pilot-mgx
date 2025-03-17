@@ -1,0 +1,10 @@
+,index,fixed_diffs,num_int_sites,sample1,species_id
+0,BG-Fecal,0,693929,BG-Fecal,102530
+1,e004-inoculumn-fecal-AR,224,1905317,BG-Fecal,102530
+2,BK-Fecal,95,1957031,BG-Fecal,102530
+0,BG-Fecal,228,693929,e004-inoculumn-fecal-AR,102530
+1,e004-inoculumn-fecal-AR,0,1905317,e004-inoculumn-fecal-AR,102530
+2,BK-Fecal,240,1957031,e004-inoculumn-fecal-AR,102530
+0,BG-Fecal,54,693929,BK-Fecal,102530
+1,e004-inoculumn-fecal-AR,182,1905317,BK-Fecal,102530
+2,BK-Fecal,0,1957031,BK-Fecal,102530

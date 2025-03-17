@@ -1,0 +1,10 @@
+,index,fixed_diffs,num_int_sites,sample1,species_id
+0,F4-e004Assembly-epsilon-p5,0,1875292,F4-e004Assembly-epsilon-p5,102588
+1,F4-e004Assembly-epsilon-p3,27,1870041,F4-e004Assembly-epsilon-p5,102588
+2,F4-e004Assembly-epsilon-p7,2,1885680,F4-e004Assembly-epsilon-p5,102588
+0,F4-e004Assembly-epsilon-p5,6,1875292,F4-e004Assembly-epsilon-p3,102588
+1,F4-e004Assembly-epsilon-p3,0,1870041,F4-e004Assembly-epsilon-p3,102588
+2,F4-e004Assembly-epsilon-p7,1,1885680,F4-e004Assembly-epsilon-p3,102588
+0,F4-e004Assembly-epsilon-p5,8,1875292,F4-e004Assembly-epsilon-p7,102588
+1,F4-e004Assembly-epsilon-p3,28,1870041,F4-e004Assembly-epsilon-p7,102588
+2,F4-e004Assembly-epsilon-p7,0,1885680,F4-e004Assembly-epsilon-p7,102588
