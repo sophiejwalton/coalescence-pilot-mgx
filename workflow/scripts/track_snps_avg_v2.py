@@ -141,14 +141,14 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
     parent1_snps = filter_distinguishing_snps(freq_filtered[child_samples], parent1_snps, thresh = .5, sample_thresh=.75)
     parent2_snps = filter_distinguishing_snps(freq_filtered[child_samples], parent2_snps, thresh = .5, sample_thresh=.75)
     print('after', len(parent1_snps), len(parent2_snps))
-    med_depth_children = depth_children.copy().replace(0, np.nan).median(skipna=True)
+    med_depth_children = depth_filtered.copy().replace(0, np.nan).median(skipna=True)
    # print(parent1_snps)
     #print(parent2_snps)
 
  #   freq_children = freq_filtered.copy()
 
 
-    freq_parent1 = get_frequency_parent(freq_filteredn, parent1_snps)
+    freq_parent1 = get_frequency_parent(freq_filtered, parent1_snps)
     avg_parent1 = get_frequency_parent_avg(freq_filtered, parent1_snps)
     frac_zero_parent1 = get_frac_zero(freq_filtered, parent1_snps)
     freq_parent1 = fix_zeros(freq_parent1,  med_depth_children, freq_filtered, parent1_snps)
