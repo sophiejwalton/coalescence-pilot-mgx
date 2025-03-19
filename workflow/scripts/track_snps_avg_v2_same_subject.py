@@ -77,16 +77,16 @@ def fix_zeros(freq_parent,  depth_parent, freq_children, parent_snps):
 def get_parent_children(subject):
 #    metadata = pd.read_csv('config/e003_coal_metadata_full.csv')
     metadata = pd.read_csv('config/e003_metadata_cultures_round2.csv')
-    child_samples = list(metadata.loc[metadata['parent_subjects'] == f'{subject}-{subjects}', 'sample'].values)
+    child_samples = list(metadata.loc[metadata['parent_subjects'] == f'{subject}-{subject}', 'sample'].values)
     
     ins = metadata.loc[metadata['is_inoculumn'],:]
-    ins = ins.loc[ins['parent_subjects'] == f'{subject}-{subjects}',:]
+    ins = ins.loc[ins['parent_subjects'] == f'{subject}-{subject}',:]
     ins1 = ins.loc[ins['media'] == 'mGAM','sample'].values[0]
     ins2 = ins.loc[ins['media'] == 'mBHI','sample'].values[0]
 
     if (len(ins1) ==0) or (len(ins2) ==0): 
         return np.nan, np.nan
-    parent_samples = [ins1['sample'].values[0], ins2['sample'].values[0]]
+    parent_samples = [ins1, ins2]
     
  #   in_parent1 = f'{subject}-{subject]}-mGAM'
    # in_parent2 = f'{subject}-{subject]}-mBHI'
@@ -236,7 +236,7 @@ if __name__ == '__main__':
         
         freq_parents, freq_avg_parents, frac_zero_parents, count_parents,qlow,qhigh, distinguishing_snps = get_main(species_dir,args.species, parent_samples, child_samples, 
             freq_filtered_in,  depth_filtered_in)
-        subject = ''.join(inoculumn.split('/'))
+        subject = ''.join(subject.split('/'))
         freq_parents.to_csv(f'{save_dir}/{subject}_parent_freqs.csv')
         freq_avg_parents.to_csv(f'{save_dir}/{subject}_parent_freqs_avg.csv')
         frac_zero_parents.to_csv(f'{save_dir}/{subject}_frac_zero_parents.csv')
