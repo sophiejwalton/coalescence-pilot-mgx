@@ -241,10 +241,11 @@ if __name__ == '__main__':
             child_samples.remove(parent_samples[1])
         if parent_samples[0] in child_samples:
             child_samples.remove(parent_samples[0])
-
+        if parent_samples[0] == 'A2-e003Coalescence-Inoculumn-mBHI':
+            parent_samples = ['A2-e003Coalescence-mBHI-inoculumn-redo', parent_samples[1]]
         
         freq_parents, freq_avg_parents, frac_zero_parents, count_parents,qlow,qhigh, distinguishing_snps = get_main(species_dir,args.species, parent_samples, child_samples, 
-            freq_filtered_in,  depth_filtered_in)
+            freq_filtered_in[parent_samples+child_samples],  depth_filtered_in[parent_samples+child_samples])
         inoculumn = ''.join(inoculumn.split('/'))
         freq_parents.to_csv(f'{save_dir}/{inoculumn}_parent_freqs.csv')
         freq_avg_parents.to_csv(f'{save_dir}/{inoculumn}_parent_freqs_avg.csv')
