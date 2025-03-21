@@ -137,7 +137,7 @@ def get_in(x):
         return ''
 
 def get_species_tracking(species):
-    fnames = glob(f'/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/report/track_snpsv2/{species}/*_parent_freqs.csv')
+    fnames = glob(f'/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/report/track_snpsv2_avg/{species}/*_parent_freqs.csv')
     
     all_dfs = []
     for info_fname in np.sort(fnames): 
@@ -229,7 +229,7 @@ if __name__ == '__main__':
     fnames = glob(f'{args.indir}/*/')
 
     species_list = [fname.split('/')[-2] for fname in fnames]
-    e003_metadata = pd.read_csv('/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/analysis/e003_metadata_cultures_round2.csv') #.drop(columns = 'Unnamed: 0')
+    e003_metadata = pd.read_csv('/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/analysis/e003_metadata_cultures_round2_change_AA.csv') #.drop(columns = 'Unnamed: 0')
 
     #e003_metadata['inoculumn'] = e003_metadata['inoculumn'].transform(get_inoculumn_sort)
     e003_metadata['type_meso'] = e003_metadata['type_mesocosm']

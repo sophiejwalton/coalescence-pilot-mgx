@@ -14,7 +14,8 @@ df2 = pd.read_csv('sample_fnames.csv')
 #df['SampleLane'] = df['Sample'].transform(lambda x: f'{x}_L002')
 samples=list(df['Sample'].values.astype(str))
 samples2=list(df2['Sample'].values.astype(str))
-samples = samples #+ samples2
+samples3 = list(df3['Sample'].values.astype(str))
+samples = samples + samples2 + samples3
 #print(samples)
 df = df.set_index('Sample')
 
@@ -89,14 +90,14 @@ rule all:
 #        "workflow/out/midas2_output/merge/snps/snps_summary.tsv",
       # "workflow/out/midas2_output/merge_bacteroides/snps/snps_summary.tsv",
       #  expand("workflow/out/midasOutput/{sample}/species/species_profile.txt",sample=samples),
-       # expand("workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.tsv.gz", species=species_list),
+        expand("workflow/out/midas2_output/mergev3_{species}/snps/{species}/{species}.snps_freqs.tsv.gz", species=species_list),
       #  expand("workflow/out/midas2_output/merge/snps/{species}/{species}.snps_freqs.tsv.gz", species=species_list),
       #  expand("workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df1.csv",species=species_list),     
        # expand("workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv",species=species_list),  
-        expand("workflow/report/track_snpsv2_ALL/{species}/done.txt", species=species_list),   
+     #   expand("workflow/report/track_snpsv2_ALL/{species}/done.txt", species=species_list),   
        # expand("workflow/report/track_snpsavg/{species}/done.txt", species=species_list), 
-        expand("workflow/report/calculateFixedDiffsFast/{species}/{species}_fixed_diffs.csv",species=species_list),
-        expand("workflow/report/track_snpsv2_ALL_same_subject/{species}/done.txt",species=species_list),
+      #  expand("workflow/report/calculateFixedDiffsFast/{species}/{species}_fixed_diffs.csv",species=species_list),
+       # expand("workflow/report/track_snpsv2_ALL_same_subject/{species}/done.txt",species=species_list),
       #  workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv
 #  "workflow/report/calculateFixedDiffs/100013/100013_fixed_diffs.csv"
  # "workflow/out/midasOutput/species/species_profile_all_abundant.csv",
@@ -106,6 +107,6 @@ rule all:
 #include: "workflow/rules/processRawReads_no_concatenation.smk",
 #include: "workflow/rules/processRawReads.smk",
 #include: "workflow/rules/runMIDAS2.smk",
-#include: "workflow/rules/runMIDAS2_population.smk"
-include: "workflow/rules/processMIDAS2.smk"
+include: "workflow/rules/runMIDAS2_population.smk"
+#include: "workflow/rules/processMIDAS2.smk"
 #include: "workflow/rules/processSNPs.smk"

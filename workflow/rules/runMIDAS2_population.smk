@@ -22,9 +22,9 @@ rule compute_populationSNVs:
         expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples)
     output:
         #"workflow/out/midas2_output/merge_v2/snps/snps_summary.tsv",
-        "workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.tsv.lz4",
-        "workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_depth.tsv.lz4",
-        "workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_info.tsv.lz4",
+        "workflow/out/midas2_output/mergev3_{species}/snps/{species}/{species}.snps_freqs.tsv.lz4",
+        "workflow/out/midas2_output/mergev3_{species}/snps/{species}/{species}.snps_depth.tsv.lz4",
+        "workflow/out/midas2_output/mergev3_{species}/snps/{species}/{species}.snps_info.tsv.lz4",
     params:
         minCoverage=config["runMIDAS_speciesMinCoverage"],
         midasdb=config['midasdb'],
@@ -35,7 +35,7 @@ rule compute_populationSNVs:
         "../../workflow/envs/midas2_sw-no-builds.yml"
     shell:
         """
-        midas2 merge_snps --samples_list workflow/out/list_of_samples.tsv --species_list {wildcards.species}  --midasdb_name {params.midasdb} --genome_depth 1 --site_depth 1  --site_prev 0.0 --snp_maf 0.01  --advanced --midasdb_dir {params.midasdb_dir} --snp_type any --genome_coverage 0.5 --num_cores {threads} workflow/out/midas2_output/mergev2_{wildcards.species}
+        midas2 merge_snps --samples_list workflow/out/list_of_samples.tsv --species_list {wildcards.species}  --midasdb_name {params.midasdb} --genome_depth 1 --site_depth 1  --site_prev 0.0 --snp_maf 0.01  --advanced --midasdb_dir {params.midasdb_dir} --snp_type any --genome_coverage 0.5 --num_cores {threads} workflow/out/midas2_output/mergev3_{wildcards.species}
         """
 
 
@@ -60,13 +60,13 @@ rule compute_populationSNVs_prominent:
 
 rule decompresslz4: 
     input:
-        snpsDepth="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_depth.tsv.lz4",
-        snpsFreq="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.tsv.lz4",
-        snpsInfo="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_info.tsv.lz4",
+        snpsDepth="workflow/out/midas2_output/mergev3_{species}/snps/{species}/{species}.snps_depth.tsv.lz4",
+        snpsFreq="workflow/out/midas2_output/mergev3_{species}/snps/{species}/{species}.snps_freqs.tsv.lz4",
+        snpsInfo="workflow/out/midas2_output/mergev3_{species}/snps/{species}/{species}.snps_info.tsv.lz4",
     output:
-        snpsDepth="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_depth.tsv",
-        snpsFreq="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.tsv",
-        snpsInfo="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_info.tsv",
+        snpsDepth="workflow/out/midas2_output/mergev3_{species}/snps/{species}/{species}.snps_depth.tsv",
+        snpsFreq="workflow/out/midas2_output/mergev3_{species}/snps/{species}/{species}.snps_freqs.tsv",
+        snpsInfo="workflow/out/midas2_output/mergev3_{species}/snps/{species}/{species}.snps_info.tsv",
     shell:
         """
         lz4 -d --rm {input.snpsDepth} {output.snpsDepth}
