@@ -33,19 +33,16 @@ def filter_distinguishing_snps(freq_children, parent_snps, thresh = .5, sample_t
     passing_sites = freq_masked.count(axis = 1)
     passing_sites = passing_sites[passing_sites>= min_samples].index.values
     parent_snps_good = np.intersect1d(passing_sites, parent_snps)
-
     return parent_snps_good
 
 
 
 def get_frequency_parent(freq_children, parent_snps):
     median_freq = freq_children.loc[parent_snps,:].median(axis = 0)
-  
     return median_freq 
 
 def get_quantile_parent(freq_children, parent_snps, q= 97.5):
     median_freq = freq_children.loc[parent_snps,:].quantile(q, axis = 0)
-  
     return median_freq 
 
   # DataFrame.quantile(q=0.5, axis=0, numeric_only=False, interpolation='linear', method='single')
@@ -55,13 +52,11 @@ def get_frequency_parent_avg(freq_children, parent_snps, freq_thresh = 1.5):
     #freq_masked = freq_children.mask((freq_children > freq_thresh * med),axis = 0)
    # freq_masked = freq_masked .mask((freq_masked  < med / freq_thresh),axis = 0)
     freq_avg = (freq_children.loc[parent_snps,:].sum(axis = 0))/(len(parent_snps))
-
     return freq_avg
 
 def get_frac_zero(freq_children, parent_snps):
     frac_zero = (freq_children.loc[parent_snps,:] == 0).sum(axis=0)/len(parent_snps)
     return frac_zero 
-
 
 def fix_zeros(freq_parent,  depth_parent, freq_children, parent_snps):
     freq_parent_fix = freq_parent.copy()
@@ -74,12 +69,47 @@ def fix_zeros(freq_parent,  depth_parent, freq_children, parent_snps):
     freq_parent_fix[freq_parent_pol==0] = 1 + np.log(frac_one_parent[freq_parent_pol==0])/depth_parent[freq_parent_pol ==0]
     return freq_parent_fix
 
+def fix_zeros_bs(sample_meds, depth, bs_samples):
+    freq_parent_fix = freq_parent.copy()
+    frac_zero_parent= np.sum(bs_samples == 0, axis=0)
+    freq_parent_fix[freq_parent == 0] = -np.log(frac_zero_parent[freq_parent==0])/depth 
+    frac_one_parent= np.sum(bs_samples == 1, axis=0)
+    freq_parent_fix[freq_parent_pol==1] = 1 + np.log(frac_one_parent[freq_parent==1])/depth
+    return freq_parent_fix
+
+
+def get_bootstrap_parent(freq_children, depth_med, parent_snps, n_bootstraps = 1000):
+    #med = freq_children.loc[parent_snps,:].median(axis = 0)
+    #freq_masked = freq_children.mask((freq_children > freq_thresh * med),axis = 0)
+   # freq_masked = freq_masked .mask((freq_masked  < med / freq_thresh),axis = 0)
+    snps = freq_children.loc[parent_snps,:]
+    boot_med = []
+    boot_low = []
+    boot_high = []
+    act_med = []
+    for sample in snps.columns.values:
+        snps_sample= snps[sample].values
+        med_og = np.median(snps_sample)
+        if med_og == 0:
+            med_og = -np.log(np.sum(snps_sample == 0))/depth 
+        if med_og == 1:
+            med_og = -np.log(np.sum(snps_sample == 0))/depth 
+        act_med.append(med_og)
+        bs_samples = np.random.choice(snps_sample, size = (len(snps), n_bootstraps))
+        samples_meds = samples.median(axis = 0)
+        samples_meds_fix = fix_zeros_bs(sample_meds, depth_med[sample].values, bs_samples)
+        boot_med.append(np.median(samples_meds_fix))
+        boot_low.append(np.percentile(samples_meds_fix, q =2.5))
+        boot_high.append(np.percentile(samples_meds_fix, q = .97.5))
+    return pd.DataFrame(data = {'sample': snps.columns.values, 'boot_med': boot_med, 'boot_low': boot_low, 'boot_high': boot_high,
+                                    'actual_med': act_med})
+
+
 def get_parent_children(inoculumn):
 #    metadata = pd.read_csv('config/e003_coal_metadata_full.csv')
     metadata = pd.read_csv('config/e003_metadata_cultures_round2.csv')
     child_samples = list(metadata.loc[metadata['inoculumn'] == inoculumn, 'sample'].values)
     
-
     parent_subjects = inoculumn.split('-')[:-1]
     parent_media = inoculumn.split('-')[-1]
     ins = metadata.loc[metadata['is_inoculumn'],:]
@@ -143,40 +173,15 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
     print('after', len(parent1_snps), len(parent2_snps))
     med_depth_children = depth_filtered.copy().replace(0, np.nan).median(skipna=True)
 
-    freq_parent1 = get_frequency_parent(freq_filtered, parent1_snps)
-    avg_parent1 = get_frequency_parent_avg(freq_filtered, parent1_snps)
-    frac_zero_parent1 = get_frac_zero(freq_filtered, parent1_snps)
-    freq_parent1 = fix_zeros(freq_parent1,  med_depth_children, freq_filtered, parent1_snps)
-    q_high_parent1 = pd.DataFrame(get_quantile_parent(freq_filtered, parent1_snps, q= .975)).rename(columns = {0: parent_samples[0]})  
-    q_low_parent1 = pd.DataFrame(get_quantile_parent(freq_filtered, parent1_snps, q= .025)).rename(columns = {0: parent_samples[0]})  
-#    print(freq_parent1)
-    freq_parent1 = pd.DataFrame(freq_parent1).rename(columns = {0: parent_samples[0]})
-    avg_parent1 = pd.DataFrame(avg_parent1).rename(columns = {0: parent_samples[0]})
-    frac_zero_parent1  = pd.DataFrame(frac_zero_parent1).rename(columns = {0: parent_samples[0]})
-
-   # print(freq_parent1)
-  #  freq_parent1['parent'] = parent_samples[0]
-    
-    avg_parent2= get_frequency_parent_avg(freq_filtered, parent2_snps)
-    freq_parent2 = get_frequency_parent(freq_filtered, parent2_snps)
-    frac_zero_parent2 = get_frac_zero(freq_filtered, parent2_snps) 
-
- #   print(med_depth_children)
-    freq_parent2 = fix_zeros(freq_parent2,  med_depth_children, freq_filtered, parent2_snps)
-    q_high_parent2 = pd.DataFrame(get_quantile_parent(freq_filtered, parent2_snps, q= .975)).rename(columns = {0: parent_samples[1]})  
-    q_low_parent2 = pd.DataFrame(get_quantile_parent(freq_filtered, parent2_snps, q= .025)).rename(columns = {0: parent_samples[1]})  
-
-
-    freq_parent2 = pd.DataFrame(freq_parent2).rename(columns = {0: parent_samples[1]})  
-    avg_parent2= pd.DataFrame(avg_parent2).rename(columns = {0: parent_samples[1]})
-    frac_zero_parent2  = pd.DataFrame(frac_zero_parent2).rename(columns = {0: parent_samples[1]})
-
     count_parent1 = pd.DataFrame(get_count(freq_filtered, parent1_snps)).rename(columns = {0: parent_samples[0]})  
     count_parent2 = pd.DataFrame(get_count(freq_filtered, parent2_snps)).rename(columns = {0: parent_samples[1]})  
+
+    parent1_info = get_bootstrap_parent(freq_children, depth_med, parent1_snps, n_bootstraps = 1000)
+    parent2_info = get_bootstrap_parent(freq_children, depth_med, parent2_snps, n_bootstraps = 1000)
 # freq_parent2 = freq_parent2.T
    # freq_parent2['parent'] = parent_samples[1]
    # print(freq_parent2)
-    return pd.concat([freq_parent1, freq_parent2],axis=1), pd.concat([avg_parent1, avg_parent2],axis=1),pd.concat([frac_zero_parent1, frac_zero_parent2],axis=1), pd.concat([count_parent1, count_parent2],axis=1),pd.concat([q_low_parent1, q_low_parent2],axis=1), pd.concat([q_high_parent1, q_high_parent2],axis=1), distinguishing_snps
+    return pd.concat([count_parent1, count_parent2],axis=1), parent1_info, parent2_info 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='basic filtering of sites')
@@ -220,7 +225,7 @@ if __name__ == '__main__':
     depth_filtered_in, freq_filtered_in = filter_sites_across_samples(depth_filtered, 
         freq_filtered,thresh=.75)
     for inoculumn in inoculumn_list:
-        #print(inoculumn)
+        print(inoculumn)
         parent_samples, child_samples = get_parent_children(inoculumn)
       #  print(parent_samples)
 #        print(freq_filtered.columns.values)
@@ -239,16 +244,15 @@ if __name__ == '__main__':
         if parent_samples[0] == 'A2-e003Coalescence-Inoculumn-mBHI':
             parent_samples = ['A2-e003Coalescence-mBHI-inoculumn-redo', parent_samples[1]]
         
-        freq_parents, freq_avg_parents, frac_zero_parents, count_parents,qlow,qhigh, distinguishing_snps = get_main(species_dir,args.species, parent_samples, child_samples, 
+        count_parents1, parent1_info, parent2_info = get_main(species_dir,args.species, parent_samples, child_samples, 
             freq_filtered_in[parent_samples+child_samples],  depth_filtered_in[parent_samples+child_samples])
+
         inoculumn = ''.join(inoculumn.split('/'))
-        freq_parents.to_csv(f'{save_dir}/{inoculumn}_parent_freqs.csv')
-        freq_avg_parents.to_csv(f'{save_dir}/{inoculumn}_parent_freqs_avg.csv')
-        frac_zero_parents.to_csv(f'{save_dir}/{inoculumn}_frac_zero_parents.csv')
+        
+
         count_parents.to_csv(f'{save_dir}/{inoculumn}_count_parents.csv')
-        qlow.to_csv(f'{save_dir}/{inoculumn}_qlow.csv')
-        qhigh.to_csv(f'{save_dir}/{inoculumn}_qhigh.csv')
-        count_parents.to_csv(f'{save_dir}/{inoculumn}_distinguishing_snps.csv')    
+        parent1_info.to_csv(f'{save_dir}/{inoculumn}_parent1_info.csv')
+        parent2_info.to_csv(f'{save_dir}/{inoculumn}_parent2_info.csv')
 
       #  distinguishing_snps.to_csv(f'{save_dir}/{inoculumn}_distinguishing_snps.csv')
        # freq_filtered_in.loc[distinguishing_snps.index.values,:].to_csv(f'{species_dir}/{inoculumn}_distinguishing_snps_freq.csv.gz',compression = 'gzip')
