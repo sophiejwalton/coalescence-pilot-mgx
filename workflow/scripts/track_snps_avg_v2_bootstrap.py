@@ -89,8 +89,10 @@ def get_bootstrap_parent(freq_children, depth_med, parent_snps, n_bootstraps = 1
     boot_low = []
     boot_high = []
     act_med = []
+    samples_good = []
     for sample in snps.columns.values:
         snps_sample= snps[sample].values
+        
         snps_sample = snps_sample[~np.isnan(snps_sample)]
         med_og = np.median(snps_sample)
         #print(snps_sample)
@@ -103,7 +105,7 @@ def get_bootstrap_parent(freq_children, depth_med, parent_snps, n_bootstraps = 1
         elif med_og == 1:
             med_og = 1+np.log(np.sum(snps_sample == 1)/n_snps)/depth_med[sample] 
             print('one', med_og)
-        act_med.append(med_og)
+    #    act_med.append(med_og)
         if len(snps_sample) == 0: continue 
         bs_samples = np.random.choice(snps_sample, size = (len(snps), n_bootstraps))
         samples_meds = np.median(bs_samples,axis = 0)
@@ -111,10 +113,12 @@ def get_bootstrap_parent(freq_children, depth_med, parent_snps, n_bootstraps = 1
 #inoculumns = ['AA-AE-mGAM', 'AA-AF-mGAM'
         print(np.sum(samples_meds==1),np.sum(samples_meds==0), 'sums')  
         samples_meds_fix = fix_zeros_bs(samples_meds, depth_med[sample], bs_samples,n_snps)
+        samples_good.append(sample)
         boot_med.append(np.median(samples_meds_fix))
         boot_low.append(np.percentile(samples_meds_fix, q =2.5))
+        act_med.append(med_og)
         boot_high.append(np.percentile(samples_meds_fix, q = 97.5))
-    return pd.DataFrame(data = {'sample': snps.columns.values, 'boot_med': boot_med, 'boot_low': boot_low, 'boot_high': boot_high,
+    return pd.DataFrame(data = {'sample': samples_good, 'boot_med': boot_med, 'boot_low': boot_low, 'boot_high': boot_high,
                                     'actual_med': act_med})
 
 
