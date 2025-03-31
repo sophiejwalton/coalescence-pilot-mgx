@@ -69,12 +69,14 @@ def fix_zeros(freq_parent,  depth_parent, freq_children, parent_snps):
     freq_parent_fix[freq_parent_pol==0] = 1 + np.log(frac_one_parent[freq_parent_pol==0])/depth_parent[freq_parent_pol ==0]
     return freq_parent_fix
 
-def fix_zeros_bs(sample_meds, depth, bs_samples):
-    freq_parent_fix = freq_parent.copy()
-    frac_zero_parent= np.sum(bs_samples == 0, axis=0)
-    freq_parent_fix[freq_parent == 0] = -np.log(frac_zero_parent[freq_parent==0])/depth 
-    frac_one_parent= np.sum(bs_samples == 1, axis=0)
-    freq_parent_fix[freq_parent_pol==1] = 1 + np.log(frac_one_parent[freq_parent==1])/depth
+def fix_zeros_bs(sample_meds, depth, bs_samples,n_snps):
+    freq_parent_fix = sample_meds.copy()
+    frac_zero_parent= np.sum(bs_samples == 0, axis=0)/n_snps
+    print(len(frac_zero_parent), np.max(frac_zero_parent),n_snps, len(freq_parent_fix))
+    freq_parent_fix[freq_parent_fix == 0] = -np.log(frac_zero_parent[freq_parent_fix==0])/depth 
+    frac_one_parent= np.sum(bs_samples == 1, axis=0)/n_snps
+    print(np.max(frac_one_parent),'pot')
+    freq_parent_fix[freq_parent_fix==1] = 1 + np.log(frac_one_parent[freq_parent_fix==1])/depth
     return freq_parent_fix
 
 
@@ -89,18 +91,29 @@ def get_bootstrap_parent(freq_children, depth_med, parent_snps, n_bootstraps = 1
     act_med = []
     for sample in snps.columns.values:
         snps_sample= snps[sample].values
+        snps_sample = snps_sample[~np.isnan(snps_sample)]
         med_og = np.median(snps_sample)
+        #print(snps_sample)
+        n_snps = len(parent_snps)
+        print(med_og)
+     #   print(np.max(snps_sample))
         if med_og == 0:
-            med_og = -np.log(np.sum(snps_sample == 0))/depth 
-        if med_og == 1:
-            med_og = -np.log(np.sum(snps_sample == 0))/depth 
+            med_og = -np.log(np.sum(snps_sample == 0)/n_snps)/depth_med[sample]
+            print('zero', med_og) 
+        elif med_og == 1:
+            med_og = 1+np.log(np.sum(snps_sample == 1)/n_snps)/depth_med[sample] 
+            print('one', med_og)
         act_med.append(med_og)
+        if len(snps_sample) == 0: continue 
         bs_samples = np.random.choice(snps_sample, size = (len(snps), n_bootstraps))
-        samples_meds = samples.median(axis = 0)
-        samples_meds_fix = fix_zeros_bs(sample_meds, depth_med[sample].values, bs_samples)
+        samples_meds = np.median(bs_samples,axis = 0)
+#species_list = [102279]
+#inoculumns = ['AA-AE-mGAM', 'AA-AF-mGAM'
+        print(np.sum(samples_meds==1),np.sum(samples_meds==0), 'sums')  
+        samples_meds_fix = fix_zeros_bs(samples_meds, depth_med[sample], bs_samples,n_snps)
         boot_med.append(np.median(samples_meds_fix))
         boot_low.append(np.percentile(samples_meds_fix, q =2.5))
-        boot_high.append(np.percentile(samples_meds_fix, q = .97.5))
+        boot_high.append(np.percentile(samples_meds_fix, q = 97.5))
     return pd.DataFrame(data = {'sample': snps.columns.values, 'boot_med': boot_med, 'boot_low': boot_low, 'boot_high': boot_high,
                                     'actual_med': act_med})
 
@@ -164,20 +177,20 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
     #distinguishing_snps.to_csv('distinguishing_snps.csv')
     parent1_snps = distinguishing_snps[distinguishing_snps == 1].index.values
     parent2_snps = distinguishing_snps[distinguishing_snps == -1].index.values
-   # freq_children = freq_filtered[child_samples]
-   # depth_children = depth_filtered[child_samples]
+    freq_children = freq_filtered[child_samples]
+    depth_children = depth_filtered[child_samples]
    
     print('before', len(parent1_snps), len(parent2_snps))
     parent1_snps = filter_distinguishing_snps(freq_filtered[child_samples], parent1_snps, thresh = .5, sample_thresh=.75)
     parent2_snps = filter_distinguishing_snps(freq_filtered[child_samples], parent2_snps, thresh = .5, sample_thresh=.75)
     print('after', len(parent1_snps), len(parent2_snps))
-    med_depth_children = depth_filtered.copy().replace(0, np.nan).median(skipna=True)
+    med_depth_children = depth_children.copy().replace(0, np.nan).median(skipna=True)
 
-    count_parent1 = pd.DataFrame(get_count(freq_filtered, parent1_snps)).rename(columns = {0: parent_samples[0]})  
-    count_parent2 = pd.DataFrame(get_count(freq_filtered, parent2_snps)).rename(columns = {0: parent_samples[1]})  
+    count_parent1 = pd.DataFrame(get_count(freq_children, parent1_snps)).rename(columns = {0: parent_samples[0]})  
+    count_parent2 = pd.DataFrame(get_count(freq_children, parent2_snps)).rename(columns = {0: parent_samples[1]})  
 
-    parent1_info = get_bootstrap_parent(freq_children, depth_med, parent1_snps, n_bootstraps = 1000)
-    parent2_info = get_bootstrap_parent(freq_children, depth_med, parent2_snps, n_bootstraps = 1000)
+    parent1_info = get_bootstrap_parent(freq_children, med_depth_children, parent1_snps, n_bootstraps = 1000)
+    parent2_info = get_bootstrap_parent(freq_children, med_depth_children, parent2_snps, n_bootstraps = 1000)
 # freq_parent2 = freq_parent2.T
    # freq_parent2['parent'] = parent_samples[1]
    # print(freq_parent2)
@@ -244,7 +257,7 @@ if __name__ == '__main__':
         if parent_samples[0] == 'A2-e003Coalescence-Inoculumn-mBHI':
             parent_samples = ['A2-e003Coalescence-mBHI-inoculumn-redo', parent_samples[1]]
         
-        count_parents1, parent1_info, parent2_info = get_main(species_dir,args.species, parent_samples, child_samples, 
+        count_parents, parent1_info, parent2_info = get_main(species_dir,args.species, parent_samples, child_samples, 
             freq_filtered_in[parent_samples+child_samples],  depth_filtered_in[parent_samples+child_samples])
 
         inoculumn = ''.join(inoculumn.split('/'))

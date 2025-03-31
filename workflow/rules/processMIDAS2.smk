@@ -126,7 +126,7 @@ rule trackSNPsAVG_same_subject:
 
 
 
-rule trackSNPsAVG:
+rule trackSNPsAVG_bootstrap:
     input:
        # snpsDepth="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_depth.tsv.gz",
         snpsFreq="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.tsv.gz",

@@ -77,8 +77,8 @@ for species in species_list2:
     #   'AE-AF-mGAM', 'AE-AF-mBHI',]
 #samples.remove('H5-e003Coalescence-mGAM-p7_S184') # ADD BACK AFTER FIRST QUICK CHECK 
 #species_list = species_list2
-print(df.head())
-print('wee',np.sort(samples))
+#print(df.head())
+#print('wee',np.sort(samples))
 species_list = [101346,102478, 100099]
 rule all:
     input:
