@@ -81,7 +81,7 @@ samples.remove('Coalescence-C4-A3-AA-ACPP-mBHI-mBHI-5_S647')
 #species_list = species_list2
 #print(df.head())
 #print('wee',np.sort(samples))
-species_list = [101346]#,102478, 100099]
+species_list = [101346, 10196]#,102478, 100099]
 rule all:
     input:
        # expand("workflow/out/trimmed/{sample}-trimmed-pair1.fastq.gz",sample=samples),
@@ -93,13 +93,15 @@ rule all:
 #        "workflow/out/midas2_output/merge/snps/snps_summary.tsv",
       # "workflow/out/midas2_output/merge_bacteroides/snps/snps_summary.tsv",
       #  expand("workflow/out/midasOutput/{sample}/species/species_profile.txt",sample=samples),
-        expand("workflow/out/midas2_output/mergev3_{species}/snps/{species}/{species}.snps_freqs.tsv.lz4", species=species_list),
+      #  expand("workflow/out/midas2_output/mergev3_{species}/snps/{species}/{species}.snps_freqs.tsv.lz4", species=species_list),
       #  expand("workflow/out/midas2_output/merge/snps/{species}/{species}.snps_freqs.tsv.gz", species=species_list),
       #  expand("workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df1.csv",species=species_list),     
        # expand("workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv",species=species_list),  
      #   expand("workflow/report/track_snpsv2_ALL/{species}/done.txt", species=species_list),   
 #        expand("workflow/report/track_snpsv2_ALL_bootstrap/{species}/done.txt", species=species_list), 
       #  expand("workflow/report/calculateFixedDiffsFast/{species}/{species}_fixed_diffs.csv",species=species_list),
+        expand("workflow/report/track_snpsv2_sel_bootstrap/{species}/done.txt",  species=species_list)
+
        # expand("workflow/report/track_snpsv2_ALL_same_subject/{species}/done.txt",species=species_list),
       #  workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv
 #  "workflow/report/calculateFixedDiffs/100013/100013_fixed_diffs.csv"
