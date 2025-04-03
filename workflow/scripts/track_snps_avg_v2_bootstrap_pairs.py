@@ -111,20 +111,23 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
         samples = [inoculumn] + samples
         passages = [0] + passages
         print(samples, snps.columns.values)
-        snps_samples = snps[samples].values 
-        depths = depth_med[samples].values
+       #snps_samples = snps[samples].values 
+       # depths = depth_med[samples].values
+        bs_samples = []
+        for sample in samples:
+            snps_sample = snps[sample].values
+            bs_samples = np.random.choice(snps_sample, size = ( len(snps), n_bootstraps))
+            medians = np.nanmedian(bs_samples, axis=0)
 
-        bs_samples = np.random.choice(snps_samples, size = ( len(snps), n_bootstraps, len(samples)))
-        medians = np.nanmedian(bs_samples, axis=0)
+            b_frac_zero = np.sum(bs_samples == 0, axis = 0)/n_snps
+            b_frac_zero = -np.log(b_frac_zero)/depth_med[sample].values[0]
 
-        b_frac_zero = np.sum(bs_samples == 0, axis = 0)/n_snps
-        b_frac_zero = -np.log(b_frac_zero)/depths
+            b_frac_one = np.sum(bs_samples == 1, axis = 0)/n_snps
+            b_frac_one = 1+ np.log(b_frac_zero)/depth_med[sample].values[0]
 
-        b_frac_one = np.sum(bs_samples == 1, axis = 0)/n_snps
-        b_frac_one = 1+ np.log(b_frac_zero)/depths
-
-        medians[medians == 0 ] = b_frac_zero[medians == 0]
-        medians[medians == 1 ] = b_frac_zero[medians == 1]
+            medians[medians == 0 ] = b_frac_zero[medians == 0]
+            medians[medians == 1 ] = b_frac_zero[medians == 1]
+            bs_samples.append(medians)
 
         for combo in np.itertools(np.arange(len(passages))):
             combo = np.sort([combo[0], combo[1]])
@@ -135,8 +138,8 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
             dt = passage2-passage1
 
             all_medians = medians[:,combo]
-            sel_coeffs = (1/dt)*(np.log(medians[:,combo[1]]/(1-medians[:,combo[1]])) + \
-                             np.log((1-medians[:,combo[0]])/(medians[:,combo[0]])))
+            sel_coeffs = (1/dt)*(np.log(medians[combo[1]]/(1-medians[combo[1]])) + \
+                             np.log((1-medians[combo[0]])/(medians[combo[0]])))
             sel_inf_upper.append(np.quantile(sel_coeffs, q = 97.5))
             passage1s.append(passage1)
             passage2s.append(passage2)
