@@ -154,7 +154,7 @@ rule trackSNPsAVG_bootstrap_pairs:
        # snpsInfo="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_info.tsv.gz",
        # wo="workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv"
     output:
-        "workflow/report/track_snpsv2_ALL_bootstrap/{species}/done.txt"
+        "workflow/report/track_snpsv2_sel_bootstrap/{species}/done.txt"
     params:
         indir="workflow/out/midas2_output/mergev2_{species}/snps/",
         outdir="workflow/report/track_snpsv2_sel_bootstrap/",

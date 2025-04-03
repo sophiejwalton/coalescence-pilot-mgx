@@ -85,12 +85,13 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
     #freq_masked = freq_children.mask((freq_children > freq_thresh * med),axis = 0)
    # freq_masked = freq_masked .mask((freq_masked  < med / freq_thresh),axis = 0)
     snps = freq_children.loc[parent_snps,:]
+    print(snps.columns.values)
     boot_med = []
     boot_low = []
     boot_high = []
     act_med = []
     samples_good = []
-
+    metadata = metadata.loc[metadata['sample'].isin(snps.columns.values),:]
     metadata_non_zero = metadata.loc[metadata['passage']>0,:].sort_values(by='passage')
     n_snps = len(parent_snps)
     passage1s=[]
@@ -107,12 +108,13 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
         inoculumn = metadata.loc[metadata['mesocosm'] == mesocosm, 'inoculumn_sample'].values[0]
         if inoculumn not in metadata['sample'].values:
             continue 
-        samples = [inoculumn] + [samples]
+        samples = [inoculumn] + samples
         passages = [0] + passages
+        print(samples, snps.columns.values)
         snps_samples = snps[samples].values 
-        depths = depths_all[samples].values
+        depths = depth_med[samples].values
 
-        bs_samples = np.random.choice(snps_sample, size = ( len(snps), n_bootstraps, len(samples)))
+        bs_samples = np.random.choice(snps_samples, size = ( len(snps), n_bootstraps, len(samples)))
         medians = np.nanmedian(bs_samples, axis=0)
 
         b_frac_zero = np.sum(bs_samples == 0, axis = 0)/n_snps
@@ -135,8 +137,6 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
             all_medians = medians[:,combo]
             sel_coeffs = (1/dt)*(np.log(medians[:,combo[1]]/(1-medians[:,combo[1]])) + \
                              np.log((1-medians[:,combo[0]])/(medians[:,combo[0]])))
-            sel_inf_med.append(np.median(sel_coeffs))
-            sel_inf_lower.append(np.quantile(sel_coeffs, q = 2.5))
             sel_inf_upper.append(np.quantile(sel_coeffs, q = 97.5))
             passage1s.append(passage1)
             passage2s.append(passage2)
@@ -224,8 +224,8 @@ def get_main(metadata, species_dir,species, parent_samples, child_samples, freq_
    # count_parent1 = pd.DataFrame(get_count(freq_children, parent1_snps)).rename(columns = {0: parent_samples[0]})  
    # count_parent2 = pd.DataFrame(get_count(freq_children, parent2_snps)).rename(columns = {0: parent_samples[1]})  
 
-    parent1_info = get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent1_snps, n_bootstraps = 1000)
-    parent2_info = get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent2_snps, n_bootstraps = 1000)
+    parent1_info = get_bootstrap_sel_coeffs(metadata, freq_children, med_depth_children, parent1_snps, n_bootstraps = 1000)
+    parent2_info = get_bootstrap_sel_coeffs(metadata, freq_children, med_depth_children, parent2_snps, n_bootstraps = 1000)
 # freq_parent2 = freq_parent2.T
    # freq_parent2['parent'] = parent_samples[1]
    # print(freq_parent2)
@@ -256,7 +256,7 @@ if __name__ == '__main__':
     #print(info.columns.values)
     #print(info.index.values)
     freq = repolarize_against_reference(freq, info)
-    metadata = pd.read_csv('config/e003_metadata_cultures_round2.csv')
+    metadata = pd.read_csv('workflow/analysis/e003_metadata_cultures_round2_change_AA.csv')
 
     med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
     med_nonzero_depth.to_csv(f'{save_dir}/{args.species}_median_depths.csv')
@@ -293,7 +293,7 @@ if __name__ == '__main__':
         if parent_samples[0] == 'A2-e003Coalescence-Inoculumn-mBHI':
             parent_samples = ['A2-e003Coalescence-mBHI-inoculumn-redo', parent_samples[1]]
         
-        count_parents, parent1_info, parent2_info = get_main(species_dir,args.species, parent_samples, child_samples, 
+        parent1_info, parent2_info = get_main(metadata,species_dir,args.species, parent_samples, child_samples, 
             freq_filtered_in[parent_samples+child_samples],  depth_filtered_in[parent_samples+child_samples])
 
         inoculumn = ''.join(inoculumn.split('/'))
