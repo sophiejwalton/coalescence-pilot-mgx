@@ -123,10 +123,10 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
             b_frac_zero = -np.log(b_frac_zero)/depth_med[sample]
 
             b_frac_one = np.sum(bs_samples == 1, axis = 0)/n_snps
-            b_frac_one = 1+ np.log(b_frac_zero)/depth_med[sample]
+            b_frac_one = 1+ np.log(b_frac_one)/depth_med[sample]
 
             meds[meds == 0 ] = b_frac_zero[meds == 0]
-            meds[meds == 1 ] = b_frac_zero[meds == 1]
+            meds[meds == 1 ] = b_frac_one[meds == 1]
             medians.append(meds)
 
         for combo in it.combinations(np.arange(len(passages)),2):
