@@ -81,7 +81,8 @@ samples.remove('Coalescence-C4-A3-AA-ACPP-mBHI-mBHI-5_S647')
 #species_list = species_list2
 #print(df.head())
 #print('wee',np.sort(samples))
-species_list = [101346, 100196]#,102478, 100099]
+#species_list = [101346, 100196]#,102478, 100099]
+#species_list = [101346]
 rule all:
     input:
        # expand("workflow/out/trimmed/{sample}-trimmed-pair1.fastq.gz",sample=samples),

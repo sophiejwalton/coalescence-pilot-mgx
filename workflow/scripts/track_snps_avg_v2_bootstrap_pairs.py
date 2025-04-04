@@ -101,7 +101,7 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
     sel_inf_lower=[]
     sel_inf_upper=[]
     sel_inf_med = []
-    mesocosm = []
+    mesocosms = []
     for mesocosm in metadata['mesocosm'].unique():
         samples = list(metadata_non_zero.loc[metadata_non_zero['mesocosm'] == mesocosm, 'sample'].values)
         passages = list(metadata_non_zero.loc[metadata_non_zero['mesocosm'] == mesocosm, 'passage'].values)
@@ -113,23 +113,23 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
         print(samples, snps.columns.values)
        #snps_samples = snps[samples].values 
        # depths = depth_med[samples].values
-        bs_samples = []
+        medians = []
         for sample in samples:
             snps_sample = snps[sample].values
             bs_samples = np.random.choice(snps_sample, size = ( len(snps), n_bootstraps))
-            medians = np.nanmedian(bs_samples, axis=0)
+            meds = np.nanmedian(bs_samples, axis=0)
 
             b_frac_zero = np.sum(bs_samples == 0, axis = 0)/n_snps
-            b_frac_zero = -np.log(b_frac_zero)/depth_med[sample].values[0]
+            b_frac_zero = -np.log(b_frac_zero)/depth_med[sample]
 
             b_frac_one = np.sum(bs_samples == 1, axis = 0)/n_snps
-            b_frac_one = 1+ np.log(b_frac_zero)/depth_med[sample].values[0]
+            b_frac_one = 1+ np.log(b_frac_zero)/depth_med[sample]
 
-            medians[medians == 0 ] = b_frac_zero[medians == 0]
-            medians[medians == 1 ] = b_frac_zero[medians == 1]
-            bs_samples.append(medians)
+            meds[meds == 0 ] = b_frac_zero[meds == 0]
+            meds[meds == 1 ] = b_frac_zero[meds == 1]
+            medians.append(meds)
 
-        for combo in np.itertools(np.arange(len(passages))):
+        for combo in it.combinations(np.arange(len(passages)),2):
             combo = np.sort([combo[0], combo[1]])
             passage1 = passages[combo[0]]
             passage2 = passages[combo[1]]
@@ -137,18 +137,20 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
             sample2 = samples[combo[1]]
             dt = passage2-passage1
 
-            all_medians = medians[:,combo]
+          #  all_medians = medians[:,combo]
             sel_coeffs = (1/dt)*(np.log(medians[combo[1]]/(1-medians[combo[1]])) + \
                              np.log((1-medians[combo[0]])/(medians[combo[0]])))
-            sel_inf_upper.append(np.quantile(sel_coeffs, q = 97.5))
+            sel_inf_upper.append(np.quantile(sel_coeffs, q = .975))
+            sel_inf_lower.append(np.quantile(sel_coeffs,q=.025))
+            sel_inf_med.append(np.median(sel_coeffs))
             passage1s.append(passage1)
             passage2s.append(passage2)
             sample1s.append(sample1)
             sample2s.append(sample2)
             mesocosms.append(mesocosm)
     df = pd.DataFrame(data = {'sample1': sample1s, 'sample2': sample2s, 'passage1': passage1s, 'passage2': passage2s, 
-                                'mesocosms': mesocosms, 'sel_med': sel_inf_med, 'sel_lower': sel_info_lower, 
-                                'sel_upper': sel_info_upper, 
+                                'mesocosms': mesocosms, 'sel_med': sel_inf_med, 'sel_lower': sel_inf_lower, 
+                                'sel_upper': sel_inf_upper, 
                                 })
     df['n_snps'] = n_snps
     return df
