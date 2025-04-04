@@ -166,3 +166,25 @@ rule trackSNPsAVG_bootstrap_pairs:
         python3 workflow/scripts/track_snps_avg_v2_bootstrap_pairs.py --outdir {params.outdir} --indir {params.indir} --species {wildcards.species}
         touch {params.outdir}/{wildcards.species}/done.txt
         """
+
+
+
+rule trackSNPsAVG_shift_sel:
+    input:
+       # snpsDepth="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_depth.tsv.gz",
+        snpsFreq="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.tsv.gz",
+       # snpsInfo="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_info.tsv.gz",
+       # wo="workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv"
+    output:
+        "workflow/report/track_snpsv2_shift_self_test/{species}/done.txt"
+    params:
+        indir="workflow/out/midas2_output/mergev2_{species}/snps/",
+        outdir="workflow/report/track_snpsv2_shift_self_test/",
+        #species={species}
+  #  conda:
+   #     "../../workflow/envs/snps_analysis_tools-no-builds.yml"
+    shell:
+        """
+        python3 workflow/scripts/track_snps_avg_v2_sample_quads_pairs.py --outdir {params.outdir} --indir {params.indir} --species {wildcards.species}
+        touch {params.outdir}/{wildcards.species}/done.txt
+        """

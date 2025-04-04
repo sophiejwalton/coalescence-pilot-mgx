@@ -82,7 +82,7 @@ samples.remove('Coalescence-C4-A3-AA-ACPP-mBHI-mBHI-5_S647')
 #print(df.head())
 #print('wee',np.sort(samples))
 #species_list = [101346, 100196]#,102478, 100099]
-#species_list = [101346]
+species_list = [101346]
 rule all:
     input:
        # expand("workflow/out/trimmed/{sample}-trimmed-pair1.fastq.gz",sample=samples),
@@ -101,7 +101,8 @@ rule all:
      #   expand("workflow/report/track_snpsv2_ALL/{species}/done.txt", species=species_list),   
 #        expand("workflow/report/track_snpsv2_ALL_bootstrap/{species}/done.txt", species=species_list), 
       #  expand("workflow/report/calculateFixedDiffsFast/{species}/{species}_fixed_diffs.csv",species=species_list),
-        expand("workflow/report/track_snpsv2_sel_bootstrap/{species}/done.txt",  species=species_list)
+        expand("workflow/report/track_snpsv2_sel_bootstrap/{species}/done.txt",  species=species_list),
+        expand("workflow/report/track_snpsv2_shift_self_test/{species}/done.txt",  species=species_list),
 
        # expand("workflow/report/track_snpsv2_ALL_same_subject/{species}/done.txt",species=species_list),
       #  workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv
