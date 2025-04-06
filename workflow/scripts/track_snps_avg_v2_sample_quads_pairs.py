@@ -80,7 +80,7 @@ def fix_zeros_bs(sample_meds, depth, bs_samples,n_snps):
     return freq_parent_fix
 
 
-def get_freq_est(snps,depth)
+def get_freq_est(snps,depth):
     med = np.nanmedian(snps)
     if med == 0:
         frac_zero = np.sum(snps == 0)/len(snps)
@@ -91,7 +91,7 @@ def get_freq_est(snps,depth)
     return med 
 
 
-def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_bootstraps = 1000):
+def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_bootstraps = 10000):
     #med = freq_children.loc[parent_snps,:].median(axis = 0)
     #freq_masked = freq_children.mask((freq_children > freq_thresh * med),axis = 0)
    # freq_masked = freq_masked .mask((freq_masked  < med / freq_thresh),axis = 0)
@@ -113,8 +113,10 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
     pred_7_lower= []
     pred_med = []
     mesocosms = []
+    as_extreme = []
+    act_7 = []
     for mesocosm in metadata['mesocosm'].unique():
-        meso_df = metadata_non_zero.loc[metadata_non_zero['mesocosm'] == mesocosm, 'sample'].values
+        meso_df = metadata_non_zero.loc[metadata_non_zero['mesocosm'] == mesocosm, :]
         passages = list(metadata_non_zero.loc[metadata_non_zero['mesocosm'] == mesocosm, 'passage'].values)
         inoculumn = metadata.loc[metadata['mesocosm'] == mesocosm, 'inoculumn_sample'].values[0]
         if inoculumn not in metadata['sample'].values:
@@ -132,36 +134,39 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
         pred_7_ests = np.zeros(n_bootstraps)
         est_7s_ests = np.zeros(n_bootstraps)
         for sample in range(n_bootstraps):
-            bs_sample = np.random.shuffle(parent_snps)
+            bs_sample = np.random.choice(parent_snps, size=len(parent_snps),replace=False)
             int1 = round(len(bs_sample)/3)
-            int3 = round(2*len(bs_sample)/3)
+            int2 = round(2*len(bs_sample)/3)
 
             passage0_est = get_freq_est(snps.loc[bs_sample[:int1],sample0].values, 
                         depth_med[sample0] )
             passage3_est = get_freq_est(snps.loc[bs_sample[int1+1:int2],sample3].values, 
-                        depth_med[sample0] )
+                       depth_med[sample3].values[0] )
             passage7_est = get_freq_est(snps.loc[bs_sample[int2+1:],sample7].values, 
-                        depth_med[sample0] )
+                        depth_med[sample7].values[0] )
             
             dt = 3
             sel_coeff_03 = (1/dt)*(np.log(passage3_est/(1-passage3_est)) + \
                                 np.log((1-passage0_est)/(passage0_est)))
             pred_p7 = np.exp(7*sel_coeff_03)
             pred_p7 = pred_p7*passage0_est/(1 - passage0_est + passage0_est*pred_p7)
-
+          #  print(pred_p7, passage7_est)
             diffs[sample] = pred_p7 - passage7_est 
             est_7s_ests[sample] = passage7_est
             pred_7_ests[sample] = pred_p7 
-        diff_info_upper.append(np.quantile(diffs q = .975))
-        diff_info_lower.append(np.quantile(diffs q = .025))
+        diff_info_upper.append(np.quantile(diffs, q = .975))
+        diff_info_lower.append(np.quantile(diffs, q = .025))
         pred_7_upper.append(np.quantile(pred_7_ests, q = .975))
         pred_7_lower.append(np.quantile(pred_7_ests, q = .025))
         pred_med.append(np.median(pred_7_ests))
         diff_info_med.append(np.median(diffs))
         mesocosms.append(mesocosm)
+        p7_act = get_freq_est(snps.loc[parent_snps,sample7].values, depth_med[sample7].values[0])
+        act_7.append(get_freq_est(snps.loc[parent_snps,sample7].values, depth_med[sample7].values[0]))
+        as_extreme.append(np.sum(p7_act>pred_7_ests))
     df = pd.DataFrame(data = { 'mesocosms': mesocosms, 'diff_med': diff_info_med, 'diff_lower': diff_info_lower, 
-                                'diff_upper': diff_info_upper, 'pred_7_upper': pred_7_upper,
-                                'pred_7_lower': pred_7_lower, 'pred_med': pred_med,
+                                'diff_upper': diff_info_upper, 'pred_7_upper': pred_7_upper, 'act_7': act_7,
+                                'pred_7_lower': pred_7_lower, 'pred_med': pred_med,'as_extreme': as_extreme, 
                                 })
     df['n_snps'] = n_snps
     return df

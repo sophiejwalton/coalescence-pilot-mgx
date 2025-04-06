@@ -1,0 +1,7 @@
+,mesocosms,diff_med,diff_lower,diff_upper,pred_7_upper,act_7,pred_7_lower,pred_med,as_extreme,n_snps
+0,B11-AC/PP-AF-mGAM-mGAM,,,,,0.9923053947822686,,,0,5
+1,D9-AC/PP-AF-mGAM-mGAM,,,,,0.868,,,0,5
+2,D9-AC/PP-AF-mGAM-mBHI,,,,,0.9861939020603786,,,0,5
+3,F11-AC/PP-AF-mGAM-mGAM,,,,,0.9925618816228596,,,0,5
+4,H9-AC/PP-AF-mGAM-mGAM,,,,,0.857,,,0,5
+5,F11-AC/PP-AF-mGAM-mBHI,,,,,0.9795669750493604,,,0,5
