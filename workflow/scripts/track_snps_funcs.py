@@ -22,7 +22,7 @@ def get_distinguishing_snps(freq_inoculumns, thresh = .8):
 
 # print(detect_df[freq_inoculumns.columns.values[0]])
     detect_df['diff1'] = detect_df[freq_inoculumns.columns.values[0]].astype(int) + detect_df_opp[freq_inoculumns.columns.values[1]].astype(int)
-    detect_df['diff2'] = detect_df[freq_inoculumns.columns.values[1]].astype(int) + detect_df_opp[freq_inoculumns.columns.values[2]].astype(int)
+    detect_df['diff2'] = detect_df[freq_inoculumns.columns.values[1]].astype(int) + detect_df_opp[freq_inoculumns.columns.values[0]].astype(int)
     return detect_df['diff1'], detect_df['diff2']
 
 def filter_distinguishing_snps(freq_children, parent_snps, thresh = .5, sample_thresh=1.):
@@ -137,7 +137,7 @@ def get_bootstrap_parent(freq_children, depth_med, parent_snps, n_bootstraps = 1
 
 def get_parent_children(inoculumn):
 #    metadata = pd.read_csv('config/e003_coal_metadata_full.csv')
-    metadata = pd.read_csv('config/e003_metadata_cultures_round2.csv')
+    metadata = pd.read_csv('workflow/analysis/e003_metadata_cultures_round2_change_AA.csv')
     child_samples = list(metadata.loc[metadata['inoculumn'] == inoculumn, 'sample'].values)
     
     parent_subjects = inoculumn.split('-')[:-1]

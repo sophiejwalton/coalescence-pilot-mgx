@@ -6,6 +6,7 @@ import argparse
 import itertools as it
 from snp_analysis_tools_sherlock import *
 from evo_changes_tools import *
+from track_snps_funcs import *
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -182,7 +183,7 @@ if __name__ == '__main__':
         freq_filtered,thresh=.75)
     for inoculumn in inoculumn_list:
         print(inoculumn)
-        parent_samples, child_samples = get_parent_children(inoculumn, metadata)
+        parent_samples, child_samples = get_parent_children(inoculumn)
       #  print(parent_samples)
 #        print(freq_filtered.columns.values)
 #AAAA
