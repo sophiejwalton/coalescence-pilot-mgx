@@ -1,0 +1,5 @@
+,index,fixed_diffs,num_int_sites,sample1,species_id
+0,AG-Fecal,0,2059989,AG-Fecal,101380
+1,e004-inoculumn-fecal-AR,525,2007824,AG-Fecal,101380
+0,AG-Fecal,1377,2059989,e004-inoculumn-fecal-AR,101380
+1,e004-inoculumn-fecal-AR,0,2007824,e004-inoculumn-fecal-AR,101380
