@@ -135,9 +135,9 @@ def get_bootstrap_parent(freq_children, depth_med, parent_snps, n_bootstraps = 1
                                     'actual_med': act_med})
 
 
-def get_parent_children(inoculumn):
+def get_parent_children(inoculumn, metadata):
 #    metadata = pd.read_csv('config/e003_coal_metadata_full.csv')
-    metadata = pd.read_csv('workflow/analysis/e003_metadata_cultures_round2_change_AA.csv')
+    
     child_samples = list(metadata.loc[metadata['inoculumn'] == inoculumn, 'sample'].values)
     
     parent_subjects = inoculumn.split('-')[:-1]
