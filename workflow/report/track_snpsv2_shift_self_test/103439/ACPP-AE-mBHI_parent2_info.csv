@@ -1,0 +1,5 @@
+,mesocosms,diff_med,diff_lower,diff_upper,pred_7_upper,act_7,pred_7_lower,pred_med,as_extreme,n_snps
+0,C3-AC/PP-AE-mBHI-mGAM,,,,,-0.0,,,0,4
+1,G3-AC/PP-AE-mBHI-mBHI,,,,,0.40249999999999997,,,7515,4
+2,F4-AC/PP-AE-mBHI-mBHI,,,,0.0,0.1095,0.0,0.0,10000,4
+3,F4-AC/PP-AE-mBHI-mGAM,,,,0.0,-0.0,0.0,0.0,0,4
