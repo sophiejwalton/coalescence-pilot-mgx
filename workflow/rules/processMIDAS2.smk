@@ -4,13 +4,13 @@
 
 rule compressgz: 
     input:
-        snpsDepth="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_depth.tsv",
-        snpsFreq="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.tsv",
-        snpsInfo="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_info.tsv",
+        snpsDepth="workflow/out/midas2_output/mergev3_{species}/snps/{species}/{species}.snps_depth.tsv",
+        snpsFreq="workflow/out/midas2_output/mergev3_{species}/snps/{species}/{species}.snps_freqs.tsv",
+        snpsInfo="workflow/out/midas2_output/mergev3_{species}/snps/{species}/{species}.snps_info.tsv",
     output:
-        snpsDepth="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_depth.tsv.gz",
-        snpsFreq="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.tsv.gz",
-        snpsInfo="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_info.tsv.gz",
+        snpsDepth="workflow/out/midas2_output/mergev3_{species}/snps/{species}/{species}.snps_depth.tsv.gz",
+        snpsFreq="workflow/out/midas2_output/mergev3_{species}/snps/{species}/{species}.snps_freqs.tsv.gz",
+        snpsInfo="workflow/out/midas2_output/mergev3_{species}/snps/{species}/{species}.snps_info.tsv.gz",
     shell:
         """
         gzip {input.snpsDepth}
@@ -20,12 +20,12 @@ rule compressgz:
 
 rule calculateDiversity:
     input:
-        snpsFreq="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.tsv.gz",
+        snpsFreq="workflow/out/midas2_output/mergev3_{species}/snps/{species}/{species}.snps_freqs.tsv.gz",
     output:
-        "workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df1.csv" 
+        "workflow/report/calculateDiversityDepthv3/{species}/{species}_diversity_df1.csv" 
     params:
-        indir="workflow/out/midas2_output/mergev2_{species}/snps/",
-        outdir="workflow/report/calculateDiversityDepth/",
+        indir="workflow/out/midas2_output/mergev3_{species}/snps/",
+        outdir="workflow/report/calculateDiversityDepthv3/",
         species="{species}"
 #    conda:
  #       "../../workflow/envs/snps_analysis_tools-no-builds.yml"
@@ -49,12 +49,12 @@ rule calculateFixedDiffs:
 
 rule calculateFixedDiffsFast:
     input:
-        snpsFreq="workflow/out/midas2_output/mergev2_{species}/snps/{species}/{species}.snps_freqs.tsv.gz",
+        snpsFreq="workflow/out/midas2_output/mergev3_{species}/snps/{species}/{species}.snps_freqs.tsv.gz",
     output:
-        "workflow/report/calculateFixedDiffsFast/{species}/{species}_fixed_diffs.csv"
+        "workflow/report/calculateFixedDiffsFastv3/{species}/{species}_fixed_diffs.csv"
     params:
-        indir="workflow/out/midas2_output/mergev2_{species}/snps/",
-        outdir="workflow/report/calculateFixedDiffsFast/",
+        indir="workflow/out/midas2_output/mergev3_{species}/snps/",
+        outdir="workflow/report/calculateFixedDiffsFastv3/",
         species="{species}"
   #  conda:
    #     "../../workflow/envs/snps_analysis_tools-no-builds.yml"
