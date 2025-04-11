@@ -1,0 +1,5 @@
+,index,fixed_diffs,num_int_sites,sample1,species_id
+0,BC-Fecal,0,1893310,BC-Fecal,100195
+1,e004-inoculumn-fecal-BE,38,1865465,BC-Fecal,100195
+0,BC-Fecal,24,1893310,e004-inoculumn-fecal-BE,100195
+1,e004-inoculumn-fecal-BE,0,1865465,e004-inoculumn-fecal-BE,100195

@@ -1,0 +1,10 @@
+,index,fixed_diffs,num_int_sites,sample1,species_id
+0,A5-e003Coalescence-mBHI-p7,0,335585,A5-e003Coalescence-mBHI-p7,102640
+1,Coalescence-C7-A5-AA-AF-mBHI-mBHI-5_S650,116,335537,A5-e003Coalescence-mBHI-p7,102640
+2,D2-e003Coalescence-mBHI-p3,173,440885,A5-e003Coalescence-mBHI-p7,102640
+0,A5-e003Coalescence-mBHI-p7,105,335585,Coalescence-C7-A5-AA-AF-mBHI-mBHI-5_S650,102640
+1,Coalescence-C7-A5-AA-AF-mBHI-mBHI-5_S650,0,335537,Coalescence-C7-A5-AA-AF-mBHI-mBHI-5_S650,102640
+2,D2-e003Coalescence-mBHI-p3,185,440885,Coalescence-C7-A5-AA-AF-mBHI-mBHI-5_S650,102640
+0,A5-e003Coalescence-mBHI-p7,120,335585,D2-e003Coalescence-mBHI-p3,102640
+1,Coalescence-C7-A5-AA-AF-mBHI-mBHI-5_S650,212,335537,D2-e003Coalescence-mBHI-p3,102640
+2,D2-e003Coalescence-mBHI-p3,0,440885,D2-e003Coalescence-mBHI-p3,102640

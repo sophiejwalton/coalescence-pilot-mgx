@@ -1,0 +1,5 @@
+,index,fixed_diffs,num_int_sites,sample1,species_id
+0,C10-e003Assembly-mGAM-p3,0.0,957693,C10-e003Assembly-mGAM-p3,102353
+1,G4-e004Assembly-epsilon-p3,0.0,570504,C10-e003Assembly-mGAM-p3,102353
+0,C10-e003Assembly-mGAM-p3,0.0,957693,G4-e004Assembly-epsilon-p3,102353
+1,G4-e004Assembly-epsilon-p3,0.0,570504,G4-e004Assembly-epsilon-p3,102353
