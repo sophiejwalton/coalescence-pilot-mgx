@@ -1,0 +1,10 @@
+,index,fixed_diffs,num_int_sites,sample1,species_id
+0,E4-e004Assembly-mGAM-p7,0,1146124,E4-e004Assembly-mGAM-p7,100994
+1,B4-e004Assembly-mBHI-p5,4587,734901,E4-e004Assembly-mGAM-p7,100994
+2,E4-e004Assembly-mGAM-p5,5,1137126,E4-e004Assembly-mGAM-p7,100994
+0,E4-e004Assembly-mGAM-p7,4582,1146124,B4-e004Assembly-mBHI-p5,100994
+1,B4-e004Assembly-mBHI-p5,0,734901,B4-e004Assembly-mBHI-p5,100994
+2,E4-e004Assembly-mGAM-p5,4619,1137126,B4-e004Assembly-mBHI-p5,100994
+0,E4-e004Assembly-mGAM-p7,3,1146124,E4-e004Assembly-mGAM-p5,100994
+1,B4-e004Assembly-mBHI-p5,4619,734901,E4-e004Assembly-mGAM-p5,100994
+2,E4-e004Assembly-mGAM-p5,0,1137126,E4-e004Assembly-mGAM-p5,100994
