@@ -4,6 +4,7 @@ from os import path, mkdir
 from glob import glob
 import argparse
 import itertools as it
+from scipy.stats import linregress
 from snp_analysis_tools_sherlock import *
 from evo_changes_tools import *
 from track_snps_funcs import *
@@ -16,7 +17,7 @@ warnings.filterwarnings('ignore')
 
 
 
-def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_bootstraps = 10000):
+def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_bootstraps = 10000, initial_sample = 1):
     #med = freq_children.loc[parent_snps,:].median(axis = 0)
     #freq_masked = freq_children.mask((freq_children > freq_thresh * med),axis = 0)
    # freq_masked = freq_masked .mask((freq_masked  < med / freq_thresh),axis = 0)
@@ -31,74 +32,181 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
     metadata_non_zero = metadata.loc[metadata['passage']>0,:].sort_values(by='passage')
     n_snps = len(parent_snps)
 
-    diff_info_lower=[]
-    diff_info_upper=[]
-    diff_info_med = []
+    diff7_info_lower=[]
+    diff7_info_upper=[]
+    diff7_info_med = []
+
+    diff5_info_lower=[]
+    diff5_info_upper=[]
+    diff5_info_med = []
+
+    diffboth_info_lower=[]
+    diffboth_info_upper=[]
+    diffboth_info_med = []
+
     pred_7_upper = []
     pred_7_lower= []
-    pred_med = []
+    pred_5_upper = []
+    pred_5_lower= []
+
+    pred7_med = []
+    pred5_med = []
     mesocosms = []
-    as_extreme = []
+    as_extreme7 = []
+    as_extreme5 = []
     act_7 = []
+    act_5 = []
     for mesocosm in metadata['mesocosm'].unique():
         meso_df = metadata_non_zero.loc[metadata_non_zero['mesocosm'] == mesocosm, :]
         passages = list(metadata_non_zero.loc[metadata_non_zero['mesocosm'] == mesocosm, 'passage'].values)
         inoculumn = metadata.loc[metadata['mesocosm'] == mesocosm, 'inoculumn_sample'].values[0]
-        if inoculumn not in metadata['sample'].values:
-            continue 
+        #if inoculumn not in metadata['sample'].values:
+         #   continue 
         if 3 not in passages:
             continue
         if 7 not in passages:
             continue 
-            
-        sample0 = inoculumn 
+        if initial_sample==1:
+            sample1 = meso_df.loc[meso_df['passage']==1,'sample'].values
+            dt=2
+            dt5=4
+            dt7=6
+        elif initial_sample == 0:
+            sample1 = inoculumn 
+            dt=3
+            dt5=5
+            dt7=7
+        else: # both!!!!! 
+            sample0 = inoculumn 
+            sample1 = meso_df.loc[meso_df['passage']==1,'sample'].values
+
+            dt=2
+            dt5=4
+            dt7=6
+          
+        if sample1 not in metadata['sample'].values:
+            continue 
+        if initial_sample == 'both' and (inoculumn not in metadata['sample'].values):
+            continue 
+
         sample3 = meso_df.loc[meso_df['passage']==3,'sample'].values
+        sample5 = meso_df.loc[meso_df['passage']==3,'sample'].values
         sample7 = meso_df.loc[meso_df['passage']==7,'sample'].values
         
-        diffs = np.zeros(n_bootstraps)
+        diffs7 = np.zeros(n_bootstraps)
+        diffs5 = np.zeros(n_bootstraps)
+        diff_both = np.zeros(n_bootstraps)
+
         pred_7_ests = np.zeros(n_bootstraps)
+        pred_5_ests = np.zeros(n_bootstraps)
         est_7s_ests = np.zeros(n_bootstraps)
+        est_5s_ests = np.zeros(n_bootstraps)
+        
         for sample in range(n_bootstraps):
             bs_sample = np.random.choice(parent_snps, size=len(parent_snps),replace=False)
-            int1 = round(len(bs_sample)/3)
-            int2 = round(2*len(bs_sample)/3)
+            int1 = round(len(bs_sample)/4)
+            int2 = round(2*len(bs_sample)/4)
+            int3 = round(3*len(bs_sample)/4)
+            if initial_sample== 'both':
+                int1 = round(len(bs_sample)/5)
+                int2 = round(2*len(bs_sample)/5)
+                int3 = round(3*len(bs_sample)/5)
+                int4=round(4*len(bs_sample)/5)
 
-            passage0_est = get_freq_est(snps.loc[bs_sample[:int1],sample0].values, 
-                        depth_med[sample0] )
+            passage1_est = get_freq_est(snps.loc[bs_sample[:int1],sample1].values, 
+                        depth_med[sample1] )
             passage3_est = get_freq_est(snps.loc[bs_sample[int1+1:int2],sample3].values, 
                        depth_med[sample3].values[0] )
-            passage7_est = get_freq_est(snps.loc[bs_sample[int2+1:],sample7].values, 
+            passage5_est = get_freq_est(snps.loc[bs_sample[int2+1:int3],sample5].values, 
+                        depth_med[sample5].values[0] )
+            passage7_est = get_freq_est(snps.loc[bs_sample[int3+1:],sample7].values, 
                         depth_med[sample7].values[0] )
             
-            dt = 3
-            sel_coeff_03 = (1/dt)*(np.log(passage3_est/(1-passage3_est)) + \
-                                np.log((1-passage0_est)/(passage0_est)))
-            pred_p7 = np.exp(7*sel_coeff_03)
-            pred_p7 = pred_p7*passage0_est/(1 - passage0_est + passage0_est*pred_p7)
+      
+            sel_coeff_13 = (1/dt)*(np.log(passage3_est/(1-passage3_est)) + \
+                                np.log((1-passage1_est)/(passage1_est)))
+
+            if initial_sample=='both':
+                passage1_est = get_freq_est(snps.loc[bs_sample[int4+1:],sample1].values, 
+                        depth_med[sample1] )
+                passage7_est = get_freq_est(snps.loc[bs_sample[int3+1:int4],sample7].values, 
+                        depth_med[sample7].values[0] )
+
+                xs = np.array([0, 1, 3])
+                ys = np.array([np.log(passage0_est/(1-passage0_est)),
+                             np.log(passage1_est/(1-passage1_est)),
+                             np.log(passage3_est/(1-passage3_est))
+                             ])
+
+           
+
+                sel_coeff_13 = linregress(xs,ys).slope
+
+
+            pred_p7 = np.exp(dt7*sel_coeff_13)
+            pred_p7 = pred_p7*passage1_est/(1 - passage1_est + passage1_est*pred_p7)
+
+            pred_p5 = np.exp(dt7*sel_coeff_13)
+            pred_p5 = pred_p5*passage1_est/(1 - passage1_est + passage1_est*pred_p5)
+
           #  print(pred_p7, passage7_est)
-            diffs[sample] = pred_p7 - passage7_est 
+            diffs7[sample] = pred_p7 - passage7_est 
+            diffs5[sample] = predp5 - passage5_est
+            diff_both[sample] = ((pred_p7 - passage7_est ) + (predp5 - passage5_est))/2
+
             est_7s_ests[sample] = passage7_est
             pred_7_ests[sample] = pred_p7 
-        diff_info_upper.append(np.quantile(diffs, q = .975))
-        diff_info_lower.append(np.quantile(diffs, q = .025))
+            est_5s_ests[sample] = passage5_est
+            pred_5_ests[sample] = pred_p5 
+
+        diff7_info_upper.append(np.quantile(diffs7, q = .975))
+        diff7_info_lower.append(np.quantile(diffs7, q = .025))
+
+        diff5_info_upper.append(np.quantile(diffs5, q = .975))
+        diff5_info_lower.append(np.quantile(diffs5, q = .025))
+        diffboth_info_upper.append(np.quantile(diff_both, q = .975))
+        diffboth_info_lower.append(np.quantile(diff_both, q = .025))
+
         pred_7_upper.append(np.quantile(pred_7_ests, q = .975))
         pred_7_lower.append(np.quantile(pred_7_ests, q = .025))
-        pred_med.append(np.median(pred_7_ests))
-        diff_info_med.append(np.median(diffs))
+        pred_5_upper.append(np.quantile(pred_5_ests, q = .975))
+        pred_5_lower.append(np.quantile(pred_5_ests, q = .025))
+
+        pred7_med.append(np.median(pred_7_ests))
+        pred5_med.append(np.median(pred_5_ests))
+
+        diff7_info_med.append(np.median(diffs7))
+        diff5_info_med.append(np.median(diffs5))
+        diffboth_info_med.append(np.median(diff_both))
+
         mesocosms.append(mesocosm)
         p7_act = get_freq_est(snps.loc[parent_snps,sample7].values, depth_med[sample7].values[0])
-        act_7.append(get_freq_est(snps.loc[parent_snps,sample7].values, depth_med[sample7].values[0]))
-        as_extreme.append(np.sum(p7_act>pred_7_ests))
-    df = pd.DataFrame(data = { 'mesocosms': mesocosms, 'diff_med': diff_info_med, 'diff_lower': diff_info_lower, 
-                                'diff_upper': diff_info_upper, 'pred_7_upper': pred_7_upper, 'act_7': act_7,
-                                'pred_7_lower': pred_7_lower, 'pred_med': pred_med,'as_extreme': as_extreme, 
+        act_7.append(p7_act)
+        p5_act = get_freq_est(snps.loc[parent_snps,sample5].values, depth_med[sample5].values[0])
+        act_5.append(p5_act)
+        as_extreme7.append(np.sum(p7_act>pred_7_ests))
+        as_extreme5.append(np.sum(p5_act>pred_5_ests))
+
+    df = pd.DataFrame(data = { 'mesocosms': mesocosms, 'diff7_med': diff7_info_med, 'diff7_lower': diff7_info_lower, 
+                                'diff7_upper': diff7_info_upper, 
+                                'diff5_med': diff5_info_med, 'diff5_lower': diff5_info_lower, 
+                                'diff5_upper': diff5_info_upper, 
+                                'pred_5_upper': pred_5_upper, 'act_5': act_5,
+                                'pred_5_lower': pred_5_lower, 
+                                'pred_7_upper': pred_7_upper, 'act_7': act_7,
+                                'pred_7_lower': pred_7_lower, 
+                                'pred7_med': pred_med,'as_extreme7': as_extreme, 
+                                'pred5_med': pred_med,'as_extreme5': as_extreme, 
+                                'diff_both_lower': diffboth_info_lower, 'diff_both_upper': diffboth_info_upper, 
+                                'diff_both_med': diffboth_info_med,
                                 })
     df['n_snps'] = n_snps
+    df['sample_init'] = sample_init
     return df
        
 
 
-def get_main(metadata, species_dir,species, parent_samples, child_samples, freq_filtered, depth_filtered):
+def get_main(metadata, species_dir,species, parent_samples, child_samples, freq_filtered, depth_filtered,sample_init= 1):
   #  info, depth, freq = load_and_sort_files(species_dir, species)
    # med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
    # good_samples = med_nonzero_depth[med_nonzero_depth>10.]
@@ -132,8 +240,10 @@ def get_main(metadata, species_dir,species, parent_samples, child_samples, freq_
    # count_parent1 = pd.DataFrame(get_count(freq_children, parent1_snps)).rename(columns = {0: parent_samples[0]})  
    # count_parent2 = pd.DataFrame(get_count(freq_children, parent2_snps)).rename(columns = {0: parent_samples[1]})  
 
-    parent1_info = get_bootstrap_sel_coeffs(metadata, freq_children, med_depth_children, parent1_snps, n_bootstraps = 10000)
-    parent2_info = get_bootstrap_sel_coeffs(metadata, freq_children, med_depth_children, parent2_snps, n_bootstraps = 10000)
+    parent1_info = get_bootstrap_sel_coeffs(metadata, freq_children, med_depth_children, parent1_snps, n_bootstraps = 10000,
+                sample_init=sample_init)
+    parent2_info = get_bootstrap_sel_coeffs(metadata, freq_children, med_depth_children, parent2_snps, n_bootstraps = 10000,
+                sample_init=sample_init)
 # freq_parent2 = freq_parent2.T
    # freq_parent2['parent'] = parent_samples[1]
    # print(freq_parent2)
@@ -183,6 +293,7 @@ if __name__ == '__main__':
      ]
     depth_filtered_in, freq_filtered_in = filter_sites_across_samples(depth_filtered, 
         freq_filtered,thresh=.75)
+    sample_init = 1
     for inoculumn in inoculumn_list:
         print(inoculumn)
         parent_samples, child_samples = get_parent_children(inoculumn,metadata)
@@ -204,13 +315,14 @@ if __name__ == '__main__':
             parent_samples = ['A2-e003Coalescence-mBHI-inoculumn-redo', parent_samples[1]]
         
         parent1_info, parent2_info = get_main(metadata,species_dir,args.species, parent_samples, child_samples, 
-            freq_filtered_in[parent_samples+child_samples],  depth_filtered_in[parent_samples+child_samples])
+            freq_filtered_in[parent_samples+child_samples],  depth_filtered_in[parent_samples+child_samples],
+            sample_init = sample_init)
 
         inoculumn = ''.join(inoculumn.split('/'))
     
       #  count_parents.to_csv(f'{save_dir}/{inoculumn}_count_parents.csv')
-        parent1_info.to_csv(f'{save_dir}/{inoculumn}_parent1_info.csv')
-        parent2_info.to_csv(f'{save_dir}/{inoculumn}_parent2_info.csv')
+        parent1_info.to_csv(f'{save_dir}/{inoculumn}_{str(sample_init)}_parent1_info.csv')
+        parent2_info.to_csv(f'{save_dir}/{inoculumn}_{str(sample_init)}_parent2_info.csv')
 
       #  distinguishing_snps.to_csv(f'{save_dir}/{inoculumn}_distinguishing_snps.csv')
        # freq_filtered_in.loc[distinguishing_snps.index.values,:].to_csv(f'{species_dir}/{inoculumn}_distinguishing_snps_freq.csv.gz',compression = 'gzip')
