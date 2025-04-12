@@ -200,7 +200,7 @@ rule trackSNPsAVG_shift_sel:
         "workflow/report/track_snpsv2_shift_self_test_13/{species}/done.txt"
     params:
         indir="workflow/out/midas2_output/mergev2_{species}/snps/",
-        outdir="workflow/report/track_snpsv2_shift_self_test/",
+        outdir="workflow/report/track_snpsv2_shift_self_test_13/",
         #species={species}
   #  conda:
    #     "../../workflow/envs/snps_analysis_tools-no-builds.yml"

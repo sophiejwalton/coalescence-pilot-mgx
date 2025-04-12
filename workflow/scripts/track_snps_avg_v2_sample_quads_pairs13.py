@@ -195,13 +195,13 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
                                 'pred_5_lower': pred_5_lower, 
                                 'pred_7_upper': pred_7_upper, 'act_7': act_7,
                                 'pred_7_lower': pred_7_lower, 
-                                'pred7_med': pred_med,'as_extreme7': as_extreme, 
-                                'pred5_med': pred_med,'as_extreme5': as_extreme, 
+                                'pred7_med': pred7_med,'as_extreme7': as_extreme7, 
+                                'pred5_med': pred5_med,'as_extreme5': as_extreme5, 
                                 'diff_both_lower': diffboth_info_lower, 'diff_both_upper': diffboth_info_upper, 
                                 'diff_both_med': diffboth_info_med,
                                 })
     df['n_snps'] = n_snps
-    df['sample_init'] = sample_init
+    df['sample_init'] = initial_sample
     return df
        
 
@@ -241,9 +241,9 @@ def get_main(metadata, species_dir,species, parent_samples, child_samples, freq_
    # count_parent2 = pd.DataFrame(get_count(freq_children, parent2_snps)).rename(columns = {0: parent_samples[1]})  
 
     parent1_info = get_bootstrap_sel_coeffs(metadata, freq_children, med_depth_children, parent1_snps, n_bootstraps = 10000,
-                sample_init=sample_init)
+                 initial_sample=sample_init)
     parent2_info = get_bootstrap_sel_coeffs(metadata, freq_children, med_depth_children, parent2_snps, n_bootstraps = 10000,
-                sample_init=sample_init)
+                initial_sample=sample_init)
 # freq_parent2 = freq_parent2.T
    # freq_parent2['parent'] = parent_samples[1]
    # print(freq_parent2)
