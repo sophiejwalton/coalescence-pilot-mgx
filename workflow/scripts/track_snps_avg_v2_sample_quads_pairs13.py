@@ -79,18 +79,18 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
         else: # both!!!!! 
             sample0 = inoculumn 
             sample1 = meso_df.loc[meso_df['passage']==1,'sample'].values
-
+    
             dt=2
             dt5=4
             dt7=6
-          
+        print(sample1)      
         if sample1 not in metadata['sample'].values:
             continue 
-        if initial_sample == 'both' and (inoculumn not in metadata['sample'].values):
-            continue 
+#        if initial_sample == 'both' and (inoculumn not in metadata['sample'].values):
+ #           continue 
 
         sample3 = meso_df.loc[meso_df['passage']==3,'sample'].values
-        sample5 = meso_df.loc[meso_df['passage']==3,'sample'].values
+        sample5 = meso_df.loc[meso_df['passage']==5,'sample'].values
         sample7 = meso_df.loc[meso_df['passage']==7,'sample'].values
         
         diffs7 = np.zeros(n_bootstraps)
