@@ -66,6 +66,8 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
             continue
         if 7 not in passages:
             continue 
+        if 5 not in passages:
+            continue
         if initial_sample==1:
             sample1 = meso_df.loc[meso_df['passage']==1,'sample'].values
             dt=2
@@ -151,8 +153,8 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
 
           #  print(pred_p7, passage7_est)
             diffs7[sample] = pred_p7 - passage7_est 
-            diffs5[sample] = predp5 - passage5_est
-            diff_both[sample] = ((pred_p7 - passage7_est ) + (predp5 - passage5_est))/2
+            diffs5[sample] = pred_p5 - passage5_est
+            diff_both[sample] = ((pred_p7 - passage7_est ) + (pred_p5 - passage5_est))/2
 
             est_7s_ests[sample] = passage7_est
             pred_7_ests[sample] = pred_p7 
