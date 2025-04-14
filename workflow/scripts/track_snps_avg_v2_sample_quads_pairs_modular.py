@@ -84,10 +84,14 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
  #           continue 
 
         sample3 = meso_df.loc[meso_df['passage']==final_sample,'sample'].values
+        p5_act = np.nan
+        p7_act = np.nan
         if 5 in passages:
             sample5 = meso_df.loc[meso_df['passage']==5,'sample'].values
+            p7_act = get_freq_est(snps.loc[parent_snps,sample7].values, depth_med[sample7].values[0])
         if 7 in passages:
             sample7 = meso_df.loc[meso_df['passage']==7,'sample'].values
+            p5_act = get_freq_est(snps.loc[parent_snps,sample5].values, depth_med[sample5].values[0])
         
         diffs7 = np.zeros(n_bootstraps)
         diffs5 = np.zeros(n_bootstraps)
@@ -180,9 +184,9 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
         diffboth_info_med.append(np.median(diff_both))
 
         mesocosms.append(mesocosm)
-        p7_act = get_freq_est(snps.loc[parent_snps,sample7].values, depth_med[sample7].values[0])
+       # p7_act = get_freq_est(snps.loc[parent_snps,sample7].values, depth_med[sample7].values[0])
         act_7.append(p7_act)
-        p5_act = get_freq_est(snps.loc[parent_snps,sample5].values, depth_med[sample5].values[0])
+        #p5_act = get_freq_est(snps.loc[parent_snps,sample5].values, depth_med[sample5].values[0])
         act_5.append(p5_act)
         as_extreme7.append(np.sum(p7_act>pred_7_ests))
         as_extreme5.append(np.sum(p5_act>pred_5_ests))
