@@ -88,10 +88,10 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
         p7_act = np.nan
         if 5 in passages:
             sample5 = meso_df.loc[meso_df['passage']==5,'sample'].values
-            p7_act = get_freq_est(snps.loc[parent_snps,sample7].values, depth_med[sample7].values[0])
+            p5_act = get_freq_est(snps.loc[parent_snps,sample5].values, depth_med[sample5].values[0])
         if 7 in passages:
             sample7 = meso_df.loc[meso_df['passage']==7,'sample'].values
-            p5_act = get_freq_est(snps.loc[parent_snps,sample5].values, depth_med[sample5].values[0])
+            p7_act = get_freq_est(snps.loc[parent_snps,sample7].values, depth_med[sample7].values[0])
         
         diffs7 = np.zeros(n_bootstraps)
         diffs5 = np.zeros(n_bootstraps)

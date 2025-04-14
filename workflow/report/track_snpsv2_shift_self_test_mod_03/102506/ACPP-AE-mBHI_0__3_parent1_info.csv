@@ -1,0 +1,9 @@
+,mesocosms,diff7_med,diff7_lower,diff7_upper,diff5_med,diff5_lower,diff5_upper,pred_5_upper,act_5,pred_5_lower,pred_7_upper,act_7,pred_7_lower,pred7_med,as_extreme7,pred5_med,as_extreme5,diff_both_lower,diff_both_upper,diff_both_med,n_snps,sample_init,final_sample
+0,B4-AC/PP-AE-mBHI-mBHI,,,,,,,,0.07168343876859262,,,,,,0,,3,,,,26,0,3
+1,C3-AC/PP-AE-mBHI-mGAM,,,,,,,,0.4265,,,0.0865,,,0,,24,,,,26,0,3
+2,C3-AC/PP-AE-mBHI-mBHI,,,,,,,,0.6645000000000001,,,0.59,,,9949,,9971,,,,26,0,3
+3,B4-AC/PP-AE-mBHI-mGAM,,,,,,,,0.41800000000000004,,,,,,0,,267,,,,26,0,3
+4,G3-AC/PP-AE-mBHI-mBHI,,,,,,,,0.33699999999999997,,,0.23149999999999998,,,8641,,9952,,,,26,0,3
+5,F4-AC/PP-AE-mBHI-mBHI,,,,,,,,0.374,,,0.3725,,,9904,,9906,,,,26,0,3
+6,F4-AC/PP-AE-mBHI-mGAM,,,,,,,,0.59,,,0.559,,,1787,,2708,,,,26,0,3
+7,G3-AC/PP-AE-mBHI-mGAM,,,,,,,,0.703,,,0.424,,,0,,0,,,,26,0,3
