@@ -298,7 +298,7 @@ if __name__ == '__main__':
      ]
     depth_filtered_in, freq_filtered_in = filter_sites_across_samples(depth_filtered, 
         freq_filtered,thresh=.75)
-    sample_init = 0
+    sample_init = 1
     final_sample = 3
     for inoculumn in inoculumn_list:
         print(inoculumn)
@@ -327,7 +327,7 @@ if __name__ == '__main__':
         inoculumn = ''.join(inoculumn.split('/'))
     
       #  count_parents.to_csv(f'{save_dir}/{inoculumn}_count_parents.csv')
-        parent1_info.to_csv(f'{save_dir}/{inoculumn}_{str(sample_init)}__{str(final_sample)}_parent1_info.csv')
+        parent1_info.to_csv(f'{save_dir}/{inoculumn}_{str(sample_init)}_{str(final_sample)}_parent1_info.csv')
         parent2_info.to_csv(f'{save_dir}/{inoculumn}_{str(sample_init)}_{str(final_sample)}_parent2_info.csv')
 
       #  distinguishing_snps.to_csv(f'{save_dir}/{inoculumn}_distinguishing_snps.csv')

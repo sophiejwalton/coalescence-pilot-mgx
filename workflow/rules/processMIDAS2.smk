@@ -218,10 +218,10 @@ rule trackSNPsAVG_shift_sel_mod:
        # snpsInfo="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_info.tsv.gz",
        # wo="workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv"
     output:
-        "workflow/report/track_snpsv2_shift_self_test_mod_03/{species}/done.txt"
+        "workflow/report/track_snpsv2_shift_self_test_mod_13/{species}/done.txt"
     params:
         indir="workflow/out/midas2_output/mergev3_{species}/snps/",
-        outdir="workflow/report/track_snpsv2_shift_self_test_mod_03/",
+        outdir="workflow/report/track_snpsv2_shift_self_test_mod_13/",
         #species={species}
   #  conda:
    #     "../../workflow/envs/snps_analysis_tools-no-builds.yml"

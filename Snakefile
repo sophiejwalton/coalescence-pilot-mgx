@@ -135,7 +135,7 @@ rule all:
         expand("workflow/report/calculateFixedDiffsFastv3/{species}/{species}_fixed_diffs.csv",species=species_list),
        # expand("workflow/report/track_snpsv2_sel_bootstrap/{species}/done.txt",  species=species_list),
         expand("workflow/report/track_snpsv2_shift_self_test_13/{species}/done.txt",  species=species_list),
-        expand("workflow/report/track_snpsv2_shift_self_test_mod_03/{species}/done.txt",  species=species_list),
+        expand("workflow/report/track_snpsv2_shift_self_test_mod_13/{species}/done.txt",  species=species_list),
 
        # expand("workflow/report/track_snpsv2_ALL_same_subject/{species}/done.txt",species=species_list),
       #  workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv
