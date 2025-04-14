@@ -16,7 +16,7 @@ samples=list(df['SampleLane'].values.astype(str))
 samples2=list(df2['Sample'].values.astype(str))
 samples3 = list(df3['Sample'].values.astype(str))
 samples = samples + samples2 + samples3
-print(samples)
+#print(samples)
 df = df.set_index('Sample')
 
 #print(df.head())
@@ -113,8 +113,8 @@ species_list = ['100146',
  '102327',
  '100013',
  '102320']
-print(species_list)
-species_list = [102506]
+#print(species_list)
+#species_list = [102506]
 rule all:
     input:
        # expand("workflow/out/trimmed/{sample}-trimmed-pair1.fastq.gz",sample=samples),
