@@ -133,8 +133,8 @@ rule all:
      #   expand("workflow/report/track_snpsv2_ALL/{species}/done.txt", species=species_list),   
       #  expand("workflow/report/track_snpsv2_ALL_bootstrapv3/{species}/done.txt", species=species_list), 
        # expand("workflow/report/calculateFixedDiffsFastv3/{species}/{species}_fixed_diffs.csv",species=species_list),
-        expand("workflow/report/track_snpsv2_sel_bootstrapv3/{species}/done.txt",  species=species_list),
- #       expand("workflow/report/track_snpsv2_shift_self_test_13/{species}/done.txt",  species=species_list),
+      #  expand("workflow/report/track_snpsv2_sel_bootstrapv3/{species}/done.txt",  species=species_list),
+        expand("workflow/report/track_snpsv2_shift_self_test_13_shift/{species}/done.txt",  species=species_list),
 #        expand("workflow/report/track_snpsv2_shift_self_test_mod_13/{species}/done.txt",  species=species_list),
 
        # expand("workflow/report/track_snpsv2_ALL_same_subject/{species}/done.txt",species=species_list),
