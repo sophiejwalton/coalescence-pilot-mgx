@@ -26,7 +26,7 @@ rule mergeSpecies:
     input:
         expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples)
     output:
-        "workflow/out/midas2_output/mergev2/species/species_prevalence.tsv"
+        "workflow/out/midas2_output/mergev3/species/species_prevalence.tsv"
     params:
         midasdb=config['midasdb'],
         midasdb_dir=config['midasdb_dir']
@@ -35,11 +35,7 @@ rule mergeSpecies:
         "../../workflow/envs/midas2_sw-no-builds.yml"
     shell:
         """
-        midas2 merge_species --samples_list workflow/out/list_of_samples.tsv \
-            --midasdb_name {params.midasdb} --midasdb_dir {params.midasdb_dir} \
-            --min_cov 1 \
-            --num_cores {threads}
-            midas2_output/mergev2
+        midas2 merge_species --samples_list workflow/out/list_of_samples.tsv --min_cov 1  midas2_output/mergev3
         """
 
 
