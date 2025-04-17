@@ -173,7 +173,7 @@ if __name__ == '__main__':
         freq_filtered,thresh=.75)
     for inoculumn in inoculumn_list:
         print(inoculumn)
-        parent_samples, child_samples = get_parent_children(inoculumn)
+        parent_samples, child_samples = get_parent_children(inoculumn,metadata)
       #  print(parent_samples)
 #        print(freq_filtered.columns.values)
 #AAAA
