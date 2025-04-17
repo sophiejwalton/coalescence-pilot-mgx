@@ -154,7 +154,7 @@ if __name__ == '__main__':
     #print(info.columns.values)
     #print(info.index.values)
     freq = repolarize_against_reference(freq, info)
-    metadata = pd.read_csv('workflow/analysis/e003_metadata_cultures_round2_change_AA.csv')
+    metadata = pd.read_csv('workflow/analysis/e003_with_passage_one_redo.csv')
 
     med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
     med_nonzero_depth.to_csv(f'{save_dir}/{args.species}_median_depths.csv')
