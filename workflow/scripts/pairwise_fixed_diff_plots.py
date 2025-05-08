@@ -41,18 +41,19 @@ def get_fixed_diffs(freq_filtered,sample):
 
 
 def get_fd_plot(freq_filtered, s1, s2):
-    points = hv.Scatter(freq_filtered, vdims = [s1,s2])
-    points.hist(dimension=[s1,s2])
-    return plot
+    points = hv.Points(freq_filtered, vdims = [s1,s2],kdims=[s1,s2])
+    points = points.hist(dimension=[s1,s2]).opts()
+    return points
 
 def get_main(species_dir, save_dir, species,metadata):
     info, depth, freq = load_and_sort_files(species_dir, species)
 
     med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
     good_samples = med_nonzero_depth[med_nonzero_depth>=5.]
-    good_samples = np.intersect1d(good_samples, metadata['sample'].values)
-    depth = depth[good_samples.index.values]
-    freq = freq[good_samples.index.values]  
+
+    good_samples = np.intersect1d(good_samples.index.values, metadata['sample'].values)
+    depth = depth[good_samples]
+    freq = freq[good_samples]  
 
     depth_filtered= depth_filtering(depth,depth_thresh = 2.5)
     freq_filtered = freq_masked(freq, depth_filtered)
@@ -60,6 +61,7 @@ def get_main(species_dir, save_dir, species,metadata):
     s1s = []
     s2s = []
     all_plots = []
+    i=0
 
     for s1,s2 in it.combinations(freq_filtered.columns.values,2):
         plot = get_fd_plot(freq_filtered[[s1,s2]],s1,s2)
@@ -67,6 +69,11 @@ def get_main(species_dir, save_dir, species,metadata):
         all_plots.append(hv.render(plot))
         s1s.append(s1)
         s2s.append(s2)
+        i=i+1
+       # if i >10:
+        bokeh.io.export_png(hv.render(plot),
+    filename=f'{save_dir}/{species}_{(str(i))}_fixed_diffs.png')
+        #    break 
   #  ss_df['Strain Shift'] = ss_df['fixed_diffs'] > 1000
   #  if '/' in parent_subjects_media:
    #     parent_subjects_media = ''.join(parent_subjects_media.split('/'))
