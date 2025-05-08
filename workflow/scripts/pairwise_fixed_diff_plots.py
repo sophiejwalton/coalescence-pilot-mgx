@@ -6,6 +6,7 @@ import argparse
 import itertools as it
 from snp_analysis_tools_sherlock import *
 from evo_changes_tools import *
+from holoviews.operation import histogram
 import iqplot
 import bokeh.plotting
 import bokeh.io
@@ -42,7 +43,11 @@ def get_fixed_diffs(freq_filtered,sample):
 
 def get_fd_plot(freq_filtered, s1, s2):
     points = hv.Points(freq_filtered, vdims = [s1,s2],kdims=[s1,s2])
-    points = points.hist(dimension=[s1,s2]).opts()
+    xhist, yhist = (histogram(freq_filtered[s1].values,dimension=dim).opts(logy=True) *
+                histogram(freq_filtered[s2].values, dimension=dim).opts(logy=True)
+                for dim in [s1,s2])
+    composition = (points) << yhist.opts(width=125) << xhist.opts(height=125)
+
     return points
 
 def get_main(species_dir, save_dir, species,metadata):
@@ -72,7 +77,7 @@ def get_main(species_dir, save_dir, species,metadata):
         i=i+1
        # if i >10:
         bokeh.io.export_png(hv.render(plot),
-    filename=f'{save_dir}/{species}_{(str(i))}_fixed_diffs.png')
+    filename=f'{save_dir}/{species}_{s1}_{s2}_fixed_diffs.png')
         #    break 
   #  ss_df['Strain Shift'] = ss_df['fixed_diffs'] > 1000
   #  if '/' in parent_subjects_media:
