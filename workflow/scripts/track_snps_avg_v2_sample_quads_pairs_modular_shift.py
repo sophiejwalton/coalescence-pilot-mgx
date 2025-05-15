@@ -20,7 +20,7 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps1, p
    # freq_masked = freq_masked .mask((freq_masked  < med / freq_thresh),axis = 0)
     snps1 = freq_children.loc[parent_snps1,:]
     snps2 = freq_children.loc[parent_snps2,:]
-    print(snps.columns.values)
+   # print(snps.columns.values)
     boot_med = []
     boot_low = []
     boot_high = []
@@ -90,13 +90,13 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps1, p
         p7_act = np.nan
         if 5 in passages:
             sample5 = meso_df.loc[meso_df['passage']==5,'sample'].values
-            p5_act1 = get_freq_est(snps.loc[parent_snps1,sample5].values, depth_med[sample5].values[0])
-            p5_act2 = get_freq_est(snps.loc[parent_snps2,sample5].values, depth_med[sample5].values[0])
+            p5_act1 = get_freq_est(snps1.loc[parent_snps1,sample5].values, depth_med[sample5].values[0])
+            p5_act2 = get_freq_est(snps2.loc[parent_snps2,sample5].values, depth_med[sample5].values[0])
             p5_act=p5_act1/(p5_act1+p5_act2)
         if 7 in passages:
             sample7 = meso_df.loc[meso_df['passage']==7,'sample'].values
-            p7_act1 = get_freq_est(snps.loc[parent_snps1,sample7].values, depth_med[sample7].values[0])
-            p7_act2 = get_freq_est(snps.loc[parent_snps2,sample7].values, depth_med[sample7].values[0])
+            p7_act1 = get_freq_est(snps1.loc[parent_snps1,sample7].values, depth_med[sample7].values[0])
+            p7_act2 = get_freq_est(snps2.loc[parent_snps2,sample7].values, depth_med[sample7].values[0])
             p7_act=p7_act1/(p7_act1+p7_act2)
         
         diffs7 = np.zeros(n_bootstraps)
@@ -117,7 +117,7 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps1, p
             int31 = round(3*len(bs_sample1)/4)
 
             int12 = round(len(bs_sample2)/4)
-            int22 = round(2*len(bs_sampe2)/4)
+            int22 = round(2*len(bs_sample2)/4)
             int32 = round(3*len(bs_sample2)/4)
             if initial_sample== 'both':
                 int11 = round(len(bs_sample1)/5)
@@ -241,7 +241,8 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps1, p
                                 'diff_both_lower': diffboth_info_lower, 'diff_both_upper': diffboth_info_upper, 
                                 'diff_both_med': diffboth_info_med,
                                 })
-    df['n_snps'] = n_snps
+    df['n_snps1'] = n_snps1
+    df['n_snps2'] = n_snps2
     df['sample_init'] = initial_sample
     df['final_sample'] = final_sample
     return df
@@ -282,9 +283,9 @@ def get_main(metadata, species_dir,species, parent_samples, child_samples, freq_
    # count_parent1 = pd.DataFrame(get_count(freq_children, parent1_snps)).rename(columns = {0: parent_samples[0]})  
    # count_parent2 = pd.DataFrame(get_count(freq_children, parent2_snps)).rename(columns = {0: parent_samples[1]})  
 
-    parent1_info = get_bootstrap_sel_coeffs(metadata, freq_children, med_depth_children, parent1_snps, n_bootstraps = 10000,
+    parent1_info = get_bootstrap_sel_coeffs(metadata, freq_children, med_depth_children, parent1_snps,parent2_snps, n_bootstraps = 10000,
                  initial_sample=sample_init, final_sample=final_sample)
-    parent2_info = get_bootstrap_sel_coeffs(metadata, freq_children, med_depth_children, parent2_snps, n_bootstraps = 10000,
+    parent2_info = get_bootstrap_sel_coeffs(metadata, freq_children, med_depth_children, parent2_snps,parent1_snps, n_bootstraps = 10000,
                 initial_sample=sample_init, final_sample=final_sample)
 # freq_parent2 = freq_parent2.T
    # freq_parent2['parent'] = parent_samples[1]

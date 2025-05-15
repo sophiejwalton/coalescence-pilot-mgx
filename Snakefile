@@ -90,7 +90,7 @@ species_list.remove('103656')
 
 #species_list = [100099,101059, 102279, 103656]
 #species_list = [101346, 100196,  102506, ]
-species_list5 = ['100146',
+species_list = ['100146',
  '100910',
  '102478',
  '102438',
@@ -131,11 +131,11 @@ rule all:
       #  expand("workflow/report/calculateDiversityDepthv3/{species}/{species}_diversity_df1.csv",species=species_list),     
        # expand("workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv",species=species_list),  
      #   expand("workflow/report/track_snpsv2_ALL/{species}/done.txt", species=species_list),   
-      #  expand("workflow/report/track_snpsv2_ALL_bootstrapv3/{species}/done.txt", species=species_list), 
+        expand("workflow/report/track_snpsv2_ALL_bootstrapv3/{species}/done.txt", species=species_list), 
        # expand("workflow/report/calculateFixedDiffsFastv3/{species}/{species}_fixed_diffs.csv",species=species_list),
       #  expand("workflow/report/track_snpsv2_sel_bootstrapv3/{species}/done.txt",  species=species_list),
-        expand("workflow/report/track_snpsv2_shift_self_test_13_shift/{species}/done.txt",  species=species_list),
-#        expand("workflow/report/track_snpsv2_shift_self_test_mod_13/{species}/done.txt",  species=species_list),
+#        expand("workflow/report/track_snpsv2_shift_self_test_13_shift/{species}/done.txt",  species=species_list),
+       # expand("workflow/report/track_snpsv2_shift_self_test_mod_13_shift/{species}/done.txt",  species=species_list),
 
        # expand("workflow/report/track_snpsv2_ALL_same_subject/{species}/done.txt",species=species_list),
       #  workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv
