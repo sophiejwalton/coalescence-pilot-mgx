@@ -71,7 +71,7 @@ def get_tidy_df(filtered_freq, e003_metadata, value_name = 'freq'):
     return tidy_data
 
 def get_moving(freq_filtered_mesocosm ):
-    df_counts = freq_filtered_mesocosm.counts(axis=1)
+    df_counts = freq_filtered_mesocosm.count(axis=1)
     fixed_at_zero = freq_filtered_mesocosm==0.
     fixed_at_zero = fixed_at_zero.sum(axis=1)
     fixed_at_zero = fixed_at_zero[fixed_at_zero < df_counts].index.values
@@ -129,7 +129,7 @@ if __name__ == '__main__':
     save_dir = f'{args.outdir}/{args.species}'
 
 #    parent_samples, child_samples = get_parent_children(args.inoculumn)
-    assembly_metadata = pd.read_csv('assembly_glycerol_metadata_with_redo.csv').drop(columns='Unnamed: 0').set_index('sample')
+    assembly_metadata = pd.read_csv('workflow/analysis/assembly_glycerol_metadata_with_redo.csv').drop(columns='Unnamed: 0')#.set_index('sample')
     assembly_metadata['pseudo_time_passage'] = assembly_metadata['passage'] 
     assembly_metadata.loc[assembly_metadata['pseudo_time_passage'] ==1,'pseudo_time_passage'] = 6. 
     assembly_metadata=assembly_metadata.loc[assembly_metadata['sample']!='Assembly-G12-fecal-AA-fecal-0_S703',:]
@@ -144,28 +144,38 @@ if __name__ == '__main__':
     freq = freq[good_samples.index.values]
     depth_filtered= depth_filtering(depth, depth_thresh=2.5)
     freq_filtered = freq_masked(freq, depth_filtered)
+    assembly_metadata=assembly_metadata.loc[assembly_metadata['pseudo_time_passage']<6,:]
 
     _, freq_filtered_in = filter_sites_across_samples(depth_filtered, freq_filtered.copy(), thresh=.75)
     plots = []
-    for mesocosm in mesocosms:
+    for mesocosm in assembly_metadata['mesocosm'].unique():
         subject = mesocosm.split('-')[1]
         fecal_meso= f'fecal-{subject}-fecal'
-        samples = e003_metadata.loc[e003_metadata['mesocosm'] == mesocosm, 'sample'].values
-        sample_fecal= e003_metadata.loc[e003_metadata['mesocosm'] == fecal_meso, 'sample'].values
+        samples = assembly_metadata.loc[assembly_metadata['mesocosm'] == mesocosm, 'sample'].values
+        sample_fecal= assembly_metadata.loc[assembly_metadata['mesocosm'] == fecal_meso, 'sample'].values[0]
         samples = list(samples) + [sample_fecal]   
            # print(freq_filtered.columns.values) 
-        samples = list(np.intersect1d(samples, freq_filtered.columns.values))     
-        freq_filtered_mesocosm = freq_filtered[samples]
+        print(samples)
+        print(freq_filtered_in)
+        samples = list(np.intersect1d(samples, list(freq_filtered_in.columns.values)))     
+        freq_filtered_mesocosm = freq_filtered_in[samples]
         freq_filtered_mesocosm =get_moving(freq_filtered_mesocosm )
+        if sample_fecal in freq_filtered_mesocosm.columns.values:
+            freq_filtered_mesocosm = polarize_species(freq_filtered_mesocosm, sample_fecal)
+        freq = repolarize_against_reference(freq, info)
+        if len(freq_filtered_mesocosm)==0:
+            continue
 
         random_snps = np.random.choice(freq_filtered_mesocosm.index.values, 10000)
         freq_filtered_mesocosm_rand  = freq_filtered_mesocosm.loc[random_snps, :]
         freq_filtered_mesocosm_rand = get_tidy_df(freq_filtered_mesocosm_rand, assembly_metadata.set_index('sample'))
            # print('go', freq_filtered_mesocosm_rand) 
         if len(mesocosm)>0:
-            p = make_mesocosm_timecourse(freq_filtered_mesocosm_rand, title = f'{species} in {mesocosm}' )
+            mesocosm = ''.join(mesocosm.split('/'))
+            p = hv.render(make_mesocosm_timecourse(freq_filtered_mesocosm_rand, title = f'{args.species} in {mesocosm}' ))
+            bokeh.io.export_png(p, filename = f'{save_dir}/{args.species}_{mesocosm}_assembly_snps.png')
             plots.append(p)
-    bokeh.io.export_png(bokeh.layouts.gridplot(plots, ncols=2), filename = f'{save_dir}/{species_id}_assembly_snps.png')
+    bokeh.io.export_png(bokeh.layouts.gridplot(plots, ncols=2), filename = f'{save_dir}/{args.species}_assembly_snps.png')
 
 
 
