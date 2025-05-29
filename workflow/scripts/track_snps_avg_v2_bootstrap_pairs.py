@@ -47,6 +47,8 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
         medians = []
         for sample in samples:
             snps_sample = snps[sample].values
+            snps_sample = snps_sample[~np.isnan(snps_sample)]
+            n_snps = len(snps_sample)
             bs_samples = np.random.choice(snps_sample, size = ( len(snps), n_bootstraps))
             meds = np.nanmedian(bs_samples, axis=0)
 

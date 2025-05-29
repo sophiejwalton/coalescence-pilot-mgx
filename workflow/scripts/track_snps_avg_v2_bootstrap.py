@@ -28,8 +28,8 @@ def get_bootstrap_parent(freq_children, depth_med, parent_snps, n_bootstraps = 1
         snps_sample = snps_sample[~np.isnan(snps_sample)]
         med_og = np.median(snps_sample)
         #print(snps_sample)
-        n_snps = len(parent_snps)
-        print(med_og)
+        n_snps = len(snps_sample)
+        print(med_og,n_snps,len(parent_snps))
      #   print(np.max(snps_sample))
         if med_og == 0:
             med_og = -np.log(np.sum(snps_sample == 0)/n_snps)/depth_med[sample]

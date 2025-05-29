@@ -82,13 +82,16 @@ def fix_zeros_bs(sample_meds, depth, bs_samples,n_snps):
     print(np.max(frac_one_parent),'pot')
     freq_parent_fix[freq_parent_fix==1] = 1 + np.log(frac_one_parent[freq_parent_fix==1])/depth
     return freq_parent_fix
+
 def get_freq_est(snps,depth):
+
     med = np.nanmedian(snps)
+    n_snps = len(snps)- np.sum(np.isnan(snps))
     if med == 0:
-        frac_zero = np.sum(snps == 0)/len(snps)
+        frac_zero = np.sum(snps == 0)/n_snps
         return -np.log(frac_zero)/depth
     elif med == 1:
-        frac_one = np.sum(snps == 1)/len(snps)
+        frac_one = np.sum(snps == 1)/n_snps
         return 1+ np.log(frac_one)/depth
     return med 
 
