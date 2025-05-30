@@ -24,12 +24,13 @@ def get_bootstrap_parent(freq_children, depth_med, parent_snps, n_bootstraps = 1
     samples_good = []
     for sample in snps.columns.values:
         snps_sample= snps[sample].values
-        
+    #    print(snps_sample)
         snps_sample = snps_sample[~np.isnan(snps_sample)]
+     #   print(snps_sample)
         med_og = np.median(snps_sample)
         #print(snps_sample)
         n_snps = len(snps_sample)
-        print(med_og,n_snps,len(parent_snps))
+        print('og',med_og,n_snps,len(parent_snps))
      #   print(np.max(snps_sample))
         if med_og == 0:
             med_og = -np.log(np.sum(snps_sample == 0)/n_snps)/depth_med[sample]
@@ -43,7 +44,7 @@ def get_bootstrap_parent(freq_children, depth_med, parent_snps, n_bootstraps = 1
         samples_meds = np.median(bs_samples,axis = 0)
 #species_list = [102279]
 #inoculumns = ['AA-AE-mGAM', 'AA-AF-mGAM'
-    #    print(np.sum(samples_meds==1),np.sum(samples_meds==0), 'sums')  
+        print('zeros', np.max(samples_meds), np.min(samples_meds), np.sum(samples_meds==1),np.sum(samples_meds==0), 'sums')  
         samples_meds_fix = fix_zeros_bs(samples_meds, depth_med[sample], bs_samples,n_snps)
         samples_good.append(sample)
         boot_med.append(np.median(samples_meds_fix))

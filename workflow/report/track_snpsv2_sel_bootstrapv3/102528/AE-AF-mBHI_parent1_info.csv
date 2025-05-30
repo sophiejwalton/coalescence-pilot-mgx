@@ -1,7 +1,7 @@
 ,sample1,sample2,passage1,passage2,mesocosms,sel_med,sel_lower,sel_upper,n_snps
-0,C5-e003Coalescence-mBHI-inoculumn-redo,C5-e003Coalescence-mGAM-p3,0,3,C5-AE-AF-mBHI-mGAM,1.0458053289818778,0.8635831393602584,1.347308295252809,313
-1,C5-e003Coalescence-mBHI-inoculumn-redo,C5-e003Coalescence-mBHI-p7,0,7,C5-AE-AF-mBHI-mBHI,0.09362483752149155,0.047948446787509945,0.14100514785063203,313
-2,C5-e003Coalescence-mBHI-inoculumn-redo,G5-e003Coalescence-mBHI-p7_S124,0,7,G5-AE-AF-mBHI-mBHI,0.003846026299679815,-0.031276676238760445,0.04690216117989197,313
-3,C5-e003Coalescence-mBHI-inoculumn-redo,G5-e003Coalescence-mGAM-p3_S84,0,3,G5-AE-AF-mBHI-mGAM,0.2136569164271025,0.11111686579573812,0.3219090994720837,313
-4,C5-e003Coalescence-mBHI-inoculumn-redo,G5-e003Coalescence-mGAM-p7_S172,0,7,G5-AE-AF-mBHI-mGAM,-0.04915864534315777,-0.08589781630785279,-0.010684439979196015,313
-5,G5-e003Coalescence-mGAM-p3_S84,G5-e003Coalescence-mGAM-p7_S172,3,7,G5-AE-AF-mBHI-mGAM,-0.2470892268176773,-0.32457812178668116,-0.16314115359306203,313
+0,C5-e003Coalescence-mBHI-inoculumn-redo,C5-e003Coalescence-mGAM-p3,0,3,C5-AE-AF-mBHI-mGAM,,,,189
+1,C5-e003Coalescence-mBHI-inoculumn-redo,C5-e003Coalescence-mBHI-p7,0,7,C5-AE-AF-mBHI-mBHI,,,,189
+2,C5-e003Coalescence-mBHI-inoculumn-redo,G5-e003Coalescence-mBHI-p7_S124,0,7,G5-AE-AF-mBHI-mBHI,,,,189
+3,C5-e003Coalescence-mBHI-inoculumn-redo,G5-e003Coalescence-mGAM-p3_S84,0,3,G5-AE-AF-mBHI-mGAM,,,,189
+4,C5-e003Coalescence-mBHI-inoculumn-redo,G5-e003Coalescence-mGAM-p7_S172,0,7,G5-AE-AF-mBHI-mGAM,,,,189
+5,G5-e003Coalescence-mGAM-p3_S84,G5-e003Coalescence-mGAM-p7_S172,3,7,G5-AE-AF-mBHI-mGAM,,,,189
