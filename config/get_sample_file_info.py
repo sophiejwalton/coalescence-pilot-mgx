@@ -39,7 +39,7 @@ def get_sampleLane(x):
 
 if __name__ == '__main__':
 
-    R1 = glob.glob('/oak/stanford/groups/dpetrov/swalton/Feb2025_Seq/*R1*.gz')
+    R1 = glob.glob('/oak/stanford/groups/dpetrov/swalton/May2025_seq/SJW006//*R1*.gz')
     df = pd.DataFrame(data = {'read1': R1})
     print(df)
     df['read2'] = df['read1'].transform(get_R2)
@@ -52,4 +52,4 @@ if __name__ == '__main__':
 
 
     #df = pd.DataFrame(data = {'Sample': sample_names, 'read1': read1 , 'read2': read2, 'trim1': trim1, 'trim2': trim2})
-    df.to_csv('sample_fnamesr3.csv')
+    df.to_csv('sample_fnamesr4.csv')

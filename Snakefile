@@ -9,16 +9,22 @@ configfile: "config/config.yaml"
 df=pd.read_csv('config/sample_fnamesr3.csv')
 df3=pd.read_csv('config/sample_fnames_round2.csv')
 df2 = pd.read_csv('sample_fnames.csv')
-
+df = pd.read_csv('sample_fnamesr4.csv')
 # Parse sample names from df and generate sample list 
 #df['SampleLane'] = df['Sample'].transform(lambda x: f'{x}_L002')
 samples=list(df['SampleLane'].values.astype(str))
 samples2=list(df2['Sample'].values.astype(str))
 samples3 = list(df3['Sample'].values.astype(str))
 samples = samples + samples2 + samples3
+samples = list(df['SampleLane'].values.astype(str))
 #print(samples)
-df = df.set_index('Sample')
-
+df = df.set_index('SampleLane')
+samples.remove('B_G2_G3_ACPP_AE_mBHI_mGAM_2_S170')
+samples.remove('D_A5_A8_AA_AA_mGAM_mBHI_6_S293')
+samples.remove('A_H7_D10_AE_AF_mGAM_mGAM_2_S91')
+samples.remove('C_A12_E5_AF_AA_mBHI_mBHI_4_S204')
+samples.remove('C_B12_e003Assembly_4_S216')
+samples.remove('B_C2_G3_ACPP_AE_mBHI_mBHI_2_S122')
 #print(df.head())
 #samples = ['A5-e003Coalescence-mBHI-p7']
 #f = df.loc[df['SampleLane'] != 'D4-e003Coalescence-mBHI-p5_S175_L003',:]
@@ -75,9 +81,9 @@ for species in species_list2:
   #     'AC/PP-AE-mGAM', 'AC/PP-AF-mGAM', 
    #    'AC/PP-AE-mBHI', 'AC/PP-AF-mBHI', 
     #   'AE-AF-mGAM', 'AE-AF-mBHI',]
-samples.remove('H5-e003Coalescence-mGAM-p7_S184') # ADD BACK AFTER FIRST QUICK CHECK 
-samples.remove('Coalescence-F4-E9-AA-ACPP-mGAM-mBHI-3_S683')
-samples.remove('Coalescence-C4-A3-AA-ACPP-mBHI-mBHI-5_S647')
+#samples.remove('H5-e003Coalescence-mGAM-p7_S184') # ADD BACK AFTER FIRST QUICK CHECK 
+#samples.remove('Coalescence-F4-E9-AA-ACPP-mGAM-mBHI-3_S683')
+#samples.remove('Coalescence-C4-A3-AA-ACPP-mBHI-mBHI-5_S647')
 #species_list = species_list2
 #print(df.head())
 #print('wee',np.sort(samples))
@@ -115,15 +121,17 @@ species_list = ['100146',
  '102320']
 #print(species_list)
 #species_list = [102506]
+print(len(samples))
+#samples=['D_A4_A5_AF_AA_mBHI_mBHI_6_S292']
 rule all:
     input:
-       # expand("workflow/out/trimmed/{sample}-trimmed-pair1.fastq.gz",sample=samples),
-        #expand("workflow/out/filter/{sample}-filtered.1.fastq.gz",sample=samples),
+         expand("workflow/out/trimmed/{sample}-trimmed-pair1.fastq.gz",sample=samples),
+         expand("workflow/out/filter/{sample}-filtered.1.fastq.gz",sample=samples),
    #     expand("workflow/out/concat/{sample}-filtered.1.fastq.gz",sample=samples),
-      #  expand("workflow/out/midas2_output/{sample}/species/species_profile.tsv",sample=samples),
-     #  "workflow/out/midas2_output/mergev3/species/species_prevalence.tsv",
-  #      expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples),
-#        "workflow/out/midas2_output/merge/snps/snps_summary.tsv",
+         expand("workflow/out/midas2_output/{sample}/species/species_profile.tsv",sample=samples),
+         #"workflow/out/midas2_output/mergev4/species/species_prevalence.tsv",
+         expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples),
+        #"workflow/out/midas2_output/merge/snps/snps_summary.tsv",
       # "workflow/out/midas2_output/merge_bacteroides/snps/snps_summary.tsv",
       #  expand("workflow/out/midasOutput/{sample}/species/species_profile.txt",sample=samples),
  #       expand("workflow/out/midas2_output/mergev3_{species}/snps/{species}/{species}.snps_freqs.tsv.gz", species=species_list),
@@ -131,9 +139,9 @@ rule all:
       #  expand("workflow/report/calculateDiversityDepthv3/{species}/{species}_diversity_df1.csv",species=species_list),     
        # expand("workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv",species=species_list),  
      #   expand("workflow/report/track_snpsv2_ALL/{species}/done.txt", species=species_list),   
-        expand("workflow/report/track_snpsv2_ALL_bootstrapv3/{species}/done.txt", species=species_list), 
+   #     expand("workflow/report/track_snpsv2_ALL_bootstrapv3/{species}/done.txt", species=species_list), 
        # expand("workflow/report/calculateFixedDiffsFastv3/{species}/{species}_fixed_diffs.csv",species=species_list),
-      #  expand("workflow/report/track_snpsv2_sel_bootstrapv3/{species}/done.txt",  species=species_list),
+  #      expand("workflow/report/track_snpsv2_sel_bootstrapv3/{species}/done.txt",  species=species_list),
 #        expand("workflow/report/track_snpsv2_shift_self_test_13_shift/{species}/done.txt",  species=species_list),
        # expand("workflow/report/track_snpsv2_shift_self_test_mod_13_shift/{species}/done.txt",  species=species_list),
 
@@ -144,9 +152,9 @@ rule all:
         #"workflow/out/midasOutput/species/abundantSpecies.txt",
        # expand("workflow/out/midasOutput/species/abundantSpecies_{subject}.txt", subject=subjects),
 
-#include: "workflow/rules/processRawReads_no_concatenation.smk",
+include: "workflow/rules/processRawReads_no_concatenation.smk",
 #include: "workflow/rules/processRawReads.smk",
-#include: "workflow/rules/runMIDAS2.smk",
+include: "workflow/rules/runMIDAS2.smk",
 #include: "workflow/rules/runMIDAS2_population.smk"
 include: "workflow/rules/processMIDAS2.smk"
 #includ: "workflow/rules/processSNPs.smk"

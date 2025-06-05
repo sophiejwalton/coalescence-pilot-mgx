@@ -24,7 +24,8 @@ rule identifySpecies:
 
 rule mergeSpecies:
     input:
-        expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples)
+        'workflow/out/list_of_samples.tsv'
+        #expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples)
     output:
         "workflow/out/midas2_output/mergev3/species/species_prevalence.tsv"
     params:

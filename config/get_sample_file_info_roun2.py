@@ -62,4 +62,4 @@ if __name__ == '__main__':
 
 
     #df = pd.DataFrame(data = {'Sample': sample_names, 'read1': read1 , 'read2': read2, 'trim1': trim1, 'trim2': trim2})
-    df.to_csv('sample_fnames_round2.csv')
+    df.to_csv('sample_fnames_round4.csv')
