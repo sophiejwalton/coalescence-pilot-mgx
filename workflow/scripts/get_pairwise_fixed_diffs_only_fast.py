@@ -13,19 +13,19 @@ warnings.filterwarnings('ignore')
 def get_fixed_diffs(freq_filtered,sample):
     freq_filtered_sample = freq_filtered[[sample]].copy()
 
-    good_sites_lower = freq_filtered_sample.loc[freq_filtered_sample[sample] < .2].index.values
-    fixed_diffs_lower_snps = freq_filtered.loc[good_sites_lower,:] >.8 
-    print(fixed_diffs_lower_snps)
+  #  good_sites_lower = freq_filtered_sample.loc[freq_filtered_sample[sample] < .2].index.values
+    fixed_diffs_lower_snps = freq_filtered.loc[freq_filtered[sample] < .2,:] >.8 
     fixed_diffs_lower_snps = fixed_diffs_lower_snps.sum(axis=0)
-    print(fixed_diffs_lower_snps)
-    good_sites_upper = freq_filtered_sample.loc[freq_filtered_sample[sample] > .8].index.values
-    fixed_diffs_upper_snps = freq_filtered.loc[good_sites_upper,:] <.8 
+
+   # good_sites_upper = freq_filtered_sample.loc[freq_filtered_sample[sample] > .8].index.values
+    fixed_diffs_upper_snps = freq_filtered.loc[freq_filtered[sample] >.8,:] <.2
     fixed_diffs_upper_snps = fixed_diffs_upper_snps.sum(axis=0)
 
     num_sites_non_int = (freq_filtered >.8).sum(axis=0) + (freq_filtered <.2).sum(axis=0) 
     fixed_diffs = fixed_diffs_upper_snps+fixed_diffs_lower_snps
+
     fixed_diffs = fixed_diffs.rename('fixed_diffs')
-    num_sites_non_int = num_sites_non_int.rename('num_int_sites')
+    num_sites_non_int = num_sites_non_int.rename('comparisons')
  
     return pd.concat([fixed_diffs,num_sites_non_int],axis=1)
  
@@ -38,7 +38,7 @@ def get_main(species_dir, save_dir, species,):
     info, depth, freq = load_and_sort_files(species_dir, species)
 
     med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
-    good_samples = med_nonzero_depth[med_nonzero_depth>=5.]
+    good_samples = med_nonzero_depth[med_nonzero_depth>=5.]#used all for now 
     depth = depth[good_samples.index.values]
     freq = freq[good_samples.index.values]  
 
@@ -49,6 +49,7 @@ def get_main(species_dir, save_dir, species,):
     snps_switch = []
     num_sites = []
     all_dfs = []
+
     for i, s1 in enumerate(freq_filtered.columns.values):
         fixed_diffs= get_fixed_diffs(freq_filtered,s1).reset_index()
         fixed_diffs['sample1'] = s1
@@ -80,10 +81,3 @@ if __name__ == '__main__':
     if not path.isdir(save_dir):
         mkdir(save_dir)
     get_main(species_dir, save_dir, args.species, )
-    
-
-
-       
-        
-    
-
