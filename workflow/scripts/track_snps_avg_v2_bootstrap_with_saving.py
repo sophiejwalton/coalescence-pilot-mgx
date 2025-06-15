@@ -88,10 +88,10 @@ if __name__ == '__main__':
      ]
     depth_filtered_in, freq_filtered_in = filter_sites_across_samples(depth_filtered, 
         freq_filtered,thresh=.75)
-    freq_filtered_in[['D_B8_e003Assembly_S308' ]].to_csv(f'{species_dir}/for_plotting_histogram.csv.gz',compression='gzip')
+    #freq_filtered_in[['D_B8_e003Assembly_S308' ]].to_csv(f'{species_dir}/for_plotting_histogram.csv.gz',compression='gzip')
     #metadata = pd.read_csv('workflow/analysis/e003_metadata_cultures_round2_change_AA.csv')
     metadata = pd.read_csv('workflow/analysis/e003_coalescence_metadata_round4.csv')
-    for inoculumn in inoculumn_list:
+    for inoculumn in ['AA-AF-mGAM']:
         print(inoculumn)
 
         parent_samples, child_samples = get_parent_children(inoculumn, metadata)
@@ -119,7 +119,10 @@ if __name__ == '__main__':
        'G5-e003Coalescence-mGAM-p1_S810',
        'G5-e003Coalescence-mGAM-p3_S84', 'G5-e003Coalescence-mGAM-p5_S76',
        'G5-e003Coalescence-mGAM-p7_S172']
-        
+        samples_to_save = ['A11-AA-AF-mGAM-mBHI', 'A11-AA-AF-mGAM-mGAM', 'A5-AA-AF-mGAM-mGAM',
+ 'D8-AA-AF-mGAM-mBHI', 'D8-AA-AF-mGAM-mGAM', 'E11-AA-AF-mGAM-mBHI',
+ 'H8-AA-AF-mGAM-mBHI', 'E11-AA-AF-mGAM-mGAM', 'H8-AA-AF-mGAM-mGAM',
+ 'D2-AA-AF-mGAM-mGAM']
         get_main(species_dir,args.species, parent_samples, child_samples, 
             freq_filtered_in[parent_samples+child_samples],  depth_filtered_in[parent_samples+child_samples],samples_to_save)
 
