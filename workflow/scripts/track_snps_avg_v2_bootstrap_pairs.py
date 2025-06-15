@@ -61,6 +61,9 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
             meds[meds == 0 ] = b_frac_zero[meds == 0]
             meds[meds == 1 ] = b_frac_one[meds == 1]
             medians.append(meds)
+        medians = np.array(medians)
+        medians[medians<1e-3] = 1e-3
+        medians[medians>1-1e-3] = 1-1e-3
 
         for combo in it.combinations(np.arange(len(passages)),2):
             combo = np.sort([combo[0], combo[1]])
