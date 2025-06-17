@@ -84,7 +84,6 @@ def fix_zeros_bs(sample_meds, depth, bs_samples,n_snps):
     return freq_parent_fix
 
 def get_freq_est(snps,depth):
-
     med = np.nanmedian(snps)
     n_snps = len(snps)- np.sum(np.isnan(snps))
     if med == 0:
@@ -93,6 +92,10 @@ def get_freq_est(snps,depth):
     elif med == 1:
         frac_one = np.sum(snps == 1)/n_snps
         return 1+ np.log(frac_one)/depth
+    if med < 1e-3:
+        return 1e-3
+    if med > 1-1e-3:
+        return 1-1e-3
     return med 
 
 
