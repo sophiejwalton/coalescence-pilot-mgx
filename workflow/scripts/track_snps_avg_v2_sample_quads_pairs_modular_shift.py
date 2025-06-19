@@ -186,7 +186,7 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps1, p
             pred_p7 = np.exp(dt7*sel_coeff_13)
             pred_p7 = pred_p7*passage3_est/(1 - passage3_est + passage3_est*pred_p7)
 
-            pred_p6 = np.exp(dt7*sel_coeff_13)
+            pred_p6 = np.exp(dt6*sel_coeff_13)
             pred_p6 = pred_p6*passage3_est/(1 - passage3_est + passage3_est*pred_p6)
 
           #  print(pred_p7, passage7_est)
