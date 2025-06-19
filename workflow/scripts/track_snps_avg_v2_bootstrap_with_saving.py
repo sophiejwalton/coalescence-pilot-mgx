@@ -44,7 +44,7 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
     med_depth_children = depth_children.copy().replace(0, np.nan).median(skipna=True)
 
     freq_children.loc[parent1_snps, samples_to_save].to_csv(f'{species_dir}/to_save_dist1.csv.gz',compression='gzip')
-    freq_children.loc[parent1_snps, samples_to_save].to_csv(f'{species_dir}/to_save_dist2.csv.gz',compression='gzip')
+    freq_children.loc[parent2_snps, samples_to_save].to_csv(f'{species_dir}/to_save_dist2.csv.gz',compression='gzip')
 
 
 if __name__ == '__main__':
@@ -123,6 +123,13 @@ if __name__ == '__main__':
  'D8-AA-AF-mGAM-mBHI', 'D8-AA-AF-mGAM-mGAM', 'E11-AA-AF-mGAM-mBHI',
  'H8-AA-AF-mGAM-mBHI', 'E11-AA-AF-mGAM-mGAM', 'H8-AA-AF-mGAM-mGAM',
  'D2-AA-AF-mGAM-mGAM']
+        samples_to_save=['Coalescence-F1-D8-AA-AF-mGAM-mGAM-3_S680',
+       'D8-e003Coalescence-mGAM-p5',
+       'Coalescence-B5-D8-AA-AF-mGAM-mGAM-7_S636',
+       'C_H5_D8_AA_AF_mGAM_mGAM_6_S281', 'A_H5_D8_AA_AF_mGAM_mGAM_2_S89',
+       'B_H9_D8_AA_AF_mGAM_mGAM_4_S189',
+       'D8-e003Coalescence-mGAM-p1_S755',
+       'A5-e003Coalescence-Inoculumn-mGAM']
         get_main(species_dir,args.species, parent_samples, child_samples, 
             freq_filtered_in[parent_samples+child_samples],  depth_filtered_in[parent_samples+child_samples],samples_to_save)
 
