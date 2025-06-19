@@ -43,13 +43,13 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps1, p
     pred_7_lower= []
     pred_6_upper = []
     pred_6_lower= []
-
-    pred6_med = []
+    
+    pred7_med = []
     pred6_med = []
     mesocosms = []
+    as_extreme7 = []
     as_extreme6 = []
-    as_extreme6 = []
-    act_6 = []
+    act_7 = []
     act_6 = []
     for mesocosm in metadata['mesocosm'].unique():
         meso_df = metadata_non_zero.loc[metadata_non_zero['mesocosm'] == mesocosm, :]
@@ -100,7 +100,7 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps1, p
         
         diffs7 = np.zeros(n_bootstraps)
         diffs6 = np.zeros(n_bootstraps)
-        diff_both = np.zeros(n_bootstraps)
+        #diff_both = np.zeros(n_bootstraps)
 
         pred_7_ests = np.zeros(n_bootstraps)
         pred_6_ests = np.zeros(n_bootstraps)
@@ -192,7 +192,7 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps1, p
           #  print(pred_p7, passage7_est)
             diffs7[sample] = pred_p7 - passage7_est 
             diffs6[sample] = pred_p6 - passage6_est
-            diff_both[sample] = ((pred_p7 - passage7_est ) + (pred_p6 - passage6_est))/2
+          #  diff_both[sample] = ((pred_p7 - passage7_est ) + (pred_p6 - passage6_est))/2
 
             est_7s_ests[sample] = passage7_est
             pred_7_ests[sample] = pred_p7 
@@ -204,8 +204,8 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps1, p
 
         diff6_info_upper.append(np.quantile(diffs6, q = .975))
         diff6_info_lower.append(np.quantile(diffs6, q = .025))
-        diffboth_info_upper.append(np.quantile(diff_both, q = .975))
-        diffboth_info_lower.append(np.quantile(diff_both, q = .025))
+       # diffboth_info_upper.append(np.quantile(diff_both, q = .975))
+       # diffboth_info_lower.append(np.quantile(diff_both, q = .025))
 
         pred_7_upper.append(np.quantile(pred_7_ests, q = .975))
         pred_7_lower.append(np.quantile(pred_7_ests, q = .025))
@@ -217,7 +217,7 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps1, p
 
         diff7_info_med.append(np.median(diffs7))
         diff6_info_med.append(np.median(diffs6))
-        diffboth_info_med.append(np.median(diff_both))
+        #diffboth_info_med.append(np.median(diff_both))
 
         mesocosms.append(mesocosm)
        # p7_act = get_freq_est(snps.loc[parent_snps,sample7].values, depth_med[sample7].values[0])
@@ -237,8 +237,8 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps1, p
                                 'pred_7_lower': pred_7_lower, 
                                 'pred7_med': pred7_med,'as_extreme7': as_extreme7, 
                                 'pred6_med': pred6_med,'as_extreme6': as_extreme6, 
-                                'diff_both_lower': diffboth_info_lower, 'diff_both_upper': diffboth_info_upper, 
-                                'diff_both_med': diffboth_info_med,
+         #                       'diff_both_lower': diffboth_info_lower, 'diff_both_upper': diffboth_info_upper, 
+          #                      'diff_both_med': diffboth_info_med,
                                 })
     df['n_snps1'] = n_snps1
     df['n_snps2'] = n_snps2
