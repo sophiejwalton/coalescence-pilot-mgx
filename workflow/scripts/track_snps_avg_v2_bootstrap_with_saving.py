@@ -130,6 +130,13 @@ if __name__ == '__main__':
        'B_H9_D8_AA_AF_mGAM_mGAM_4_S189',
        'D8-e003Coalescence-mGAM-p1_S755',
        'A5-e003Coalescence-Inoculumn-mGAM']
+       samples_to_save = ['B_E8_E11_AF_AA_mGAM_mGAM_2_S152',
+       'Coalescence-B6-E11-AA-AF-mGAM-mGAM-7_S637',
+       'Coalescence-F3-E11-AA-AF-mGAM-mGAM-3_S682',
+       'D_E12_E11_AF_AA_mGAM_mGAM_4_S348',
+       'D_E8_A11_AF_AA_mGAM_mGAM_6_S344',
+       'E11-e003Coalescence-mGAM-p1_S840',
+       'E111-e003Coalescence-mGAM-p5_S56']
         get_main(species_dir,args.species, parent_samples, child_samples, 
             freq_filtered_in[parent_samples+child_samples],  depth_filtered_in[parent_samples+child_samples],samples_to_save)
 
