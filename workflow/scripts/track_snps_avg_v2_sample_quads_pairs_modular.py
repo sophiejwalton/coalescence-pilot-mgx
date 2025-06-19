@@ -92,6 +92,7 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
             sample6 = meso_df.loc[meso_df['passage']==6,'sample'].values
             p6_act = get_freq_est(snps.loc[parent_snps,sample6].values, depth_med[sample6].values[0])
         if 7 in passages:
+            print('potatoes')
             sample7 = meso_df.loc[meso_df['passage']==7,'sample'].values
             p7_act = get_freq_est(snps.loc[parent_snps,sample7].values, depth_med[sample7].values[0])
         
@@ -152,7 +153,7 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
             pred_p7 = np.exp(dt7*sel_coeff_13)
             pred_p7 = pred_p7*passage3_est/(1 - passage3_est + passage3_est*pred_p7)
 
-            pred_p6 = np.exp(dt7*sel_coeff_13)
+            pred_p6 = np.exp(dt6*sel_coeff_13)
             pred_p6 = pred_p6*passage3_est/(1 - passage3_est + passage3_est*pred_p6)
 
           #  print(pred_p7, passage7_est)
@@ -165,25 +166,31 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
             est_6s_ests[sample] = passage6_est
             pred_6_ests[sample] = pred_p6 
 
-        diff7_info_upper.append(np.quantile(diffs7, q = .975))
-        diff7_info_lower.append(np.quantile(diffs7, q = .025))
+        diffs7 = diffs7[~np.isnan(diffs7)]
+        diffs6 = diffs6[~np.isnan(diffs6)]
+        diff_both = diff_both[~np.isnan(diff_both)]
 
-        diff6_info_upper.append(np.quantile(diffs6, q = .975))
-        diff6_info_lower.append(np.quantile(diffs6, q = .025))
-        diffboth_info_upper.append(np.quantile(diff_both, q = .975))
-        diffboth_info_lower.append(np.quantile(diff_both, q = .025))
+        diff7_info_upper.append(np.nanquantile(diffs7, q = .975))
+        diff7_info_lower.append(np.nanquantile(diffs7, q = .025))
 
-        pred_7_upper.append(np.quantile(pred_7_ests, q = .975))
-        pred_7_lower.append(np.quantile(pred_7_ests, q = .025))
-        pred_6_upper.append(np.quantile(pred_6_ests, q = .975))
-        pred_6_lower.append(np.quantile(pred_6_ests, q = .025))
+   
+        diff6_info_upper.append(np.nanquantile(diffs6, q = .975))
+        diff6_info_lower.append(np.nanquantile(diffs6, q = .025))
 
-        pred7_med.append(np.median(pred_7_ests))
-        pred6_med.append(np.median(pred_6_ests))
+        diffboth_info_upper.append(np.nanquantile(diff_both, q = .975))
+        diffboth_info_lower.append(np.nanquantile(diff_both, q = .025))
 
-        diff7_info_med.append(np.median(diffs7))
-        diff6_info_med.append(np.median(diffs6))
-        diffboth_info_med.append(np.median(diff_both))
+        pred_7_upper.append(np.nanquantile(pred_7_ests, q = .975))
+        pred_7_lower.append(np.nanquantile(pred_7_ests, q = .025))
+        pred_6_upper.append(np.nanquantile(pred_6_ests, q = .975))
+        pred_6_lower.append(np.nanquantile(pred_6_ests, q = .025))
+
+        pred7_med.append(np.nanmedian(pred_7_ests))
+        pred6_med.append(np.nanmedian(pred_6_ests))
+
+        diff7_info_med.append(np.nanmedian(diffs7))
+        diff6_info_med.append(np.nanmedian(diffs6))
+        diffboth_info_med.append(np.nanmedian(diff_both))
 
         mesocosms.append(mesocosm)
        # p7_act = get_freq_est(snps.loc[parent_snps,sample7].values, depth_med[sample7].values[0])
@@ -247,9 +254,9 @@ def get_main(metadata, species_dir,species, parent_samples, child_samples, freq_
    # count_parent1 = pd.DataFrame(get_count(freq_children, parent1_snps)).rename(columns = {0: parent_samples[0]})  
    # count_parent2 = pd.DataFrame(get_count(freq_children, parent2_snps)).rename(columns = {0: parent_samples[1]})  
 
-    parent1_info = get_bootstrap_sel_coeffs(metadata, freq_children, med_depth_children, parent1_snps, n_bootstraps = 10000,
+    parent1_info = get_bootstrap_sel_coeffs(metadata, freq_children, med_depth_children, parent1_snps, n_bootstraps = 100,
                  initial_sample=sample_init, final_sample=final_sample)
-    parent2_info = get_bootstrap_sel_coeffs(metadata, freq_children, med_depth_children, parent2_snps, n_bootstraps = 10000,
+    parent2_info = get_bootstrap_sel_coeffs(metadata, freq_children, med_depth_children, parent2_snps, n_bootstraps = 100,
                 initial_sample=sample_init, final_sample=final_sample)
 # freq_parent2 = freq_parent2.T
    # freq_parent2['parent'] = parent_samples[1]
