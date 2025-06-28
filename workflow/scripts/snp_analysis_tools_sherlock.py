@@ -68,6 +68,15 @@ def get_diversity_series(freq_filtered, thresh=.2):
     num_int_sites = freq_filtered.count() - all_nonint_sites
     diversity = num_int_sites/freq_filtered.count() 
     return num_int_sites, diversity
+
+
+def get_median_int_freq(freq_filtered, thresh=.2):
+    freq_filtered_pol = freq_filtered.copy()
+    freq_filtered_pol[freq_filtered_pol >.5]=1-freq_filtered_pol[freq_filtered_pol >.5] #polarize everything
+    bad_stuff = freq_filtered_pol < thresh # look for stuff above the thresh
+    freq_filtered_pol[bad_stuff] = np.nan
+    freq_filtered_pol_meds = freq_filtered_pol.median(axis = 0,skipna=True)
+    return freq_filtered_pol_meds
     
 def polarize_species(freq, sample):
     """
