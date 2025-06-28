@@ -91,7 +91,7 @@ if __name__ == '__main__':
     #freq_filtered_in[['D_B8_e003Assembly_S308' ]].to_csv(f'{species_dir}/for_plotting_histogram.csv.gz',compression='gzip')
     #metadata = pd.read_csv('workflow/analysis/e003_metadata_cultures_round2_change_AA.csv')
     metadata = pd.read_csv('workflow/analysis/e003_coalescence_metadata_round4.csv')
-    for inoculumn in ['AA-AF-mGAM']:
+    for inoculumn in ['AE-AF-mBHI']:
         print(inoculumn)
 
         parent_samples, child_samples = get_parent_children(inoculumn, metadata)
@@ -130,13 +130,25 @@ if __name__ == '__main__':
        'B_H9_D8_AA_AF_mGAM_mGAM_4_S189',
        'D8-e003Coalescence-mGAM-p1_S755',
        'A5-e003Coalescence-Inoculumn-mGAM']
-       samples_to_save = ['B_E8_E11_AF_AA_mGAM_mGAM_2_S152',
+        samples_to_save = ['B_E8_E11_AF_AA_mGAM_mGAM_2_S152',
        'Coalescence-B6-E11-AA-AF-mGAM-mGAM-7_S637',
+        'A5-e003Coalescence-Inoculumn-mGAM',
        'Coalescence-F3-E11-AA-AF-mGAM-mGAM-3_S682',
        'D_E12_E11_AF_AA_mGAM_mGAM_4_S348',
        'D_E8_A11_AF_AA_mGAM_mGAM_6_S344',
        'E11-e003Coalescence-mGAM-p1_S840',
-       'E111-e003Coalescence-mGAM-p5_S56']
+       'E111-e003Coalescencei-mGAM-p5_S56']
+        samples_to_save = ['A_C12_C5_AF_AE_mBHI_mBHI_4_S36', 'A_C4_C5_AF_AE_mBHI_mBHI_2_S28',
+       'C5-e003Coalescence-mBHI-inoculumn-redo',
+       'C5-e003Coalescence-mBHI-p3', 'C5-e003Coalescence-mBHI-p5',
+       'C5-e003Coalescence-mBHI-p7', 'C_C4_C5_AF_AE_mBHI_mBHI_6_S220']
+        samples_to_save = ['D_C4_C5_AF_AE_mBHI_mBHI_6_S316',
+       'G5-e003Coalescence-mBHI-p7_S124',
+       'C_C12_G5_AF_AE_mBHI_mBHI_4_S228',
+       'G5-e003Coalescence-mBHI-p5_S28', 'B_C4_G5_AF_AE_mBHI_mBHI_2_S124',
+       'G5-e003Coalescence-mBHI-p3_S36',
+       'G5-e003Coalescence-mBHI-p1_S806',
+       'C5-e003Coalescence-mBHI-inoculumn-redo']
         get_main(species_dir,args.species, parent_samples, child_samples, 
             freq_filtered_in[parent_samples+child_samples],  depth_filtered_in[parent_samples+child_samples],samples_to_save)
 
