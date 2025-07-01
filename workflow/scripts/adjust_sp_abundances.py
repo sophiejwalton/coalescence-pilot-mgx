@@ -30,7 +30,7 @@ if __name__ == '__main__':
         sample = fname.split('/')[-3]
         sample_df = pd.read_csv(fname,delimiter='\t').set_index('species_id')
         if sample in species_df.columns.values:
-		species_df.loc[sample_df.index.values, sample] = sample_df['marker_relative_abundance'].values	
+		      species_df.loc[sample_df.index.values, sample] = sample_df['marker_relative_abundance'].values	
         #print(sample_df)
        # species_df.loc[sample_df.index.values, sample] = sample_df['marker_relative_abundance'].values
     species_df.to_csv('workflow/out/midas2_output/species/species/species_relative_abundance_alt.tsv',sep='\t')
