@@ -12,22 +12,24 @@ warnings.filterwarnings('ignore')
 
 
 
-def get_bootstrap_parent(freq_children, depth_med, reads_children, parent_snps, n_bootstraps = 1000):
+def get_bootstrap_parent(freq_children, depth_med, reads_children, reads_children_opp, parent_snps, n_bootstraps = 1000):
     #med = freq_children.loc[parent_snps,:].median(axis = 0)
     #freq_masked = freq_children.mask((freq_children > freq_thresh * med),axis = 0)
    # freq_masked = freq_masked .mask((freq_masked  < med / freq_thresh),axis = 0)
     snps = freq_children.loc[parent_snps,:]
     reads = reads_children.loc[parent_snps,:]
+    reads_opp=reads_children_opp.loc[parent_snps,:]
     boot_med = []
     boot_low = []
     boot_high = []
     act_med = []
     samples_good = []
     for sample in snps.columns.values:
-        snps_sample= snps[sample].values
-        
-        reads_sample = reads[sample].values
+        snps_sample= snps[sample]
+        reads_sample = reads[sample]
         reads_sample = reads_sample[~np.isnan(snps_sample)]
+        reads_samples_opp = reads[sample]
+        reads_sample_opp = reads_sample_opp[~np.isnan(snps_sample)]
         snps_sample = snps_sample[~np.isnan(snps_sample)]
 
         med_og = np.median(snps_sample)
@@ -35,20 +37,28 @@ def get_bootstrap_parent(freq_children, depth_med, reads_children, parent_snps, 
         if med_og == 0:
             med_og = (np.sum(reads_sample==1)/np.sum(reads_sample==0))/depth_med[sample] 
         elif med_og == 1:
-            med_og = 1+np.log(np.sum(snps_sample == 1)/n_snps)/depth_med[sample] 
-            print('one', med_og)
+            med_og = 1 - (np.sum(reads_sample_opp==1)/np.sum(reads_sample_opp==0))/depth_med[sample] 
         if len(snps_sample) == 0: continue 
 
-        bs_samples = np.random.choice(snps_sample, size = (n_snps, n_bootstraps))
-        samples_meds = np.median(bs_samples,axis = 0)
-
-     
-        samples_meds_fix = fix_zeros_bs(samples_meds, depth_med[sample], bs_samples,n_snps)
+        bs_samples = np.random.choice(snps_sample.index.values, size = (n_snps, n_bootstraps))
+        samples_meds= np.zeros(n_bootstraps)
+        for n in n_bootstraps:
+            bs_sample = np.random.choice(snps_sample.index.values, size = n_snps)
+            snps_bs = snps_sample[bs_sample]
+            bs_med = np.median(bs_sample)
+            if bs_med == 0:
+                reads_bs = reads_sample[bs_sample]
+                bs_med = (np.sum(reads_bs==1)/np.sum(reads_bs==0))/depth_med[sample] 
+            if bs_med == 1:
+                reads_bs = reads_sample_opp[bs_sample]
+                bs_med = 1- (np.sum(reads_bs==1)/np.sum(reads_bs==0))/depth_med[sample] 
+            samples_meds[n] = bs_med
+            
         samples_good.append(sample)
-        boot_med.append(np.median(samples_meds_fix))
-        boot_low.append(np.percentile(samples_meds_fix, q =2.5))
+        boot_med.append(np.median(samples_meds))
+        boot_low.append(np.percentile(samples_meds, q =2.5))
         act_med.append(med_og)
-        boot_high.append(np.percentile(samples_meds_fix, q = 97.5))
+        boot_high.append(np.percentile(samples_meds, q = 97.5))
     return pd.DataFrame(data = {'sample': samples_good, 'boot_med': boot_med, 'boot_low': boot_low, 'boot_high': boot_high,
                                     'actual_med': act_med})
 
@@ -78,6 +88,7 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
     freq_children = freq_filtered[child_samples]
     depth_children = depth_filtered[child_samples]
     reads_children = freq_children*depth_children
+    reads_children_opp = (1-freq_children)*depth_children
     print(reads_children)
    
     print('before', len(parent1_snps), len(parent2_snps))
@@ -89,11 +100,9 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
     count_parent1 = pd.DataFrame(get_count(freq_children, parent1_snps)).rename(columns = {0: parent_samples[0]})  
     count_parent2 = pd.DataFrame(get_count(freq_children, parent2_snps)).rename(columns = {0: parent_samples[1]})  
 
-    parent1_info = get_bootstrap_parent(freq_children, med_depth_children, reads_children, parent1_snps, n_bootstraps = 1000)
-    parent2_info = get_bootstrap_parent(freq_children, med_depth_children, reads_children, parent2_snps, n_bootstraps = 1000)
-# freq_parent2 = freq_parent2.T
-   # freq_parent2['parent'] = parent_samples[1]
-   # print(freq_parent2)
+    parent1_info = get_bootstrap_parent(freq_children, med_depth_children, reads_children, reads_children_opp, parent1_snps, n_bootstraps = 1000)
+    parent2_info = get_bootstrap_parent(freq_children, med_depth_children, reads_children, reads_children_opp, parent2_snps, n_bootstraps = 1000)
+
     return pd.concat([count_parent1, count_parent2],axis=1), parent1_info, parent2_info 
 
 if __name__ == '__main__':
