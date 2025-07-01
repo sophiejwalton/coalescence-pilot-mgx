@@ -1,0 +1,2 @@
+,mesocosms,diff7_med,diff7_lower,diff7_upper,diff6_med,diff6_lower,diff6_upper,pred_6_upper,act_6,pred_6_lower,pred_7_upper,act_7,pred_7_lower,pred7_med,as_extreme7,pred6_med,as_extreme6,diff_both_lower,diff_both_upper,diff_both_med,n_snps,sample_init,final_sample
+0,C3-AC/PP-AE-mBHI-mGAM,-0.2579999528867652,-0.2599999464076128,-0.25699994724014147,,,,1.071439766997785e-06,,7.93931255825585e-07,6.08330634197331e-08,0.258,4.21363836120153e-08,4.8976223057904194e-08,100,8.976938607434677e-07,0,,,,7708,1,2
