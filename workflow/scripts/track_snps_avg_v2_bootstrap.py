@@ -140,15 +140,13 @@ if __name__ == '__main__':
     depth_filtered= depth_filtering(depth, depth_thresh = 2.5)
     freq_filtered = freq_masked(freq, depth_filtered)
     inoculumn_list = ['AA-AE-mGAM', 'AA-AF-mGAM', 
-       'AA-AC/PP-mGAM', 'AA-AC/PP-mBHI', 'AA-AE-mBHI', 'AA-AF-mBHI',
-       'AC/PP-AE-mGAM', 'AC/PP-AF-mGAM', 
-       'AC/PP-AE-mBHI', 'AC/PP-AF-mBHI', 
+        'AA-AE-mBHI', 'AA-AF-mBHI',
        'AE-AF-mGAM', 'AE-AF-mBHI',
      ]
     depth_filtered_in, freq_filtered_in = filter_sites_across_samples(depth_filtered, 
         freq_filtered,thresh=.75)
     #metadata = pd.read_csv('workflow/analysis/e003_metadata_cultures_round2_change_AA.csv')
-    metadata = pd.read_csv('workflow/analysis/e003_coalescence_metadata_round4.csv')
+    metadata = pd.read_csv('workflow/analysis/e003_coalescence_metadata_round4_good.csv')
     for inoculumn in inoculumn_list:
         print(inoculumn)
 
