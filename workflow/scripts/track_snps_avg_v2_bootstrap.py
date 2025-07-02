@@ -26,26 +26,27 @@ def get_bootstrap_parent(freq_children, depth_med, reads_children, reads_childre
     samples_good = []
     for sample in snps.columns.values:
         snps_sample= snps[sample]
-        reads_sample = reads[sample]
+        reads_sample = reads[sample].round()
         reads_sample = reads_sample[~np.isnan(snps_sample)]
-        reads_samples_opp = reads[sample]
+        reads_sample_opp = reads_opp[sample].round()
         reads_sample_opp = reads_sample_opp[~np.isnan(snps_sample)]
         snps_sample = snps_sample[~np.isnan(snps_sample)]
 
         med_og = np.median(snps_sample)
         n_snps = len(snps_sample)
+        print(sample, 'woo', np.sum(reads_sample==1),np.sum(reads_sample_opp==1))
         if med_og == 0:
             med_og = (np.sum(reads_sample==1)/np.sum(reads_sample==0))/depth_med[sample] 
         elif med_og == 1:
             med_og = 1 - (np.sum(reads_sample_opp==1)/np.sum(reads_sample_opp==0))/depth_med[sample] 
         if len(snps_sample) == 0: continue 
-
+        print('after',med_og)
         bs_samples = np.random.choice(snps_sample.index.values, size = (n_snps, n_bootstraps))
         samples_meds= np.zeros(n_bootstraps)
-        for n in n_bootstraps:
+        for n in range(n_bootstraps):
             bs_sample = np.random.choice(snps_sample.index.values, size = n_snps)
             snps_bs = snps_sample[bs_sample]
-            bs_med = np.median(bs_sample)
+            bs_med = np.median(snps_bs)
             if bs_med == 0:
                 reads_bs = reads_sample[bs_sample]
                 bs_med = (np.sum(reads_bs==1)/np.sum(reads_bs==0))/depth_med[sample] 

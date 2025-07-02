@@ -21,5 +21,5 @@ if __name__ == '__main__':
           species_df.loc[sample_df.index.values, sample] = sample_df['marker_relative_abundance'].values	
         #print(sample_df)
        # species_df.loc[sample_df.index.values, sample] = sample_df['marker_relative_abundance'].values 
-    species_df.to_csv('workflow/out/midas2_output/species/species/species_relative_abundance_alt.tsv',sep='\t')
+    species_df.to_csv('workflow/out/midas2_output/species/species_relative_abundance_alt.tsv',sep='\t')
 
