@@ -11,7 +11,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 
-def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_bootstraps = 1000):
+def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med,  reads_children, reads_children_opp, parent_snps, n_bootstraps = 1000):
     #med = freq_children.loc[parent_snps,:].median(axis = 0)
     #freq_masked = freq_children.mask((freq_children > freq_thresh * med),axis = 0)
    # freq_masked = freq_masked .mask((freq_masked  < med / freq_thresh),axis = 0)
@@ -41,26 +41,42 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
             continue 
         samples = [inoculumn] + samples
         passages = [0] + passages
-        print(samples, snps.columns.values)
+       # print(samples, snps.columns.values)
        #snps_samples = snps[samples].values 
        # depths = depth_med[samples].values
         medians = []
-        for sample in samples:
-            snps_sample = snps[sample].values
+        for sample in snps.columns.values:
+            snps_sample= snps[sample]
+            reads_sample = reads[sample].round()
+            reads_sample = reads_sample[~np.isnan(snps_sample)]
+            reads_sample_opp = reads_opp[sample].round()
+            reads_sample_opp = reads_sample_opp[~np.isnan(snps_sample)]
             snps_sample = snps_sample[~np.isnan(snps_sample)]
+
+            med_og = np.median(snps_sample)
             n_snps = len(snps_sample)
-            bs_samples = np.random.choice(snps_sample, size = ( n_snps, n_bootstraps))
-            meds = np.nanmedian(bs_samples, axis=0)
-
-            b_frac_zero = np.sum(bs_samples == 0, axis = 0)/n_snps
-            b_frac_zero = -np.log(b_frac_zero)/depth_med[sample]
-
-            b_frac_one = np.sum(bs_samples == 1, axis = 0)/n_snps
-            b_frac_one = 1+ np.log(b_frac_one)/depth_med[sample]
-
-            meds[meds == 0 ] = b_frac_zero[meds == 0]
-            meds[meds == 1 ] = b_frac_one[meds == 1]
-            medians.append(meds)
+            #print(sample, 'woo', np.sum(reads_sample==1),np.sum(reads_sample_opp==1))
+            if med_og == 0:
+                med_og = (np.sum(reads_sample==1)/np.sum(reads_sample==0))/depth_med[sample] 
+            elif med_og == 1:
+                med_og = 1 - (np.sum(reads_sample_opp==1)/np.sum(reads_sample_opp==0))/depth_med[sample] 
+            if len(snps_sample) == 0: continue 
+          #  print('after',med_og)
+            bs_samples = np.random.choice(snps_sample.index.values, size = (n_snps, n_bootstraps))
+            samples_meds= np.zeros(n_bootstraps)
+            for n in range(n_bootstraps):
+                bs_sample = np.random.choice(snps_sample.index.values, size = n_snps)
+                snps_bs = snps_sample[bs_sample]
+                bs_med = np.median(snps_bs)
+                if bs_med == 0:
+                    reads_bs = reads_sample[bs_sample]
+                    bs_med = (np.sum(reads_bs==1)/np.sum(reads_bs==0))/depth_med[sample] 
+                if bs_med == 1:
+                    reads_bs = reads_sample_opp[bs_sample]
+                    bs_med = 1- (np.sum(reads_bs==1)/np.sum(reads_bs==0))/depth_med[sample] 
+                samples_meds[n] = bs_med
+            medians.append(samples_meds)
+            
         medians = np.array(medians)
         medians[medians<1e-3] = 1e-3
         medians[medians>1-1e-3] = 1-1e-3
@@ -93,7 +109,9 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med, parent_snps, n_
        
 
 
-def get_main(metadata, species_dir,species, parent_samples, child_samples, freq_filtered, depth_filtered):
+
+
+def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, depth_filtered):
   #  info, depth, freq = load_and_sort_files(species_dir, species)
    # med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
    # good_samples = med_nonzero_depth[med_nonzero_depth>10.]
@@ -117,6 +135,9 @@ def get_main(metadata, species_dir,species, parent_samples, child_samples, freq_
     parent2_snps = distinguishing_snps2[distinguishing_snps2 == 2].index.values
     freq_children = freq_filtered[child_samples]
     depth_children = depth_filtered[child_samples]
+    reads_children = freq_children*depth_children
+    reads_children_opp = (1-freq_children)*depth_children
+    print(reads_children)
    
     print('before', len(parent1_snps), len(parent2_snps))
     parent1_snps = filter_distinguishing_snps(freq_filtered[child_samples], parent1_snps, thresh = .5, sample_thresh=.75)
@@ -124,15 +145,14 @@ def get_main(metadata, species_dir,species, parent_samples, child_samples, freq_
     print('after', len(parent1_snps), len(parent2_snps))
     med_depth_children = depth_children.copy().replace(0, np.nan).median(skipna=True)
 
-   # count_parent1 = pd.DataFrame(get_count(freq_children, parent1_snps)).rename(columns = {0: parent_samples[0]})  
-   # count_parent2 = pd.DataFrame(get_count(freq_children, parent2_snps)).rename(columns = {0: parent_samples[1]})  
+    count_parent1 = pd.DataFrame(get_count(freq_children, parent1_snps)).rename(columns = {0: parent_samples[0]})  
+    count_parent2 = pd.DataFrame(get_count(freq_children, parent2_snps)).rename(columns = {0: parent_samples[1]})  
 
-    parent1_info = get_bootstrap_sel_coeffs(metadata, freq_children, med_depth_children, parent1_snps, n_bootstraps = 1000)
-    parent2_info = get_bootstrap_sel_coeffs(metadata, freq_children, med_depth_children, parent2_snps, n_bootstraps = 1000)
-# freq_parent2 = freq_parent2.T
-   # freq_parent2['parent'] = parent_samples[1]
-   # print(freq_parent2)
-    return parent1_info, parent2_info 
+    parent1_info = get_bootstrap_sel_coeff(freq_children, med_depth_children, reads_children, reads_children_opp, parent1_snps, n_bootstraps = 1000)
+    parent2_info = get_bootstrap_sel_coeff(freq_children, med_depth_children, reads_children, reads_children_opp, parent2_snps, n_bootstraps = 1000)
+
+    return pd.concat([count_parent1, count_parent2],axis=1), parent1_info, parent2_info 
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='basic filtering of sites')
@@ -159,7 +179,7 @@ if __name__ == '__main__':
     #print(info.columns.values)
     #print(info.index.values)
     freq = repolarize_against_reference(freq, info)
-    metadata = pd.read_csv('workflow/analysis/e003_coalescence_metadata_round4.csv')
+    metadata = pd.read_csv('workflow/analysis/e003_coalescence_metadata_round4_good.csv')
 
     med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
     med_nonzero_depth.to_csv(f'{save_dir}/{args.species}_median_depths.csv')
@@ -169,9 +189,7 @@ if __name__ == '__main__':
     depth_filtered= depth_filtering(depth, depth_thresh = 2.5)
     freq_filtered = freq_masked(freq, depth_filtered)
     inoculumn_list = ['AA-AE-mGAM', 'AA-AF-mGAM', 
-       'AA-AC/PP-mGAM', 'AA-AC/PP-mBHI', 'AA-AE-mBHI', 'AA-AF-mBHI',
-       'AC/PP-AE-mGAM', 'AC/PP-AF-mGAM', 
-       'AC/PP-AE-mBHI', 'AC/PP-AF-mBHI', 
+        'AA-AE-mBHI', 'AA-AF-mBHI',
        'AE-AF-mGAM', 'AE-AF-mBHI',
      ]
     depth_filtered_in, freq_filtered_in = filter_sites_across_samples(depth_filtered, 
