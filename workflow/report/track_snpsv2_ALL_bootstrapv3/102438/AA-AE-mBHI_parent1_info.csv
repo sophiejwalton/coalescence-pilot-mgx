@@ -1,9 +1,9 @@
 ,sample,boot_med,boot_low,boot_high,actual_med
-0,A4-e003Coalescence-mBHI-inoculumn-redo,0.514,0.512,0.515,0.514
+0,A4-e003Coalescence-mBHI-inoculumn-redo,0.514,0.512,0.516,0.514
 1,A4-e003Coalescence-mBHI-p7,0.0,0.0,0.0,0.0
 2,A4-e003Coalescence-mGAM-p1_S736,0.0,0.0,0.0,0.0
 3,A_A11_A4_AE_AA_mBHI_mBHI_4_S11,0.0,0.0,0.0,0.0
-4,A_C1_C2_AA_AE_mBHI_mBHI_2_S25,0.179,0.177,0.181,0.179
+4,A_C1_C2_AA_AE_mBHI_mBHI_2_S25,0.179,0.178,0.182,0.179
 5,A_C9_C2_AA_AE_mBHI_mBHI_4_S33,0.0,0.0,0.0,0.0
 6,A_E11_A4_AE_AA_mBHI_mGAM_4_S59,0.0,0.0,0.0,0.0
 7,A_E3_A4_AE_AA_mBHI_mGAM_2_S51,0.0,0.0,0.0,0.0
