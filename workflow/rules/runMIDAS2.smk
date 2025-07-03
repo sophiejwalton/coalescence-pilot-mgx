@@ -6,7 +6,7 @@ rule identifySpecies:
 #	r1=join(config["filterdir"],"{sample}-filtered.1.fastq.gz"),
 #	r2=join(config["filterdir"],"{sample}-filtered.2.fastq.gz")
         r1=lambda wildcards: df.loc[str(wildcards.sample), 'filter1'],
-		r2=lambda wildcards: df.loc[str(wildcards.sample), 'filter2']
+	r2=lambda wildcards: df.loc[str(wildcards.sample), 'filter2']
        # r1=join(config["filterdir"],"{sample}-filtered.1.fastq.gz"),
        # r2=join(config["filterdir"],"{sample}-filtered.2.fastq.gz")
     output:

@@ -12,12 +12,12 @@ warnings.filterwarnings('ignore')
 
 
 
-def get_bootstrap_parent(freq_children, depth_med, reads_children, reads_children_opp, parent_snps, n_bootstraps = 1000):
+def get_bootstrap_parent(freq_children, depth_med,depth_children, reads_children, reads_children_opp, parent_snps, inoculumn,n_bootstraps = 1000):
     #med = freq_children.loc[parent_snps,:].median(axis = 0)
     #freq_masked = freq_children.mask((freq_children > freq_thresh * med),axis = 0)
    # freq_masked = freq_masked .mask((freq_masked  < med / freq_thresh),axis = 0)
     snps = freq_children.loc[parent_snps,:]
-    reads = reads_children.loc[parent_snps,:]
+    depths = depth_children.loc[parent_snps,:]
     reads_opp=reads_children_opp.loc[parent_snps,:]
     boot_med = []
     boot_low = []
@@ -26,15 +26,18 @@ def get_bootstrap_parent(freq_children, depth_med, reads_children, reads_childre
     samples_good = []
     for sample in snps.columns.values:
         snps_sample= snps[sample]
-        reads_sample = reads[sample].round()
+        reads_sample = depth[sample]*snps_sample[sample]
         reads_sample = reads_sample[~np.isnan(snps_sample)]
-        reads_sample_opp = reads_opp[sample].round()
-        reads_sample_opp = reads_sample_opp[~np.isnan(snps_sample)]
+        print(np.min(reads_sample[reads_sample>0]))
+        reads_sample = reads_sample.round()
+        print(np.min(reads_sample[reads_sample>0]))
+        reads_sample_opp = (depth[sample]*(1-snps_sample[sample]))
+        reads_sample_opp = reads_sample_opp[~np.isnan(snps_sample)].round()
         snps_sample = snps_sample[~np.isnan(snps_sample)]
 
         med_og = np.median(snps_sample)
         n_snps = len(snps_sample)
-        print(sample, 'woo', np.sum(reads_sample==1),np.sum(reads_sample_opp==1))
+        print(sample, 'woo', np.unique(reads_sample), np.unique(reads_sample_opp), np.sum(reads_sample==1),np.sum(reads_sample_opp==1))
         if med_og == 0:
             med_og = (np.sum(reads_sample==1)/np.sum(reads_sample==0))/depth_med[sample] 
         elif med_og == 1:
@@ -64,7 +67,7 @@ def get_bootstrap_parent(freq_children, depth_med, reads_children, reads_childre
                                     'actual_med': act_med})
 
 
-def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, depth_filtered):
+def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, depth_filtered,inoculumn):
   #  info, depth, freq = load_and_sort_files(species_dir, species)
    # med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
    # good_samples = med_nonzero_depth[med_nonzero_depth>10.]
@@ -90,7 +93,8 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
     depth_children = depth_filtered[child_samples]
     reads_children = freq_children*depth_children
     reads_children_opp = (1-freq_children)*depth_children
-    print(reads_children)
+
+   # print(reads_children)
    
     print('before', len(parent1_snps), len(parent2_snps))
     parent1_snps = filter_distinguishing_snps(freq_filtered[child_samples], parent1_snps, thresh = .5, sample_thresh=.75)
@@ -101,9 +105,10 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
     count_parent1 = pd.DataFrame(get_count(freq_children, parent1_snps)).rename(columns = {0: parent_samples[0]})  
     count_parent2 = pd.DataFrame(get_count(freq_children, parent2_snps)).rename(columns = {0: parent_samples[1]})  
 
-    parent1_info = get_bootstrap_parent(freq_children, med_depth_children, reads_children, reads_children_opp, parent1_snps, n_bootstraps = 1000)
-    parent2_info = get_bootstrap_parent(freq_children, med_depth_children, reads_children, reads_children_opp, parent2_snps, n_bootstraps = 1000)
-
+    parent1_info = get_bootstrap_parent(freq_children, med_depth_children,depth_children, reads_children, reads_children_opp, parent1_snps,inoculumn, n_bootstraps = 1000)
+    parent2_info = get_bootstrap_parent(freq_children, med_depth_children,depth_children, reads_children, reads_children_opp, parent2_snps, inoculumn, n_bootstraps = 1000)
+    reads_children.loc[reads_children,parent1_snps].to_csv(f'{species_dir}/{inoculumn}_reads_children.csv.gz',compression='gzip')
+    reads_children_opp.loc[reads_children,parent1_snps].to_csv(f'{species_dir}/{inoculumn}_reads_children_opp.csv.gz',compression='gzip')
     return pd.concat([count_parent1, count_parent2],axis=1), parent1_info, parent2_info 
 
 if __name__ == '__main__':
@@ -169,7 +174,7 @@ if __name__ == '__main__':
             parent_samples = ['A2-e003Coalescence-mBHI-inoculumn-redo', parent_samples[1]]
         
         count_parents, parent1_info, parent2_info = get_main(species_dir,args.species, parent_samples, child_samples, 
-            freq_filtered_in[parent_samples+child_samples],  depth_filtered_in[parent_samples+child_samples])
+            freq_filtered_in[parent_samples+child_samples],  depth_filtered_in[parent_samples+child_samples],inoculumn)
 
         inoculumn = ''.join(inoculumn.split('/'))
         
