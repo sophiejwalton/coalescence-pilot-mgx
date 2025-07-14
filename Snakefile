@@ -124,7 +124,7 @@ species_list = ['100146',
 #species_list = [100146,102478,100196,102438,100099,101346,102506]
 print(len(samples))
 #species_list = ['100196','100146']
-species_list = get_species_list()
+#species_list = get_species_list()
 #samples=['D_A4_A5_AF_AA_mBHI_mBHI_6_S292']
 print(len(species_list))
 rule all:
@@ -143,9 +143,9 @@ rule all:
          expand("workflow/report/calculateDiversityDepthv3/{species}/{species}_diversity_df1.csv",species=species_list),     
        # expand("workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv",species=species_list),  
      #   expand("workflow/report/track_snpsv2_ALL/{species}/done.txt", species=species_list),   
-#         expand("workflow/report/track_snpsv2_ALL_bootstrapv3/{species}/done.txt", species=species_list), 
+         expand("workflow/report/track_snpsv2_ALL_bootstrapv3/{species}/done.txt", species=species_list), 
  #        expand("workflow/report/calculateFixedDiffsFastv3/{species}/{species}_fixed_diffs.csv",species=species_list),
-  #       expand("workflow/report/track_snpsv2_sel_bootstrapv3/{species}/done.txt",  species=species_list),
+         expand("workflow/report/track_snpsv2_sel_bootstrapv3/{species}/done.txt",  species=species_list),
    #      expand("workflow/report/track_snpsv2_shift_self_test_mod_12/{species}/done.txt",  species=species_list),
         # expand("workflow/report/track_snpsv2_shift_self_test_mod_12_shift/{species}/done.txt",  species=species_list),
 

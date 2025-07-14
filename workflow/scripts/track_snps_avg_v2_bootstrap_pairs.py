@@ -10,6 +10,8 @@ from track_snps_funcs import *
 import warnings
 warnings.filterwarnings('ignore')
 
+def adjust_freq(nreads0, nreads3):
+    return (6*nreads3/nreads0)**(1/3)
 
 def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med,  reads_children, reads_children_opp, parent_snps, n_bootstraps = 1000):
     #med = freq_children.loc[parent_snps,:].median(axis = 0)
@@ -57,9 +59,11 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med,  reads_children
             n_snps = len(snps_sample)
             #print(sample, 'woo', np.sum(reads_sample==1),np.sum(reads_sample_opp==1))
             if med_og == 0:
-                med_og = (np.sum(reads_sample==1)/np.sum(reads_sample==0))/depth_med[sample] 
+                med_og = adjust_freq(np.sum(reads_sample==0), np.sum(reads_sample==3))/depth_med[sample] 
+                #med_og = (np.sum(reads_sample==1)/np.sum(reads_sample==0))/depth_med[sample] 
             elif med_og == 1:
-                med_og = 1 - (np.sum(reads_sample_opp==1)/np.sum(reads_sample_opp==0))/depth_med[sample] 
+                med_og = 1 - adjust_freq(np.sum(reads_sample_opp==0), np.sum(reads_sample_opp==3))/depth_med[sample] 
+               # med_og = 1 - (np.sum(reads_sample_opp==1)/np.sum(reads_sample_opp==0))/depth_med[sample] 
             if len(snps_sample) == 0: continue 
           #  print('after',med_og)
             bs_samples = np.random.choice(snps_sample.index.values, size = (n_snps, n_bootstraps))
@@ -70,16 +74,16 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med,  reads_children
                 bs_med = np.median(snps_bs)
                 if bs_med == 0:
                     reads_bs = reads_sample[bs_sample]
-                    bs_med = (np.sum(reads_bs==1)/np.sum(reads_bs==0))/depth_med[sample] 
+                    bs_med = adjust_freq(np.sum(reads_bs==0), np.sum(reads_bs==3))/depth_med[sample]
                 if bs_med == 1:
                     reads_bs = reads_sample_opp[bs_sample]
-                    bs_med = 1- (np.sum(reads_bs==1)/np.sum(reads_bs==0))/depth_med[sample] 
+                    bs_med = 1- adjust_freq(np.sum(reads_bs==0), np.sum(reads_bs==3))/depth_med[sample]
                 samples_meds[n] = bs_med
             medians.append(samples_meds)
             
         medians = np.array(medians)
-        medians[medians<1e-3] = 1e-3
-        medians[medians>1-1e-3] = 1-1e-3
+        medians[medians<5e-3] = 5e-3
+        medians[medians>1-5e-3] = 1-5e-3
 
         for combo in it.combinations(np.arange(len(passages)),2):
             combo = np.sort([combo[0], combo[1]])
