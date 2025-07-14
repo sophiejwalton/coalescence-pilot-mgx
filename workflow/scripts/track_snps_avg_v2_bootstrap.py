@@ -24,17 +24,19 @@ def get_bootstrap_parent(freq_children, depth_med,depth_children, reads_children
     samples_good = []
     for sample in snps.columns.values:
         snps_sample= snps[sample]
-        reads_sample = depth[sample]*snps_sample[sample]
+        reads_sample = depths[sample]*snps_sample
+ #       print(reads_sample,snps_sample)
         reads_sample = reads_sample[~np.isnan(snps_sample)]
-        print(np.min(reads_sample[reads_sample>0]))
+  #      print(np.min(reads_sample[reads_sample>0]))
         reads_sample = reads_sample.round()
-        print(np.min(reads_sample[reads_sample>0]))
-        reads_sample_opp = (depth[sample]*(1-snps_sample[sample]))
+   #     print(np.min(reads_sample[reads_sample>0]))
+        reads_sample_opp = (depths[sample]*(1-snps_sample))
         reads_sample_opp = reads_sample_opp[~np.isnan(snps_sample)].round()
         snps_sample = snps_sample[~np.isnan(snps_sample)]
 
         med_og = np.median(snps_sample)
         n_snps = len(snps_sample)
+        print('before',med_og)
         print(sample, 'woo', np.unique(reads_sample), np.unique(reads_sample_opp), np.sum(reads_sample==1),np.sum(reads_sample_opp==1))
         if med_og == 0:
             med_og = adjust_freq(np.sum(reads_sample==0), np.sum(reads_sample==3))/depth_med[sample] 
@@ -106,8 +108,8 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
 
     parent1_info = get_bootstrap_parent(freq_children, med_depth_children,depth_children, reads_children, reads_children_opp, parent1_snps,inoculumn, n_bootstraps = 1000)
     parent2_info = get_bootstrap_parent(freq_children, med_depth_children,depth_children, reads_children, reads_children_opp, parent2_snps, inoculumn, n_bootstraps = 1000)
-    reads_children.loc[reads_children,parent1_snps].to_csv(f'{species_dir}/{inoculumn}_reads_children.csv.gz',compression='gzip')
-    reads_children_opp.loc[reads_children,parent1_snps].to_csv(f'{species_dir}/{inoculumn}_reads_children_opp.csv.gz',compression='gzip')
+#    reads_children.loc[reads_children,parent1_snps].to_csv(f'{species_dir}/{inoculumn}_reads_children.csv.gz',compression='gzip')
+ #   reads_children_opp.loc[reads_children,parent1_snps].to_csv(f'{species_dir}/{inoculumn}_reads_children_opp.csv.gz',compression='gzip')
     return pd.concat([count_parent1, count_parent2],axis=1), parent1_info, parent2_info 
 
 if __name__ == '__main__':
