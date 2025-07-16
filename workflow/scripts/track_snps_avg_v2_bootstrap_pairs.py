@@ -13,7 +13,7 @@ warnings.filterwarnings('ignore')
 def adjust_freq(nreads0, nreads3):
     return (6*nreads3/nreads0)**(1/3)
 
-def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med,  reads_children, reads_children_opp, parent_snps, n_bootstraps = 1000):
+def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med,  reads, reads_opp, parent_snps, n_bootstraps = 1000):
     #med = freq_children.loc[parent_snps,:].median(axis = 0)
     #freq_masked = freq_children.mask((freq_children > freq_thresh * med),axis = 0)
    # freq_masked = freq_masked .mask((freq_masked  < med / freq_thresh),axis = 0)
@@ -115,7 +115,7 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med,  reads_children
 
 
 
-def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, depth_filtered):
+def get_main(metadata,species_dir,species, parent_samples, child_samples, freq_filtered, depth_filtered):
   #  info, depth, freq = load_and_sort_files(species_dir, species)
    # med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
    # good_samples = med_nonzero_depth[med_nonzero_depth>10.]
@@ -152,8 +152,8 @@ def get_main(species_dir,species, parent_samples, child_samples, freq_filtered, 
     count_parent1 = pd.DataFrame(get_count(freq_children, parent1_snps)).rename(columns = {0: parent_samples[0]})  
     count_parent2 = pd.DataFrame(get_count(freq_children, parent2_snps)).rename(columns = {0: parent_samples[1]})  
 
-    parent1_info = get_bootstrap_sel_coeff(freq_children, med_depth_children, reads_children, reads_children_opp, parent1_snps, n_bootstraps = 1000)
-    parent2_info = get_bootstrap_sel_coeff(freq_children, med_depth_children, reads_children, reads_children_opp, parent2_snps, n_bootstraps = 1000)
+    parent1_info = get_bootstrap_sel_coeffs(metadata,freq_children, med_depth_children, reads_children, reads_children_opp, parent1_snps, n_bootstraps = 1000)
+    parent2_info = get_bootstrap_sel_coeffs(metadata,freq_children, med_depth_children, reads_children, reads_children_opp, parent2_snps, n_bootstraps = 1000)
 
     return pd.concat([count_parent1, count_parent2],axis=1), parent1_info, parent2_info 
 
