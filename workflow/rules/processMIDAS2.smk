@@ -184,7 +184,7 @@ rule trackSNPsAVG_bootstrap_pairs:
    #     "../../workflow/envs/snps_analysis_tools-no-builds.yml"
     shell:
         """
-        python3 workflow/scripts/track_snps_avg_v2_bootstrap_pairs.py --outdir {params.outdir} --indir {params.indir} --species {wildcards.species}
+        python3 workflow/scripts/track_snps_avg_v2_bootstrap_pairs_3reads.py --outdir {params.outdir} --indir {params.indir} --species {wildcards.species}
         touch {params.outdir}/{wildcards.species}/done.txt
         """
 
