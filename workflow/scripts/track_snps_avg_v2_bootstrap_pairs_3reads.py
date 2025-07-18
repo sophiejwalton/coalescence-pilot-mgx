@@ -25,7 +25,7 @@ def get_sample_freq(freqs, reads,readsopp, depth_med):
     return freq_est 
 
 
-def get_bootstrap_parent(metadata,freq_children, depth_med, depth_children, reads_children, reads_children_opp, parent_snps1,parent_snps2, inoculumn,n_bootstraps = 1000):
+def get_bootstrap_parent(metadata,freq_children, depth_med, depth_children, reads, readsopp, parent_snps1,parent_snps2, inoculumn,thresh = 5e-3, n_bootstraps = 1000):
     passage1s=[]
     passage2s=[]
     sample1s=[]
@@ -37,7 +37,8 @@ def get_bootstrap_parent(metadata,freq_children, depth_med, depth_children, read
     shifts1=[]
     shifts2=[]
     initial_freqs=[]
-
+    metadata = metadata.loc[metadata['sample'].isin(freq_children.columns.values),:]
+    metadata_non_zero = metadata.loc[metadata['passage']>0,:].sort_values(by='passage')
     for mesocosm in metadata['mesocosm'].unique():
         samples = list(metadata_non_zero.loc[metadata_non_zero['mesocosm'] == mesocosm, 'sample'].values)
         passages = list(metadata_non_zero.loc[metadata_non_zero['mesocosm'] == mesocosm, 'passage'].values)
@@ -144,7 +145,7 @@ def get_main(metadata,species_dir,species, parent_samples, child_samples, freq_f
     count_parent1 = pd.DataFrame(get_count(freq_children, parent1_snps)).rename(columns = {0: parent_samples[0]})  
     count_parent2 = pd.DataFrame(get_count(freq_children, parent2_snps)).rename(columns = {0: parent_samples[1]})  
 
-    parent1_info = get_bootstrap_parent(metadata, freq_children, depth_med, depth_children, reads_children, reads_children_opp, parent_snps1,parent_snps2, inoculumn, n_bootstraps = 1000)
+    parent1_info = get_bootstrap_parent(metadata, freq_children, med_depth_children, depth_children, reads_children, reads_children_opp, parent1_snps,parent2_snps, inoculumn, n_bootstraps = 1000)
     #parent2_info = get_bootstrap_parent(freq_children, med_depth_children,depth_children, reads_children, reads_children_opp, parent2_snps, inoculumn, n_bootstraps = 1000)
 #    reads_children.loc[reads_children,parent1_snps].to_csv(f'{species_dir}/{inoculumn}_reads_children.csv.gz',compression='gzip')
  #   reads_children_opp.loc[reads_children,parent1_snps].to_csv(f'{species_dir}/{inoculumn}_reads_children_opp.csv.gz',compression='gzip')
