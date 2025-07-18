@@ -9,24 +9,24 @@ from evo_changes_tools import *
 from track_snps_funcs import * 
 import warnings
 warnings.filterwarnings('ignore')
-
 def adjust_freq(nreads0, nreads3):
     return (6*nreads3/nreads0)**(1/3)
 
-def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med,  reads, reads_opp, parent_snps, n_bootstraps = 1000):
+def get_sample_freq(freqs, reads,readsopp, depth_med):
+    reads = reads[~np.isnan(freqs)]
+    readsopp = readsopp[~np.isnan(freqs)]
+    freqs = freqs[~np.isnan(freqs)]
+    freq_est = np.median(freqs)
+    if freq_est == 0:
+        freq_est = adjust_freq(np.sum(reads==0), np.sum(reads==3))/depth_med
+    if freq_est == 1:
+        freq_est = 1-adjust_freq(np.sum(readsopp==0), np.sum(readsopp==3))/depth_med
+    return freq_est 
+
+def get_bootstrap_sel_coeffs(metadata,snps, depth_med, depth_children, reads, readsopp, parent_snps1,parent_snps2, inoculumn,thresh = 5e-3, n_bootstraps = 1000):
     #med = freq_children.loc[parent_snps,:].median(axis = 0)
     #freq_masked = freq_children.mask((freq_children > freq_thresh * med),axis = 0)
    # freq_masked = freq_masked .mask((freq_masked  < med / freq_thresh),axis = 0)
-    snps = freq_children.loc[parent_snps,:]
-    print(snps.columns.values)
-    boot_med = []
-    boot_low = []
-    boot_high = []
-    act_med = []
-    samples_good = []
-    metadata = metadata.loc[metadata['sample'].isin(snps.columns.values),:]
-    metadata_non_zero = metadata.loc[metadata['passage']>0,:].sort_values(by='passage')
-    n_snps = len(parent_snps)
     passage1s=[]
     passage2s=[]
     sample1s=[]
@@ -34,7 +34,19 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med,  reads, reads_o
     sel_inf_lower=[]
     sel_inf_upper=[]
     sel_inf_med = []
+    sel_inf_med1 = []
+    sel_inf_upper1 = []
+    sel_inf_lower1= []
+
+    sel_inf_med2 = []
+    sel_inf_upper2 = []
+    sel_inf_lower2= []
+
     mesocosms = []
+    initial_freqs=[]
+    metadata = metadata.loc[metadata['sample'].isin(freq_children.columns.values),:]
+    metadata_non_zero = metadata.loc[metadata['passage']>0,:].sort_values(by='passage')
+
     for mesocosm in metadata['mesocosm'].unique():
         samples = list(metadata_non_zero.loc[metadata_non_zero['mesocosm'] == mesocosm, 'sample'].values)
         passages = list(metadata_non_zero.loc[metadata_non_zero['mesocosm'] == mesocosm, 'passage'].values)
@@ -43,47 +55,70 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med,  reads, reads_o
             continue 
         samples = [inoculumn] + samples
         passages = [0] + passages
-       # print(samples, snps.columns.values)
-       #snps_samples = snps[samples].values 
-       # depths = depth_med[samples].values
         medians = []
+        strain1s=[]
+        strain2s=[]
+        shifts_all=[]
         for sample in snps.columns.values:
-            snps_sample= snps[sample]
-            reads_sample = reads[sample].round()
-            reads_sample = reads_sample[~np.isnan(snps_sample)]
-            reads_sample_opp = reads_opp[sample].round()
-            reads_sample_opp = reads_sample_opp[~np.isnan(snps_sample)]
-            snps_sample = snps_sample[~np.isnan(snps_sample)]
+            strain1_snps = snps.loc[parent_snps1, sample]
+            strain2_snps  = snps.loc[parent_snps2, sample]
+            reads_strain1 = reads.loc[parent_snps1, sample].round()
+            reads_strain2 = reads.loc[parent_snps2, sample].round()
 
-            med_og = np.median(snps_sample)
-            n_snps = len(snps_sample)
-            #print(sample, 'woo', np.sum(reads_sample==1),np.sum(reads_sample_opp==1))
-            if med_og == 0:
-                med_og = adjust_freq(np.sum(reads_sample==0), np.sum(reads_sample==3))/depth_med[sample] 
-                #med_og = (np.sum(reads_sample==1)/np.sum(reads_sample==0))/depth_med[sample] 
-            elif med_og == 1:
-                med_og = 1 - adjust_freq(np.sum(reads_sample_opp==0), np.sum(reads_sample_opp==3))/depth_med[sample] 
-               # med_og = 1 - (np.sum(reads_sample_opp==1)/np.sum(reads_sample_opp==0))/depth_med[sample] 
-            if len(snps_sample) == 0: continue 
+            reads_opp_strain1 = readsopp.loc[parent_snps1, sample].round()
+            reads_opp_strain2 = readsopp.loc[parent_snps2, sample].round()
+
+
+            reads_strain1 = reads_strain1[~np.isnan(strain1_snps)]
+            reads_opp_strain1 = reads_opp_strain1[~np.isnan(strain1_snps)]
+            strain1_snps = strain1_snps[~np.isnan(strain1_snps)]
+
+
+            reads_strain2 = reads_strain2[~np.isnan(strain2_snps)]
+            reads_opp_strain2 = reads_opp_strain2[~np.isnan(strain2_snps)]
+            strain2_snps = strain2_snps[~np.isnan(strain2_snps)]
+
+            freq_strain1 = get_sample_freq(strain1_snps, reads_strain1, reads_opp_strain1, depth_med[sample])
+            freq_strain2 = get_sample_freq(strain2_snps, reads_strain2, reads_opp_strain2, depth_med[sample])
+            freq_strain1 = freq_strain1/(freq_strain1+freq_strain2)
           #  print('after',med_og)
-            bs_samples = np.random.choice(snps_sample.index.values, size = (n_snps, n_bootstraps))
+         #   bs_samples = np.random.choice(snps_sample.index.values, size = (n_snps, n_bootstraps))
             samples_meds= np.zeros(n_bootstraps)
+            strain1_meds = np.zeros(n_bootstraps)
+            strain2_meds = np.zeros(n_bootstraps)
+            shifts = np.zeros(n_bootstraps)
             for n in range(n_bootstraps):
-                bs_sample = np.random.choice(snps_sample.index.values, size = n_snps)
-                snps_bs = snps_sample[bs_sample]
-                bs_med = np.median(snps_bs)
-                if bs_med == 0:
-                    reads_bs = reads_sample[bs_sample]
-                    bs_med = adjust_freq(np.sum(reads_bs==0), np.sum(reads_bs==3))/depth_med[sample]
-                if bs_med == 1:
-                    reads_bs = reads_sample_opp[bs_sample]
-                    bs_med = 1- adjust_freq(np.sum(reads_bs==0), np.sum(reads_bs==3))/depth_med[sample]
-                samples_meds[n] = bs_med
+                bs_sample1 = np.random.choice(parent1_snps, size = len(parent1_snps))
+                bs_sample2 = np.random.choice(parent2_snps, size = len(parent2_snps))
+
+                freq_strain1 = get_sample_freq(freq_children.loc[bs_sample1, sample], 
+                                        reads.loc[bs_sample1, sample], readsopp.loc[bs_sample1, sample], depth_med[sample])
+
+                freq_strain2 = get_sample_freq(freq_children.loc[bs_sample2, sample], 
+                                        reads.loc[bs_sample2, sample], readsopp.loc[bs_sample2, sample], depth_med[sample])
+
+                if freq_strain1<thresh:
+                    freq_strain1 = thresh
+                if freq_strain1>1-thresh:
+                    freq_strain1=1-thresh
+
+                if freq_strain2<thresh:
+                    freq_strain2 = thresh
+                if freq_strain2>1-thresh:
+                    freq_strain2=1-thresh
+                samples_meds[n] = freq_strain1/(freq_strain1+freq_strain2)
+                strain1_meds[n] = freq_strain1
+                strain2_meds[n] = freq_strain2
+                shifts[n] = 1-(freq_strain1+freq_strain2)
+
             medians.append(samples_meds)
+            strain1s.append(strain1_meds)
+            strain2s.append(strain2_meds)
+            shifts_all.append(shifts)
             
         medians = np.array(medians)
-        medians[medians<5e-3] = 5e-3
-        medians[medians>1-5e-3] = 1-5e-3
+        medians[medians<thresh] = thresh
+        medians[medians>1-thresh] = 1-thresh
 
         for combo in it.combinations(np.arange(len(passages)),2):
             combo = np.sort([combo[0], combo[1]])
@@ -91,14 +126,31 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med,  reads, reads_o
             passage2 = passages[combo[1]]
             sample1 = samples[combo[0]]
             sample2 = samples[combo[1]]
+
             dt = passage2-passage1
 
           #  all_medians = medians[:,combo]
             sel_coeffs = (1/dt)*(np.log(medians[combo[1]]/(1-medians[combo[1]])) + \
                              np.log((1-medians[combo[0]])/(medians[combo[0]])))
+            sel_coeffs1 = (1/dt)*(np.log(strain1s[combo[1]]/(1-strain1s[combo[1]])) + \
+                             np.log((1-strain1s[combo[0]])/(strain1s[combo[0]])))
+
+            sel_coeffs2 = (1/dt)*(np.log(strain2s[combo[1]]/(1-strain2s[combo[1]])) + \
+                             np.log((1-strain2s[combo[0]])/(strain2s[combo[0]])))
+
             sel_inf_upper.append(np.quantile(sel_coeffs, q = .975))
             sel_inf_lower.append(np.quantile(sel_coeffs,q=.025))
             sel_inf_med.append(np.median(sel_coeffs))
+
+            sel_inf_upper1.append(np.quantile(sel_coeffs1, q = .975))
+            sel_inf_lower1.append(np.quantile(sel_coeffs1,q=.025))
+            sel_inf_med1.append(np.median(sel_coeffs1))
+
+            sel_inf_upper2.append(np.quantile(sel_coeffs2, q = .975))
+            sel_inf_lower2.append(np.quantile(sel_coeffs2,q=.025))
+            sel_inf_med2.append(np.median(sel_coeffs2))
+
+
             passage1s.append(passage1)
             passage2s.append(passage2)
             sample1s.append(sample1)
@@ -107,8 +159,12 @@ def get_bootstrap_sel_coeffs(metadata, freq_children, depth_med,  reads, reads_o
     df = pd.DataFrame(data = {'sample1': sample1s, 'sample2': sample2s, 'passage1': passage1s, 'passage2': passage2s, 
                                 'mesocosms': mesocosms, 'sel_med': sel_inf_med, 'sel_lower': sel_inf_lower, 
                                 'sel_upper': sel_inf_upper, 
+                                'sel_med1': sel_inf_med1, 'sel_lower1': sel_inf_lowe1, 
+                                'sel_upper1': sel_inf_upper1, 
+                                'sel_med2': sel_inf_med2, 'sel_lower2': sel_inf_lowe2, 
+                                'sel_upper2': sel_inf_upper2, 
                                 })
-    df['n_snps'] = n_snps
+   # df['n_snps'] = n_snps
     return df
        
 
@@ -152,10 +208,10 @@ def get_main(metadata,species_dir,species, parent_samples, child_samples, freq_f
     count_parent1 = pd.DataFrame(get_count(freq_children, parent1_snps)).rename(columns = {0: parent_samples[0]})  
     count_parent2 = pd.DataFrame(get_count(freq_children, parent2_snps)).rename(columns = {0: parent_samples[1]})  
 
-    parent1_info = get_bootstrap_sel_coeffs(metadata,freq_children, med_depth_children, reads_children, reads_children_opp, parent1_snps, n_bootstraps = 1000)
-    parent2_info = get_bootstrap_sel_coeffs(metadata,freq_children, med_depth_children, reads_children, reads_children_opp, parent2_snps, n_bootstraps = 1000)
+    parent1_info = get_bootstrap_sel_coeffs(metadata,freq_children, med_depth_children, depth_children, reads_children, reads_children_opp, parent_snps1,parent_snps2, inoculumn, n_bootstraps = 1000)
+  #  parent2_info = get_bootstrap_sel_coeffs(metadata,freq_children, med_depth_children, reads_children, reads_children_opp, parent2_snps, n_bootstraps = 1000)
 
-    return pd.concat([count_parent1, count_parent2],axis=1), parent1_info, parent2_info 
+    return pd.concat([count_parent1, count_parent2],axis=1), parent1_info, #parent2_info 
 
 
 if __name__ == '__main__':
@@ -218,14 +274,14 @@ if __name__ == '__main__':
         if parent_samples[0] == 'A2-e003Coalescence-Inoculumn-mBHI':
             parent_samples = ['A2-e003Coalescence-mBHI-inoculumn-redo', parent_samples[1]]
         
-        parent1_info, parent2_info = get_main(metadata,species_dir,args.species, parent_samples, child_samples, 
+        count1, parent1_info= get_main(metadata,species_dir,args.species, parent_samples, child_samples, 
             freq_filtered_in[parent_samples+child_samples],  depth_filtered_in[parent_samples+child_samples])
 
         inoculumn = ''.join(inoculumn.split('/'))
     
       #  count_parents.to_csv(f'{save_dir}/{inoculumn}_count_parents.csv')
-        parent1_info.to_csv(f'{save_dir}/{inoculumn}_parent1_info.csv')
-        parent2_info.to_csv(f'{save_dir}/{inoculumn}_parent2_info.csv')
+        parent1_info.to_csv(f'{save_dir}/{inoculumn}_parentboth_info.csv')
+      #  parent2_info.to_csv(f'{save_dir}/{inoculumn}_parent2_info.csv')
 
       #  distinguishing_snps.to_csv(f'{save_dir}/{inoculumn}_distinguishing_snps.csv')
        # freq_filtered_in.loc[distinguishing_snps.index.values,:].to_csv(f'{species_dir}/{inoculumn}_distinguishing_snps_freq.csv.gz',compression = 'gzip')
