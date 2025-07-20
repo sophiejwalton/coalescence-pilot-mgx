@@ -23,7 +23,7 @@ def get_sample_freq(freqs, reads,readsopp, depth_med):
         freq_est = 1-adjust_freq(np.sum(readsopp==0), np.sum(readsopp==3))/depth_med
     return freq_est 
 
-def get_bootstrap_sel_coeffs(metadata,snps, depth_med, depth_children, reads, readsopp, parent_snps1,parent_snps2, inoculumn,thresh = 5e-3, n_bootstraps = 1000):
+def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, reads, readsopp, parent_snps1,parent_snps2, inoculumn,thresh = 5e-3, n_bootstraps = 1000):
     #med = freq_children.loc[parent_snps,:].median(axis = 0)
     #freq_masked = freq_children.mask((freq_children > freq_thresh * med),axis = 0)
    # freq_masked = freq_masked .mask((freq_masked  < med / freq_thresh),axis = 0)
@@ -59,9 +59,9 @@ def get_bootstrap_sel_coeffs(metadata,snps, depth_med, depth_children, reads, re
         strain1s=[]
         strain2s=[]
         shifts_all=[]
-        for sample in snps.columns.values:
-            strain1_snps = snps.loc[parent_snps1, sample]
-            strain2_snps  = snps.loc[parent_snps2, sample]
+        for sample in samples:
+            strain1_snps = freq_children.loc[parent_snps1, sample]
+            strain2_snps  = freq_children.loc[parent_snps2, sample]
             reads_strain1 = reads.loc[parent_snps1, sample].round()
             reads_strain2 = reads.loc[parent_snps2, sample].round()
 
@@ -88,8 +88,8 @@ def get_bootstrap_sel_coeffs(metadata,snps, depth_med, depth_children, reads, re
             strain2_meds = np.zeros(n_bootstraps)
             shifts = np.zeros(n_bootstraps)
             for n in range(n_bootstraps):
-                bs_sample1 = np.random.choice(parent1_snps, size = len(parent1_snps))
-                bs_sample2 = np.random.choice(parent2_snps, size = len(parent2_snps))
+                bs_sample1 = np.random.choice(parent_snps1, size = len(parent_snps1))
+                bs_sample2 = np.random.choice(parent_snps2, size = len(parent_snps2))
 
                 freq_strain1 = get_sample_freq(freq_children.loc[bs_sample1, sample], 
                                         reads.loc[bs_sample1, sample], readsopp.loc[bs_sample1, sample], depth_med[sample])
@@ -159,9 +159,9 @@ def get_bootstrap_sel_coeffs(metadata,snps, depth_med, depth_children, reads, re
     df = pd.DataFrame(data = {'sample1': sample1s, 'sample2': sample2s, 'passage1': passage1s, 'passage2': passage2s, 
                                 'mesocosms': mesocosms, 'sel_med': sel_inf_med, 'sel_lower': sel_inf_lower, 
                                 'sel_upper': sel_inf_upper, 
-                                'sel_med1': sel_inf_med1, 'sel_lower1': sel_inf_lowe1, 
+                                'sel_med1': sel_inf_med1, 'sel_lower1': sel_inf_lower1, 
                                 'sel_upper1': sel_inf_upper1, 
-                                'sel_med2': sel_inf_med2, 'sel_lower2': sel_inf_lowe2, 
+                                'sel_med2': sel_inf_med2, 'sel_lower2': sel_inf_lower2, 
                                 'sel_upper2': sel_inf_upper2, 
                                 })
    # df['n_snps'] = n_snps
@@ -208,7 +208,7 @@ def get_main(metadata,species_dir,species, parent_samples, child_samples, freq_f
     count_parent1 = pd.DataFrame(get_count(freq_children, parent1_snps)).rename(columns = {0: parent_samples[0]})  
     count_parent2 = pd.DataFrame(get_count(freq_children, parent2_snps)).rename(columns = {0: parent_samples[1]})  
 
-    parent1_info = get_bootstrap_sel_coeffs(metadata,freq_children, med_depth_children, depth_children, reads_children, reads_children_opp, parent_snps1,parent_snps2, inoculumn, n_bootstraps = 1000)
+    parent1_info = get_bootstrap_sel_coeffs(metadata,freq_children, med_depth_children, depth_children, reads_children, reads_children_opp, parent1_snps,parent2_snps, inoculumn, n_bootstraps = 1000)
   #  parent2_info = get_bootstrap_sel_coeffs(metadata,freq_children, med_depth_children, reads_children, reads_children_opp, parent2_snps, n_bootstraps = 1000)
 
     return pd.concat([count_parent1, count_parent2],axis=1), parent1_info, #parent2_info 
