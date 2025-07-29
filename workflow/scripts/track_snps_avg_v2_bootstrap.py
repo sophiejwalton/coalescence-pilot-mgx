@@ -13,6 +13,24 @@ warnings.filterwarnings('ignore')
 def adjust_freq(nreads0, nreads3):
     return (6*nreads3/nreads0)**(1/3)
 
+
+def get_sample_freq(freqs, reads,readsopp, depth_med):
+    reads = reads[~np.isnan(freqs)]
+    readsopp = readsopp[~np.isnan(freqs)]
+    freqs = freqs[~np.isnan(freqs)]
+    freq_est = np.median(freqs)
+    if freq_est == 0:
+        freq_est = adjust_freq(np.sum(reads==0), np.sum(reads==3))/depth_med
+        if np.sum(reads == 3) > 100:
+            if np.sum(reads == 4)/np.sum(reads == 3) <.9
+                freq_est = (np.sum(reads==4)*4/np.sum(reads==3))/depth_med
+    if freq_est == 1:
+        freq_est = 1-adjust_freq(np.sum(readsopp==0), np.sum(readsopp==3))/depth_med
+        if np.sum(readsopp == 3) > 100:
+            if np.sum(readsopp == 4)/np.sum(readsopp == 3) <.9
+                freq_est = (np.sum(readsopp==4)*4/np.sum(readsopp==3))/depth_med
+    return freq_est 
+
 def get_bootstrap_parent(freq_children, depth_med,depth_children, reads_children, reads_children_opp, parent_snps, inoculumn,n_bootstraps = 1000):
     snps = freq_children.loc[parent_snps,:]
     depths = depth_children.loc[parent_snps,:]
@@ -33,16 +51,7 @@ def get_bootstrap_parent(freq_children, depth_med,depth_children, reads_children
         reads_sample_opp = (depths[sample]*(1-snps_sample))
         reads_sample_opp = reads_sample_opp[~np.isnan(snps_sample)].round()
         snps_sample = snps_sample[~np.isnan(snps_sample)]
-
-        med_og = np.median(snps_sample)
-        n_snps = len(snps_sample)
-       # print('before',med_og)
-        #print(sample, 'woo', np.unique(reads_sample), np.unique(reads_sample_opp), np.sum(reads_sample==1),np.sum(reads_sample_opp==1))
-        if med_og == 0:
-            med_og = adjust_freq(np.sum(reads_sample==0), np.sum(reads_sample==3))/depth_med[sample] 
-            #med_og = (np.sum(reads_sample==1)/np.sum(reads_sample==0))/depth_med[sample] 
-        elif med_og == 1:
-            med_og = 1 - adjust_freq(np.sum(reads_sample_opp==0), np.sum(reads_sample_opp==3))/depth_med[sample] 
+        med_og = get_sample_freq(snps_sample, reads_sample,reads_sample_opp, depth_med[sample])
         if len(snps_sample) == 0: continue 
      #   print('after',med_og)
         bs_samples = np.random.choice(snps_sample.index.values, size = (n_snps, n_bootstraps))
@@ -50,13 +59,9 @@ def get_bootstrap_parent(freq_children, depth_med,depth_children, reads_children
         for n in range(n_bootstraps):
             bs_sample = np.random.choice(snps_sample.index.values, size = n_snps)
             snps_bs = snps_sample[bs_sample]
-            bs_med = np.median(snps_bs)
-            if bs_med == 0:
-                reads_bs = reads_sample[bs_sample]
-                bs_med = adjust_freq(np.sum(reads_bs==0), np.sum(reads_bs==3))/depth_med[sample]
-            if bs_med == 1:
-                reads_bs = reads_sample_opp[bs_sample]
-                bs_med = 1- adjust_freq(np.sum(reads_bs==0), np.sum(reads_bs==3))/depth_med[sample]
+            reads_bs = reads_sample[bs_sample]
+            reads_opp_bs = reads_sample_opp[bs_sample]
+            bs_med = get_sample_freq(snps_bs reads_bs,reads_opp_bs, depth_med[sample])
             samples_meds[n] = bs_med
             
         samples_good.append(sample)
