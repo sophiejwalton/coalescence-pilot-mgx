@@ -20,12 +20,12 @@ def get_sample_freq(freqs, reads,readsopp, depth_med):
     if freq_est == 0:
         freq_est = adjust_freq(np.sum(reads==0), np.sum(reads==3))/depth_med
         if np.sum(reads == 3) > 100:
-            if np.sum(reads == 4)/np.sum(reads == 3) <.9
+            if np.sum(reads == 4)/np.sum(reads == 3) <.9:
                 freq_est = (np.sum(reads==4)*4/np.sum(reads==3))/depth_med
     if freq_est == 1:
         freq_est = 1-adjust_freq(np.sum(readsopp==0), np.sum(readsopp==3))/depth_med
         if np.sum(readsopp == 3) > 100:
-            if np.sum(readsopp == 4)/np.sum(readsopp == 3) <.9
+            if np.sum(readsopp == 4)/np.sum(readsopp == 3) <.9:
                 freq_est = (np.sum(readsopp==4)*4/np.sum(readsopp==3))/depth_med
     return freq_est 
 
@@ -94,8 +94,8 @@ def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, 
             strain2_meds = np.zeros(n_bootstraps)
             shifts = np.zeros(n_bootstraps)
             for n in range(n_bootstraps):
-                bs_sample1 = np.random.choice(parent_snps1, size = len(parent_snps1))
-                bs_sample2 = np.random.choice(parent_snps2, size = len(parent_snps2))
+                bs_sample1 = np.random.choice(strain1_snps.index.values, size = len(strain1_snps))
+                bs_sample2 = np.random.choice(strain2_snps.index.values, size = len(strain2_snps))
 
                 freq_strain1 = get_sample_freq(freq_children.loc[bs_sample1, sample], 
                                         reads.loc[bs_sample1, sample], readsopp.loc[bs_sample1, sample], depth_med[sample])
