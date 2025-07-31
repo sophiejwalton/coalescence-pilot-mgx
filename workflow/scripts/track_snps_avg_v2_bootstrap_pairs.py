@@ -19,14 +19,14 @@ def get_sample_freq(freqs, reads,readsopp, depth_med):
     freq_est = np.median(freqs)
     if freq_est == 0:
         freq_est = adjust_freq(np.sum(reads==0), np.sum(reads==3))/depth_med
-        if np.sum(reads == 3) > 100:
-            if np.sum(reads == 4)/np.sum(reads == 3) <.9:
-                freq_est = (np.sum(reads==4)*4/np.sum(reads==3))/depth_med
+     #   if np.sum(reads == 3) > 100:
+      #      if np.sum(reads == 4)/np.sum(reads == 3) <.9:
+       #         freq_est = (np.sum(reads==4)*4/np.sum(reads==3))/depth_med
     if freq_est == 1:
         freq_est = 1-adjust_freq(np.sum(readsopp==0), np.sum(readsopp==3))/depth_med
-        if np.sum(readsopp == 3) > 100:
-            if np.sum(readsopp == 4)/np.sum(readsopp == 3) <.9:
-                freq_est = (np.sum(readsopp==4)*4/np.sum(readsopp==3))/depth_med
+     #   if np.sum(readsopp == 3) > 100:
+      #      if np.sum(readsopp == 4)/np.sum(readsopp == 3) <.9:
+       #         freq_est = (np.sum(readsopp==4)*4/np.sum(readsopp==3))/depth_med
     return freq_est 
 
 def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, reads, readsopp, parent_snps1,parent_snps2, inoculumn,thresh = 1e-2, n_bootstraps = 1000):
