@@ -19,23 +19,23 @@ rule mergeSpecies:
 
 rule compute_populationSNVs:
     input:
-        expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples)
+        expand("workflow/out/midas2v3_output/{sample}/snps/snps_summary.tsv",sample=samples)
     output:
         #"workflow/out/midas2_output/merge_v2/snps/snps_summary.tsv",
-        "workflow/out/midas2_output/mergevfinal_{species}/snps/{species}/{species}.snps_freqs.tsv.lz4",
-        "workflow/out/midas2_output/mergevfinal_{species}/snps/{species}/{species}.snps_depth.tsv.lz4",
-        "workflow/out/midas2_output/mergevfinal_{species}/snps/{species}/{species}.snps_info.tsv.lz4",
+        "workflow/out/midas2v3_output/mergevfinal_{species}/snps/{species}/{species}.snps_freqs.tsv.lz4",
+        "workflow/out/midas2v3_output/mergevfinal_{species}/snps/{species}/{species}.snps_depth.tsv.lz4",
+        "workflow/out/midas2v3_output/mergevfinal_{species}/snps/{species}/{species}.snps_info.tsv.lz4",
     params:
         minCoverage=config["runMIDAS_speciesMinCoverage"],
         midasdb=config['midasdb'],
         midasdb_dir=config['midasdb_dir'],
-        species_list = get_species_list()
+      #  species_list = get_species_list()
     threads: config['maxCPUs']
     conda:
         "../../workflow/envs/midas2_sw-no-builds.yml"
     shell:
         """
-        midas2 merge_snps --samples_list workflow/out/list_of_samples.tsv --species_list {wildcards.species} --sample_counts 1  --midasdb_name {params.midasdb} --genome_depth 1 --site_depth 1  --site_prev 0.0 --snp_maf 0.01  --advanced --midasdb_dir {params.midasdb_dir} --snp_type any --genome_coverage 0.5 --num_cores {threads} workflow/out/midas2_output/mergevfinal_{wildcards.species}
+        midas2 merge_snps --samples_list workflow/out/list_of_samples.tsv --species_list {wildcards.species} --robust_chunk --sample_counts 1  --midasdb_name {params.midasdb} --genome_depth 2 --site_depth 1  --site_prev 0.0 --snp_maf 0.01  --advanced --midasdb_dir {params.midasdb_dir} --snp_type any --genome_coverage 0.5 --num_cores {threads} workflow/out/midas2v3_output/mergevfinal_{wildcards.species}
         """
 
 
