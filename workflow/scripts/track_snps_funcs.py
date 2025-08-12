@@ -177,3 +177,16 @@ def get_depth_parent(depth_children, parent_snps):
 def get_count(freq_children, parent_snps):
     count_parent = freq_children.loc[parent_snps,:].count(axis=0)
     return count_parent
+
+
+def get_sample_freq(freqs, reads,readsopp, depth_med):
+    reads = reads[~np.isnan(freqs)]
+    readsopp = readsopp[~np.isnan(freqs)]
+    freqs = freqs[~np.isnan(freqs)]
+    freq_est = np.median(freqs)
+    if freq_est == 0:
+
+        freq_est = (np.sum(reads==1)/np.sum(reads==0))/depth_med
+    if freq_est == 1:
+        freq_est = 1-(np.sum(readsopp==1)/np.sum(readsopp==0))/depth_med
+    return freq_est 
