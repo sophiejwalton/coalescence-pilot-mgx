@@ -11,7 +11,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 
-def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, reads, readsopp, parent_snps1,parent_snps2, inoculumn,thresh = 1e-2, n_bootstraps = 1000):
+def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, reads, readsopp, parent_snps1,parent_snps2, inoculumn,thresh = 1e-3, n_bootstraps = 1000):
     #med = freq_children.loc[parent_snps,:].median(axis = 0)
     #freq_masked = freq_children.mask((freq_children > freq_thresh * med),axis = 0)
    # freq_masked = freq_masked .mask((freq_masked  < med / freq_thresh),axis = 0)
