@@ -1,0 +1,10 @@
+,index,fixed_diffs,comparisons,sample1,species_id
+0,e003-inoculumn-fecal-AC,0,2652887,e003-inoculumn-fecal-AC,100193
+1,e003-inoculumn-fecal-AE,18842,2142996,e003-inoculumn-fecal-AC,100193
+2,e003-inoculumn-fecal-AF,20157,2599703,e003-inoculumn-fecal-AC,100193
+0,e003-inoculumn-fecal-AC,18842,2652887,e003-inoculumn-fecal-AE,100193
+1,e003-inoculumn-fecal-AE,0,2142996,e003-inoculumn-fecal-AE,100193
+2,e003-inoculumn-fecal-AF,16878,2599703,e003-inoculumn-fecal-AE,100193
+0,e003-inoculumn-fecal-AC,20157,2652887,e003-inoculumn-fecal-AF,100193
+1,e003-inoculumn-fecal-AE,16878,2142996,e003-inoculumn-fecal-AF,100193
+2,e003-inoculumn-fecal-AF,0,2599703,e003-inoculumn-fecal-AF,100193

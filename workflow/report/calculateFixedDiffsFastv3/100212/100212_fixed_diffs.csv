@@ -1,0 +1,5 @@
+,index,fixed_diffs,comparisons,sample1,species_id
+0,e003-inoculumn-fecal-AC,0,1595933,e003-inoculumn-fecal-AC,100212
+1,e003-inoculumn-fecal-AE,6541,2501804,e003-inoculumn-fecal-AC,100212
+0,e003-inoculumn-fecal-AC,6541,1595933,e003-inoculumn-fecal-AE,100212
+1,e003-inoculumn-fecal-AE,0,2501804,e003-inoculumn-fecal-AE,100212

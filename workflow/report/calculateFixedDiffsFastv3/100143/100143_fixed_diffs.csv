@@ -1,0 +1,5 @@
+,index,fixed_diffs,comparisons,sample1,species_id
+0,C_B11_e003Assembly_4_S215,0,2730041,C_B11_e003Assembly_4_S215,100143
+1,C_F3_e003Assembly_6_S255,0,2730593,C_B11_e003Assembly_4_S215,100143
+0,C_B11_e003Assembly_4_S215,0,2730041,C_F3_e003Assembly_6_S255,100143
+1,C_F3_e003Assembly_6_S255,0,2730593,C_F3_e003Assembly_6_S255,100143
