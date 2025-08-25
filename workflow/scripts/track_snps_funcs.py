@@ -164,7 +164,7 @@ def get_parent_children(inoculumn, metadata):
     child_samples_parent1_ss =  list(metadata.loc[metadata['inoculumn'] == in_parent1, 'sample'].values)
     child_samples_parent2_ss =  list(metadata.loc[metadata['inoculumn'] == in_parent2, 'sample'].values)
     #print(child_samples + child_samples_parent1_ss + child_samples_parent2_ss )
-    child_samples_all = child_samples  + child_samples_parent1_ss + child_samples_parent2_ss 
+    child_samples_all = child_samples#  + child_samples_parent1_ss + child_samples_parent2_ss 
     return parent_samples, child_samples_all
      
 
