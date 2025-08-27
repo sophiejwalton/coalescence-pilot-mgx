@@ -3,17 +3,27 @@ import numpy as np
 from os import path, mkdir
 from glob import glob
 import argparse
+import os
 import itertools as it
 from snp_analysis_tools_sherlock import *
 from evo_changes_tools import *
 from track_snps_funcs import * 
 import warnings
+import bokeh.plotting 
+import bokeh.io
+import holoviews as hv
+from holoviews import dim,opts
+import bokeh.models
+from bokeh.layouts import gridplot
+from glob import glob
+hv.extension('bokeh')
+
 warnings.filterwarnings('ignore')
 
 def export_plot_pdf(p, fname_prefix):
     p.output_backend = "svg"
-    plot_fname_svg=f'plots/{fname_prefix}.svg'
-    plot_fname_pdf=f'plots/{fname_prefix}.pdf'
+    plot_fname_svg=f'{fname_prefix}.svg'
+    plot_fname_pdf=f'{fname_prefix}.pdf'
     bokeh.io.export_svg(p,filename=plot_fname_svg)
     convert_scripts = f'rsvg-convert -f pdf -o {plot_fname_pdf} {plot_fname_svg}' 
     os.system(convert_scripts)
@@ -34,19 +44,16 @@ def subsample_and_plot(good_freq, good_depth, color = 'grey',  x_limits = (-.5, 
     return snps_plot
     
 def get_tidy_df(filtered_freq, e003_metadata, value_name = 'freq'):
+    e003_metadata = e003_metadata.set_index('sample')
     filtered_freq.index.name = 'site_id'
     tidy_data = filtered_freq.reset_index().melt(id_vars = ['site_id'], var_name = 'sample', value_name = value_name)
-
+   
     tidy_data = tidy_data.loc[tidy_data['sample'].isin(e003_metadata.index.values)]
 
     tidy_data['passage'] = tidy_data["sample"].transform(lambda x: e003_metadata.loc[x, 'passage'])
     tidy_data['passage'] = pd.to_numeric(tidy_data['passage'])
 
     tidy_data['mesocosm'] = tidy_data["sample"].transform(lambda x: e003_metadata.loc[x, 'mesocosm'])
-    
-  #  tidy_data['inoculumn'] = tidy_data["sample"].transform(lambda x: e003_metadata.loc[x, 'inoculumn'])
-   # tidy_data['inoculumn_sample'] = tidy_data['inoculumn'].transform(get_in)
-    
     
     return tidy_data
 
@@ -59,7 +66,7 @@ def make_mesocosm_timecourse(tidy_data, title = '',
                 ).groupby('site_id'
                 ).opts(width=500, height=250,
                 color = color,
-                ylabel = 'Strain AA Allele Frequency',
+                ylabel = 'Non Ref Allele Frequency',
                        xlabel='Passage',
                 title = title,
                 #show_grid=True,
@@ -81,14 +88,28 @@ def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, 
     metadata_non_zero = metadata.loc[metadata['passage']>0,:].sort_values(by='passage')
 
     for mesocosm in metadata['mesocosm'].unique():
+
         samples = list(metadata_non_zero.loc[metadata_non_zero['mesocosm'] == mesocosm, 'sample'].values)
+        
+        print(samples)
+        if len(samples)<2:
+            continue
         passages = list(metadata_non_zero.loc[metadata_non_zero['mesocosm'] == mesocosm, 'passage'].values)
         inoculumn = metadata.loc[metadata['mesocosm'] == mesocosm, 'inoculumn_sample'].values[0]
+        samples = [inoculumn] + samples
+        passages = [0] + passages
         if inoculumn not in metadata['sample'].values:
             continue 
-        random_inds_all = np.random.choice(freq_children.index.values, 1000)
+        fixed = freq_children[samples].sum(axis=1)
+        print(fixed)
+        fixed_good = fixed[(fixed>.1)*(fixed<.9)].index.values
+        print(fixed_good)
+
+        random_inds_all = np.random.choice(fixed_good, 5000)
         snps_all_plot = freq_children.loc[random_inds_all, samples]
+
         tidy=get_tidy_df(snps_all_plot, metadata, value_name = 'freq')
+        print(tidy)
         p1 = make_mesocosm_timecourse(tidy,color=bokeh.palettes.Set2[8][2],alpha = .1)
 
         random_inds_p1 = parent_snps1.copy()
@@ -105,9 +126,10 @@ def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, 
         
         snps_all_plot = freq_children.loc[random_inds_p2, samples]
         tidy=get_tidy_df(snps_all_plot, metadata, value_name = 'freq')
-        p3 = make_mesocosm_timecourse(tidy,color=bokeh.palettes.Set2[8][3],alpha = .1)
+        p3 = make_mesocosm_timecourse(tidy,color=bokeh.palettes.Set2[8][1],alpha = .1)
         p = hv.render(p1*p2*p3)
-        export_plot_pdf(p, f'workflow/report/plots/{species}_{inoculumn}')
+        p.legend.visible=False
+        export_plot_pdf(p, f'workflow/report/plots/{species}_{mesocosm}')
     
 
 
@@ -183,18 +205,26 @@ if __name__ == '__main__':
 
     med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
     med_nonzero_depth.to_csv(f'{save_dir}/{args.species}_median_depths.csv')
-    good_samples = med_nonzero_depth[med_nonzero_depth>=5.]
-    depth = depth[good_samples.index.values]
-    freq = freq[good_samples.index.values]
-    depth_filtered= depth_filtering(depth, depth_thresh = 2.5)
-    freq_filtered = freq_masked(freq, depth_filtered)
+    good_samples = med_nonzero_depth[med_nonzero_depth>=5.].index.values
+    inoculumn='AE-AF-mGAM'
+    parent_samples, child_samples = get_parent_children(inoculumn,metadata)
+    good_samples = np.intersect1d(good_samples, parent_samples+child_samples)
+    depth = depth[good_samples]
+    freq = freq[good_samples]
+    print('peepee')
+    depth_filtered_in= depth_filtering(depth, depth_thresh = 2.5)
+    depth = []
+    print('wooooo')
+    freq_filtered_in= freq_masked(freq, depth_filtered_in)
+    freq = []
+    print('slakjds')
     inoculumn_list = ['AA-AE-mGAM', 'AA-AF-mGAM', 
         'AA-AE-mBHI', 'AA-AF-mBHI',
        'AE-AF-mGAM', 'AE-AF-mBHI',
      ]
-    depth_filtered_in, freq_filtered_in = filter_sites_across_samples(depth_filtered, 
-        freq_filtered,thresh=.75)
-    for inoculumn in inoculumn_list:
+    depth_filtered_in, freq_filtered_in = filter_sites_across_samples(depth_filtered_in, 
+        freq_filtered_in,thresh=.75)
+    for inoculumn in [inoculumn]:
         print(inoculumn)
         parent_samples, child_samples = get_parent_children(inoculumn,metadata)
       #  print(parent_samples)
