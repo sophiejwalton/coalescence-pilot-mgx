@@ -42,7 +42,7 @@ def get_bootstrap_parent(freq_children, depth_med,depth_children, reads_children
 
         freq_strain1 = get_sample_freq(strain1_snps, reads_strain1, reads_opp_strain1, depth_med[sample])
         freq_strain2 = get_sample_freq(strain2_snps, reads_strain2, reads_opp_strain2, depth_med[sample])
-        freq_strain1 = freq_strain1/(freq_strain1+freq_strain2)
+        freq_strain1_med = freq_strain1/(freq_strain1+freq_strain2)
           #  print('after',med_og)
          #   bs_samples = np.random.choice(snps_sample.index.values, size = (n_snps, n_bootstraps))
         samples_meds= np.zeros(n_bootstraps)
@@ -79,17 +79,9 @@ def get_bootstrap_parent(freq_children, depth_med,depth_children, reads_children
             strain2_meds[n] = freq_strain2
             shifts[n] = 1-(freq_strain1+freq_strain2)
 
-       # medians.append(samples_meds)
-      #  strain1s.append(strain1_meds)
-     #   strain2s.append(strain2_meds)
-    #    shifts_all.append(shifts)
-            
-   #     medians = np.array(medians)
- #       medians[medians<thresh] = thresh
-# #       medians[medians>1-thresh] = 1-thresh
 
         samples_good.append(sample)
-        act_med.append(freq_strain1)
+        act_med.append(freq_strain1_med)
         boot_med.append(np.median(samples_meds))
         boot_low.append(np.percentile(samples_meds, q =2.5))
         boot_high.append(np.percentile(samples_meds, q = 97.5))

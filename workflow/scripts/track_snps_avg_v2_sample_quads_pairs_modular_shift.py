@@ -12,19 +12,17 @@ import warnings
 warnings.filterwarnings('ignore')
 
 
-def adjust_freq(nreads0, nreads3):
-    return (6*nreads3/nreads0)**(1/3)
+
 
 def get_sample_freq(freqs, reads,readsopp, depth_med):
-    reads = reads[~np.isnan(freqs)].values
-    readsopp = readsopp[~np.isnan(freqs)].values
-    freqs = freqs[~np.isnan(freqs)].values
+    reads = reads[~np.isnan(freqs)]
+    readsopp = readsopp[~np.isnan(freqs)]
+    freqs = freqs[~np.isnan(freqs)]
     freq_est = np.median(freqs)
     if freq_est == 0:
-        freq_est = adjust_freq(np.sum(reads==0), np.sum(reads==3))/depth_med.values[0]
-       # print(np.sum(reads==0),depth_med)
+        freq_est = (np.sum(reads==1)/np.sum(reads==0))/depth_med
     if freq_est == 1:
-        freq_est = 1-adjust_freq(np.sum(readsopp==0), np.sum(readsopp==3))/depth_med.values[0]
+        freq_est = 1-(np.sum(readsopp==1)/np.sum(readsopp==0))/depth_med
     return freq_est 
 
 def get_sample_freq_adjust(freqs,reads,readsopp, sample, snps1,snps2, depth_med):
@@ -32,19 +30,19 @@ def get_sample_freq_adjust(freqs,reads,readsopp, sample, snps1,snps2, depth_med)
                                     readsopp.loc[snps1,sample], depth_med[sample])
     est2 = get_sample_freq(freqs.loc[snps2,sample], reads.loc[snps2,sample],
                                     readsopp.loc[snps2,sample], depth_med[sample])
-    if est1<5e-3:
-        est1=5e-3
-    if est2<5e-3:
-        est2=5e-3
-    if est1>1-5e-3:
-        est1 = 1-5e-3
-    if est2>1-5e-3:
-        est2=1-5e-3
+    if est1<1e-3:
+        est1=1e-3
+    if est2<1e-3:
+        est2=1e-3
+    if est1>1-1e-3:
+        est1 = 1-1e-3
+    if est2>1-1e-3:
+        est2=1-1e-3
     return est1/(est1+est2)
 
 
 
-def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, reads_children, reads_children_opp, parent_snps1,parent_snps2, inoculumn, n_bootstraps = 10000, thresh = 5e-3, early_interval = (1,2), late_interval = (6,7)):
+def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, reads_children, reads_children_opp, parent_snps1,parent_snps2, inoculumn, n_bootstraps = 10000, thresh = 1e-3, early_interval = (1,2), late_interval = (6,7)):
     early1,early2 = early_interval
     late1,late2 = late_interval
     metadata = metadata.loc[metadata['sample'].isin(freq_children.columns.values),:]
@@ -132,10 +130,12 @@ def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, 
             bssample32 = bs_sample1[int22+1:int32]
             bssample42 = bs_sample1[int32+1:]
 
-
             passage1_est=get_sample_freq_adjust(freq_children,reads_children, reads_children_opp, sample1, bssample11,bssample12, depth_med)
+
             passage2_est=get_sample_freq_adjust(freq_children,reads_children, reads_children_opp, sample2, bssample21,bssample22, depth_med)
+
             passage3_est=get_sample_freq_adjust(freq_children,reads_children, reads_children_opp, sample3, bssample31,bssample32, depth_med)
+            
             passage4_est=get_sample_freq_adjust(freq_children,reads_children, reads_children_opp, sample4, bssample41,bssample42, depth_med)
 
             sel_coeff_early = (1/dt)*(np.log(passage2_est/(1-passage2_est)) + \
@@ -150,14 +150,16 @@ def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, 
             
             est_7s_ests[sample] = passage4_est
             pred_7_ests[sample] = pred_p7 
-            if pred_p7 <5e-3:
-                pred_p7=5e-3
-            if pred_p7 >1-5e-3:
-                pred_p7=1-5e-3
+            if pred_p7 <thresh:
+                pred_p7=thresh
+            if pred_p7 >1-thresh:
+                pred_p7=1-thresh
           #  pred_7_ests[sample] = pred_p7 
             diffs7[sample] = pred_p7 - passage4_est 
             late_sels[sample] = sel_coeff_late
             early_sels[sample] = sel_coeff_early
+
+        print(diffs7)
 
         diff7_info_upper.append(np.quantile(diffs7, q = .975))
         diff7_info_lower.append(np.quantile(diffs7, q = .025))
@@ -180,8 +182,8 @@ def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, 
         late_sel_lower.append(np.quantile(late_sels, q = .025))
         late_sel_med.append(np.median(late_sels))
         #p6_act = get_freq_est(snps.loc[parent_snps,sample6].values, depth_med[sample6].values[0])
-        pred_7_ests[pred_7_ests<5e-3]=5e-3
-        pred_7_ests[pred_7_ests>1-5e-3]=1-5e-3
+        pred_7_ests[pred_7_ests<1e-3]=1e-3
+        pred_7_ests[pred_7_ests>1-1e-3]=1-1e-3
         as_extreme7.append(np.sum(est_7s_ests>pred_7_ests))
 
     df = pd.DataFrame(data = { 'mesocosms': mesocosms, 'diff7_med': diff7_info_med, 'diff7_lower': diff7_info_lower, 
