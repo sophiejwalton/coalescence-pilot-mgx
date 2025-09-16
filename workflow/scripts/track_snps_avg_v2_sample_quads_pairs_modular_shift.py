@@ -15,21 +15,24 @@ warnings.filterwarnings('ignore')
 
 
 def get_sample_freq(freqs, reads,readsopp, depth_med):
-    reads = reads[~np.isnan(freqs)]
-    readsopp = readsopp[~np.isnan(freqs)]
+    reads = np.round(reads[~np.isnan(freqs)])
+    readsopp = np.round(readsopp[~np.isnan(freqs)])
     freqs = freqs[~np.isnan(freqs)]
     freq_est = np.median(freqs)
+   # print('wooo',freqs, freq_est)
+   # print(depth_med)
     if freq_est == 0:
-        freq_est = (np.sum(reads==1)/np.sum(reads==0))/depth_med
+        freq_est = (np.sum(reads==1)/np.sum(reads==0))/depth_med[0]
+   # print(freq_est)
     if freq_est == 1:
-        freq_est = 1-(np.sum(readsopp==1)/np.sum(readsopp==0))/depth_med
+        freq_est = 1-(np.sum(readsopp==1)/np.sum(readsopp==0))/depth_med[0]
     return freq_est 
 
 def get_sample_freq_adjust(freqs,reads,readsopp, sample, snps1,snps2, depth_med):
-    est1 = get_sample_freq(freqs.loc[snps1,sample], reads.loc[snps1,sample],
-                                    readsopp.loc[snps1,sample], depth_med[sample])
-    est2 = get_sample_freq(freqs.loc[snps2,sample], reads.loc[snps2,sample],
-                                    readsopp.loc[snps2,sample], depth_med[sample])
+    est1 = get_sample_freq(freqs.loc[snps1,sample].values, reads.loc[snps1,sample].values,
+                                    readsopp.loc[snps1,sample].values, depth_med[sample].values)
+    est2 = get_sample_freq(freqs.loc[snps2,sample].values, reads.loc[snps2,sample].values,
+                                    readsopp.loc[snps2,sample].values, depth_med[sample].values)
     if est1<1e-3:
         est1=1e-3
     if est2<1e-3:
@@ -99,7 +102,7 @@ def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, 
         sample2 = meso_df.loc[meso_df['passage'] == early2,'sample'].values
         sample3 = meso_df.loc[meso_df['passage'] == late1,'sample'].values
         sample4 = meso_df.loc[meso_df['passage'] == late2,'sample'].values
-   
+        print('samp',sample3)
         if sample1 not in metadata['sample'].values:
             continue 
 
@@ -112,7 +115,8 @@ def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, 
         for sample in range(n_bootstraps):
             bs_sample1 = np.random.choice(parent_snps1, size=len(parent_snps1),replace=False)
             bs_sample2 = np.random.choice(parent_snps2, size=len(parent_snps2),replace=False)
-
+    
+#        print(bs_sample1)
             int11 = round(len(bs_sample1)/4)
             bssample11 = bs_sample1[:int11]
 
@@ -120,20 +124,20 @@ def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, 
             bssample21 = bs_sample1[int11+1:int21]
             int31 = round(3*len(bs_sample1)/4)
             bssample31 = bs_sample1[int21+1:int31]
-            bssample41 = bs_sample2[int31+1:]
+            bssample41 = bs_sample1[int31+1:]
 
             int12 = round(len(bs_sample2)/4)
-            bssample12 = bs_sample1[:int12]
+            bssample12 = bs_sample2[:int12]
             int22 = round(2*len(bs_sample2)/4)
-            bssample22 = bs_sample1[int12+1:int12]
+            bssample22 = bs_sample2[int12+1:int12]
             int32 = round(3*len(bs_sample2)/4)
-            bssample32 = bs_sample1[int22+1:int32]
-            bssample42 = bs_sample1[int32+1:]
+            bssample32 = bs_sample2[int22+1:int32]
+            bssample42 = bs_sample2[int32+1:]
 
             passage1_est=get_sample_freq_adjust(freq_children,reads_children, reads_children_opp, sample1, bssample11,bssample12, depth_med)
 
             passage2_est=get_sample_freq_adjust(freq_children,reads_children, reads_children_opp, sample2, bssample21,bssample22, depth_med)
-
+            #print('samape',sample3,depth_med[sample3])
             passage3_est=get_sample_freq_adjust(freq_children,reads_children, reads_children_opp, sample3, bssample31,bssample32, depth_med)
             
             passage4_est=get_sample_freq_adjust(freq_children,reads_children, reads_children_opp, sample4, bssample41,bssample42, depth_med)
@@ -145,7 +149,7 @@ def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, 
 
             pred_p7 = np.exp(dt7*sel_coeff_early)
             pred_p7 = pred_p7*passage2_est/(1 - passage2_est + passage2_est*pred_p7)
-
+            print('yay',passage2_est, 'b',sel_coeff_early)
           #  print(pred_p7, passage7_est
             
             est_7s_ests[sample] = passage4_est
@@ -159,8 +163,8 @@ def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, 
             late_sels[sample] = sel_coeff_late
             early_sels[sample] = sel_coeff_early
 
-        print(diffs7)
-
+        #print(diffs7)
+       # print(pred_7_ests)
         diff7_info_upper.append(np.quantile(diffs7, q = .975))
         diff7_info_lower.append(np.quantile(diffs7, q = .025))
         diff7_info_med.append(np.median(diffs7))

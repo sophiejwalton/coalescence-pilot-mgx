@@ -1,3 +1,3 @@
 ,mesocosms,diff7_med,diff7_lower,diff7_upper,pred_7_upper,pred_7_lower,pred7_med,as_extreme7,act7_upper,act_7_lower,act_7_med,early_sel_upper,early_sel_lower,early_sel_med,late_sel_upper,late_sel_lower,late_sel_med,sample_early1,sample_early2,sample_late1,sample_late2
-0,E5-AA-AF-mBHI-mBHI,,,,,,,0,,,,,,,,,,1,2,6,7
-1,E5-AA-AF-mBHI-mGAM,,,,,,,0,,,,,,,,,,1,2,6,7
+0,E5-AA-AF-mBHI-mBHI,,,,,,,0,0.007514725606653917,0.005802136177245698,0.0066515017819914835,,,,-0.761397216459211,-1.0264298985567664,-0.8884998580094625,1,2,6,7
+1,E5-AA-AF-mBHI-mGAM,,,,,,,0,0.001462554816188975,0.0011486193082226493,0.0013030623406058105,,,,0.3806479052146333,0.13870938825579712,0.26502055155768733,1,2,6,7
