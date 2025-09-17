@@ -64,10 +64,10 @@ def make_mesocosm_timecourse(tidy_data, title = '',
                 kdims=['passage', ],
                 vdims=['freq','site_id']
                 ).groupby('site_id'
-                ).opts(width=500, height=250,
+                ).opts(width=500, height=300,
                 color = color,
                 ylabel = 'Non Ref Allele Frequency',
-                       xlabel='Passage',
+                       xlabel='Timepoint',
                 title = title,
                 #show_grid=True,
                 line_width = 1.,
@@ -127,9 +127,17 @@ def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, 
         snps_all_plot = freq_children.loc[random_inds_p2, samples]
         tidy=get_tidy_df(snps_all_plot, metadata, value_name = 'freq')
         p3 = make_mesocosm_timecourse(tidy,color=bokeh.palettes.Set2[8][1],alpha = .1)
-        p = hv.render(p1*p2*p3)
+        p = hv.render(p2*p3)
         p.legend.visible=False
-        export_plot_pdf(p, f'workflow/report/plots/{species}_{mesocosm}')
+        tick_font_size ='22px'
+        label_font_size = '28px'
+        p.xaxis.axis_label_text_font_size=label_font_size
+        p.xaxis.major_label_text_font_size=tick_font_size
+        p.yaxis.axis_label_text_font_size=label_font_size
+        p.yaxis.major_label_text_font_size=tick_font_size
+        p.yaxis.major_label_text_font_style='normal'
+        p.xaxis.major_label_text_font_style='normal'
+        export_plot_pdf(p, f'workflow/report/plots/{species}_{mesocosm}_only_dist')
     
 
 
@@ -197,34 +205,37 @@ if __name__ == '__main__':
 
     if not path.isdir(save_dir):
         mkdir(save_dir) 
-    info, depth, freq = load_and_sort_files(species_dir, args.species)
+
+    metadata = pd.read_csv('workflow/analysis/e003_coalescence_metadata_round4_good.csv')
+    inoculumn_list = ['AE-AF-mGAM', 'AA-AE-mGAM', 'AA-AF-mGAM', 
+            'AA-AE-mBHI', 'AA-AF-mBHI',
+        'AE-AF-mBHI',
+        ]
+
+    for inoculumn in inoculumn_list:
+        info, depth, freq = load_and_sort_files(species_dir, args.species)
     #print(info.columns.values)
     #print(info.index.values)
-    freq = repolarize_against_reference(freq, info)
-    metadata = pd.read_csv('workflow/analysis/e003_coalescence_metadata_round4_good.csv')
+        freq = repolarize_against_reference(freq, info)
 
-    med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
-    med_nonzero_depth.to_csv(f'{save_dir}/{args.species}_median_depths.csv')
-    good_samples = med_nonzero_depth[med_nonzero_depth>=5.].index.values
-    inoculumn='AE-AF-mGAM'
-    parent_samples, child_samples = get_parent_children(inoculumn,metadata)
-    good_samples = np.intersect1d(good_samples, parent_samples+child_samples)
-    depth = depth[good_samples]
-    freq = freq[good_samples]
-    print('peepee')
-    depth_filtered_in= depth_filtering(depth, depth_thresh = 2.5)
-    depth = []
-    print('wooooo')
-    freq_filtered_in= freq_masked(freq, depth_filtered_in)
-    freq = []
-    print('slakjds')
-    inoculumn_list = ['AA-AE-mGAM', 'AA-AF-mGAM', 
-        'AA-AE-mBHI', 'AA-AF-mBHI',
-       'AE-AF-mGAM', 'AE-AF-mBHI',
-     ]
-    depth_filtered_in, freq_filtered_in = filter_sites_across_samples(depth_filtered_in, 
+        med_nonzero_depth = depth.copy().replace(0, np.nan).median(skipna=True)
+        med_nonzero_depth.to_csv(f'{save_dir}/{args.species}_median_depths.csv')
+        good_samples = med_nonzero_depth[med_nonzero_depth>=5.].index.values
+        #inoculumn='AE-AF-mBHI'
+        parent_samples, child_samples = get_parent_children(inoculumn,metadata)
+        good_samples = np.intersect1d(good_samples, parent_samples+child_samples)
+        depth = depth[good_samples]
+        freq = freq[good_samples]
+        print('peepee')
+        depth_filtered_in= depth_filtering(depth, depth_thresh = 2.5)
+        depth = []
+        print('wooooo')
+        freq_filtered_in= freq_masked(freq, depth_filtered_in)
+        freq = []
+        print('slakjds')
+        
+        depth_filtered_in, freq_filtered_in = filter_sites_across_samples(depth_filtered_in, 
         freq_filtered_in,thresh=.75)
-    for inoculumn in [inoculumn]:
         print(inoculumn)
         parent_samples, child_samples = get_parent_children(inoculumn,metadata)
       #  print(parent_samples)
