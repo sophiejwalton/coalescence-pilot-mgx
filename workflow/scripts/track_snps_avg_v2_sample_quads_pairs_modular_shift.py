@@ -304,8 +304,8 @@ if __name__ == '__main__':
      ]
     depth_filtered_in, freq_filtered_in = filter_sites_across_samples(depth_filtered, 
         freq_filtered,thresh=.75)
-    sample_init = 1
-    final_sample = 2
+    sample_init = 2
+    final_sample = 3
     for inoculumn in inoculumn_list:
         print(inoculumn)
         parent_samples, child_samples = get_parent_children(inoculumn,metadata)
@@ -325,7 +325,7 @@ if __name__ == '__main__':
             child_samples.remove(parent_samples[0])
         if parent_samples[0] == 'A2-e003Coalescence-Inoculumn-mBHI':
             parent_samples = ['A2-e003Coalescence-mBHI-inoculumn-redo', parent_samples[1]]
-        early = (1,2)
+        early = (2,3)
         late=(6,7)
         _, parent1_info = get_main(metadata,species_dir,args.species, parent_samples, child_samples, 
             freq_filtered_in[parent_samples+child_samples],  depth_filtered_in[parent_samples+child_samples],early_interval = early, late_interval = late)
