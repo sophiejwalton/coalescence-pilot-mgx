@@ -9,7 +9,36 @@ from evo_changes_tools import *
 from track_snps_funcs import *
 import warnings
 warnings.filterwarnings('ignore')
+def get_sample_freq(freqs, reads,readsopp, depth_med):
+    reads = np.round(reads[~np.isnan(freqs)])
+    readsopp = np.round(readsopp[~np.isnan(freqs)])
+    freqs = freqs[~np.isnan(freqs)]
+    freq_est = np.median(freqs)
+    if freq_est == 0:
+        freq_est = (np.sum(reads==1)/np.sum(reads==0))/depth_med[0]
+    if freq_est == 1:
+        freq_est = 1-(np.sum(readsopp==1)/np.sum(readsopp==0))/depth_med[0]
+    return freq_est 
 
+def get_sample_freq_adjust(freqs,reads,readsopp, sample, snps1,snps2, depth_med):
+    est1 = get_sample_freq(freqs.loc[snps1,sample].values, reads.loc[snps1,sample].values,
+                                    readsopp.loc[snps1,sample].values, depth_med[sample].values)
+    est2 = get_sample_freq(freqs.loc[snps2,sample].values, reads.loc[snps2,sample].values,
+                                    readsopp.loc[snps2,sample].values, depth_med[sample].values)
+    if est1<1e-3:
+        est1=1e-3
+    if est2<1e-3:
+        est2=1e-3
+    if est1>1-1e-3:
+        est1 = 1-1e-3
+    if est2>1-1e-3:
+        est2=1-1e-3
+    together = est1/(est1+est2)
+    if together < 1e-3:
+        together = 1e-3
+    if together > 1-1e-3:
+        together = 1- 1e-3
+    return together,est1,est2
 
 
 def get_bootstrap_parent(freq_children, depth_med,depth_children, reads_children, reads_children_opp, parent_snps1, parent_snps2, inoculumn,thresh=1e-3, n_bootstraps = 1000):
@@ -46,37 +75,19 @@ def get_bootstrap_parent(freq_children, depth_med,depth_children, reads_children
           #  print('after',med_og)
          #   bs_samples = np.random.choice(snps_sample.index.values, size = (n_snps, n_bootstraps))
         samples_meds= np.zeros(n_bootstraps)
-        strain1_meds = np.zeros(n_bootstraps)
-        strain2_meds = np.zeros(n_bootstraps)
+      #  strain1_meds = np.zeros(n_bootstraps)
+       # strain2_meds = np.zeros(n_bootstraps)
         shifts = np.zeros(n_bootstraps)
         for n in range(n_bootstraps):
             bs_sample1 = np.random.choice(strain1_snps.index.values, size = len(strain1_snps))
             bs_sample2 = np.random.choice(strain2_snps.index.values, size = len(strain2_snps))
 
-            freq_strain1 = get_sample_freq(freq_children.loc[bs_sample1, sample], 
-                                        reads_children.loc[bs_sample1, sample], reads_children_opp.loc[bs_sample1, sample], depth_med[sample])
-
-            freq_strain2 = get_sample_freq(freq_children.loc[bs_sample2, sample], 
-                                        reads_children.loc[bs_sample2, sample], reads_children_opp.loc[bs_sample2, sample], depth_med[sample])
-
-            if freq_strain1<thresh:
-                freq_strain1 = thresh
-            if freq_strain1>1-thresh:
-                freq_strain1=1-thresh
-
-            if freq_strain2<thresh:
-                freq_strain2 = thresh
-            if freq_strain2>1-thresh:
-                freq_strain2=1-thresh
-            freq_strain_adjust = freq_strain1/(freq_strain1+freq_strain2)
-            if freq_strain_adjust<thresh:
-                freq_strain_adjust = thresh
-            if freq_strain_adjust>1-thresh:
-                freq_strain_adjust=1-thresh
+         
+            freq_strain_adjust,freq_strain1,freq_strain2=get_sample_freq_adjust(freq_children,reads_children, reads_children_opp, sample, bssample1,bssample2, depth_med)
 
             samples_meds[n] = freq_strain_adjust 
-            strain1_meds[n] = freq_strain1
-            strain2_meds[n] = freq_strain2
+            #strain1_meds[n] = freq_strain1
+            #strain2_meds[n] = freq_strain2
             shifts[n] = 1-(freq_strain1+freq_strain2)
 
 
