@@ -158,14 +158,14 @@ rule trackSNPsAVG_bootstrapv3both:
 
 
 #workflow/report/track_snpsv2_shift_self_test_12_shift
-rule trackSNPsAVG_shift_sel_mod_shift:
+rule trackSNPsAVG_shift_sel_mod_shift01:
     input:
        # snpsDepth="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_depth.tsv.gz",
         snpsFreq="workflow/out/midas2v3_output/mergevfinal_{species}/snps/{species}/{species}.snps_freqs.tsv.gz",
        # snpsInfo="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_info.tsv.gz",
        # wo="workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv"
     output:
-        "workflow/report/track_snpsv2_shift_self_test_mod_shift/{species}/done.txt"
+        "workflow/report/track_snpsv2_shift_self_test_mod_shift/{species}/done01.txt"
     params:
         indir="workflow/out/midas2v3_output/mergevfinal_{species}/snps/",
         outdir="workflow/report/track_snpsv2_shift_self_test_mod_shift/",
@@ -174,6 +174,49 @@ rule trackSNPsAVG_shift_sel_mod_shift:
    #     "../../workflow/envs/snps_analysis_tools-no-builds.yml"
     shell:
         """
-        python3 workflow/scripts/track_snps_avg_v2_sample_quads_pairs_modular_shift.py --outdir {params.outdir} --indir {params.indir} --species {wildcards.species}
-        touch {params.outdir}/{wildcards.species}/done.txt
+        python3 workflow/scripts/track_snps_avg_v2_sample_quads_pairs_modular_shift.py --outdir {params.outdir} --indir {params.indir} --species {wildcards.species} --interval 01
+        touch {params.outdir}/{wildcards.species}/done01.txt
+        """
+
+#workflow/report/track_snpsv2_shift_self_test_12_shift
+rule trackSNPsAVG_shift_sel_mod_shift12:
+    input:
+       # snpsDepth="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_depth.tsv.gz",
+        snpsFreq="workflow/out/midas2v3_output/mergevfinal_{species}/snps/{species}/{species}.snps_freqs.tsv.gz",
+       # snpsInfo="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_info.tsv.gz",
+       # wo="workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv"
+    output:
+        "workflow/report/track_snpsv2_shift_self_test_mod_shift/{species}/done12.txt"
+    params:
+        indir="workflow/out/midas2v3_output/mergevfinal_{species}/snps/",
+        outdir="workflow/report/track_snpsv2_shift_self_test_mod_shift/",
+        #species={species}
+  #  conda:
+   #     "../../workflow/envs/snps_analysis_tools-no-builds.yml"
+    shell:
+        """
+        python3 workflow/scripts/track_snps_avg_v2_sample_quads_pairs_modular_shift.py --outdir {params.outdir} --indir {params.indir} --species {wildcards.species} --interval 12
+        touch {params.outdir}/{wildcards.species}/done12.txt
+        """
+
+
+#workflow/report/track_snpsv2_shift_self_test_12_shift
+rule trackSNPsAVG_shift_sel_mod_shift23:
+    input:
+       # snpsDepth="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_depth.tsv.gz",
+        snpsFreq="workflow/out/midas2v3_output/mergevfinal_{species}/snps/{species}/{species}.snps_freqs.tsv.gz",
+       # snpsInfo="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_info.tsv.gz",
+       # wo="workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv"
+    output:
+        "workflow/report/track_snpsv2_shift_self_test_mod_shift/{species}/done23.txt"
+    params:
+        indir="workflow/out/midas2v3_output/mergevfinal_{species}/snps/",
+        outdir="workflow/report/track_snpsv2_shift_self_test_mod_shift/",
+        #species={species}
+  #  conda:
+   #     "../../workflow/envs/snps_analysis_tools-no-builds.yml"
+    shell:
+        """
+        python3 workflow/scripts/track_snps_avg_v2_sample_quads_pairs_modular_shift.py --outdir {params.outdir} --indir {params.indir} --species {wildcards.species} --interval 23
+        touch {params.outdir}/{wildcards.species}/done23.txt
         """

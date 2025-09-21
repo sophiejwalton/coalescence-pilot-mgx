@@ -151,7 +151,9 @@ rule all:
          expand("workflow/report/track_snpsv2_sel_bootstrapv3/{species}/done.txt",  species=species_list),
         # expand("workflow/report/track_snpsv2_shift_self_test_mod_shift/{species}/done.txt",  species=species_list),
         # expand("workflow/report/track_snpsv2_shift_self_test_mod_shift/{species}/done23.txt",  species=species_list)
-   #      expand("workflow/report/track_snpsv2_shift_self_test_mod_shift/{species}/done.txt",  species=species_list),
+         expand("workflow/report/track_snpsv2_shift_self_test_mod_shift/{species}/done01.txt",  species=species_list),
+         expand("workflow/report/track_snpsv2_shift_self_test_mod_shift/{species}/done12.txt",  species=species_list),
+         expand("workflow/report/track_snpsv2_shift_self_test_mod_shift/{species}/done23.txt",  species=species_list),
          expand("workflow/report/track_snpsv2_ALL_bootstrapv3_both/{species}/done.txt",species=species_list)
        # expand("workflow/report/track_snpsv2_ALL_same_subject/{species}/done.txt",species=species_list),
       #  workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv

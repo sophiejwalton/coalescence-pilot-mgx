@@ -276,6 +276,8 @@ if __name__ == '__main__':
                        help = 'location where to get stuff from')
     parser.add_argument('--species', action = 'store', 
                        help = 'species to perform analysis on')
+    parser.add_argument('--interval', action = 'store', 
+                       help = 'early_interval')
 #    parser.add_argument('--inoculumn', action = 'store', 
  #                      help = 'inoculumn')
     args = parser.parse_args()
@@ -308,10 +310,10 @@ if __name__ == '__main__':
        'AC/PP-AE-mBHI', 'AC/PP-AF-mBHI', 
        'AE-AF-mGAM', 'AE-AF-mBHI',
      ]
+    late=(6,7)
+    early = (int(args.interval[0]),int(args.interval[1]))
     depth_filtered_in, freq_filtered_in = filter_sites_across_samples(depth_filtered, 
         freq_filtered,thresh=.75)
-    sample_init = 0
-    final_sample = 1
     for inoculumn in inoculumn_list:
         print(inoculumn)
         parent_samples, child_samples = get_parent_children(inoculumn,metadata)
@@ -331,8 +333,8 @@ if __name__ == '__main__':
             child_samples.remove(parent_samples[0])
         if parent_samples[0] == 'A2-e003Coalescence-Inoculumn-mBHI':
             parent_samples = ['A2-e003Coalescence-mBHI-inoculumn-redo', parent_samples[1]]
-        early = (0,1)
-        late=(6,7)
+        
+        
         _, parent1_info = get_main(metadata,species_dir,args.species, parent_samples, child_samples, 
             freq_filtered_in[parent_samples+child_samples],  depth_filtered_in[parent_samples+child_samples],early_interval = early, late_interval = late)
 
