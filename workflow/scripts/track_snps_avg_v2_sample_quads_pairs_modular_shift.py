@@ -105,7 +105,7 @@ def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, 
 
         
         sample4 = meso_df.loc[meso_df['passage'] == late2,'sample'].values
-        print('samp',sample3)
+        #print('samp',sample3)
         if sample1 not in metadata['sample'].values:
             continue 
 
@@ -145,13 +145,15 @@ def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, 
             #print('samape',sample3,depth_med[sample3])
             passage3_est = np.nan
             sel_coeff_late=np.nan
+            passage4_est=get_sample_freq_adjust(freq_children,reads_children, reads_children_opp, sample4, bssample41,bssample42, depth_med)
             if late1 in passages:
+#                passage4_est=get_sample_freq_adjust(freq_children,reads_children, reads_children_opp, sample4, bssample41,bssample42, depth_med)
                 sample3 = meso_df.loc[meso_df['passage'] == late1,'sample'].values
                 passage3_est=get_sample_freq_adjust(freq_children,reads_children, reads_children_opp, sample3, bssample31,bssample32, depth_med)
                 sel_coeff_late =  (1/(dtlate))*(np.log(passage4_est/(1-passage4_est)) + \
                                 np.log((1-passage3_est)/(passage3_est)))
             
-            passage4_est=get_sample_freq_adjust(freq_children,reads_children, reads_children_opp, sample4, bssample41,bssample42, depth_med)
+#            passage4_est=get_sample_freq_adjust(freq_children,reads_children, reads_children_opp, sample4, bssample41,bssample42, depth_med)
            # print('lens2', len(bssample11), len(bssample21), len(bssample31), len(bssample41), len(bssample12), len(bssample22), len(bssample32), len(bssample42),) 
 
             sel_coeff_early = (1/dt)*(np.log(passage2_est/(1-passage2_est)) + \
@@ -308,8 +310,8 @@ if __name__ == '__main__':
      ]
     depth_filtered_in, freq_filtered_in = filter_sites_across_samples(depth_filtered, 
         freq_filtered,thresh=.75)
-    sample_init = 2
-    final_sample = 3
+    sample_init = 0
+    final_sample = 1
     for inoculumn in inoculumn_list:
         print(inoculumn)
         parent_samples, child_samples = get_parent_children(inoculumn,metadata)
@@ -329,7 +331,7 @@ if __name__ == '__main__':
             child_samples.remove(parent_samples[0])
         if parent_samples[0] == 'A2-e003Coalescence-Inoculumn-mBHI':
             parent_samples = ['A2-e003Coalescence-mBHI-inoculumn-redo', parent_samples[1]]
-        early = (2,3)
+        early = (0,1)
         late=(6,7)
         _, parent1_info = get_main(metadata,species_dir,args.species, parent_samples, child_samples, 
             freq_filtered_in[parent_samples+child_samples],  depth_filtered_in[parent_samples+child_samples],early_interval = early, late_interval = late)

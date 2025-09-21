@@ -15,16 +15,16 @@ def get_sample_freq(freqs, reads,readsopp, depth_med):
     freqs = freqs[~np.isnan(freqs)]
     freq_est = np.median(freqs)
     if freq_est == 0:
-        freq_est = (np.sum(reads==1)/np.sum(reads==0))/depth_med[0]
+        freq_est = (np.sum(reads==1)/np.sum(reads==0))/depth_med
     if freq_est == 1:
-        freq_est = 1-(np.sum(readsopp==1)/np.sum(readsopp==0))/depth_med[0]
+        freq_est = 1-(np.sum(readsopp==1)/np.sum(readsopp==0))/depth_med
     return freq_est 
 
 def get_sample_freq_adjust(freqs,reads,readsopp, sample, snps1,snps2, depth_med):
     est1 = get_sample_freq(freqs.loc[snps1,sample].values, reads.loc[snps1,sample].values,
-                                    readsopp.loc[snps1,sample].values, depth_med[sample].values)
+                                    readsopp.loc[snps1,sample].values, depth_med[sample])
     est2 = get_sample_freq(freqs.loc[snps2,sample].values, reads.loc[snps2,sample].values,
-                                    readsopp.loc[snps2,sample].values, depth_med[sample].values)
+                                    readsopp.loc[snps2,sample].values, depth_med[sample])
     if est1<1e-3:
         est1=1e-3
     if est2<1e-3:
@@ -83,7 +83,7 @@ def get_bootstrap_parent(freq_children, depth_med,depth_children, reads_children
             bs_sample2 = np.random.choice(strain2_snps.index.values, size = len(strain2_snps))
 
          
-            freq_strain_adjust,freq_strain1,freq_strain2=get_sample_freq_adjust(freq_children,reads_children, reads_children_opp, sample, bssample1,bssample2, depth_med)
+            freq_strain_adjust,freq_strain1,freq_strain2=get_sample_freq_adjust(freq_children,reads_children, reads_children_opp, sample, bs_sample1,bs_sample2, depth_med)
 
             samples_meds[n] = freq_strain_adjust 
             #strain1_meds[n] = freq_strain1
