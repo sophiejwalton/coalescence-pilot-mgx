@@ -90,9 +90,9 @@ for species in species_list2:
 #species_list = [101346, 100196]#,102478, 100099]
 #species_list = [101346,100196,102478,100099, 102506, 100120]
 #species_list = [101346]
-species_list.remove('101059')
-species_list.remove('102279')
-species_list.remove('103656')
+#species_list.remove('101059')
+#species_list.remove('102279')
+#species_list.remove('103656')
 
 #species_list = [100099,101059, 102279, 103656]
 #species_list = [101346, 100196,  102506, ]
@@ -127,12 +127,15 @@ print(len(samples))
 #species_list = get_species_list()
 #samples=['D_A4_A5_AF_AA_mBHI_mBHI_6_S292']
 print(len(species_list))
+#species_list = ['100099', '100146', '100196', '100910', '101059', '101294',
+ #      '101346', '102438', '102478', '102506', '102528', '102544',
+  #     '103117', '103656']
 rule all:
     input:
-         expand("workflow/out/trimmed/{sample}-trimmed-pair1.fastq.gz",sample=samples),
-         expand("workflow/out/filter/{sample}-filtered.1.fastq.gz",sample=samples),
+         #expand("workflow/out/trimmed/{sample}-trimmed-pair1.fastq.gz",sample=samples),
+        # expand("workflow/out/filter/{sample}-filtered.1.fastq.gz",sample=samples),
    #     expand("workflow/out/concat/{sample}-filtered.1.fastq.gz",sample=samples),
-         expand("workflow/out/midas2_output/{sample}/species/species_profile.tsv",sample=samples),
+         #expand("workflow/out/midas2_output/{sample}/species/species_profile.tsv",sample=samples),
          #"workflow/out/midas2_output/mergev4/species/species_prevalence.tsv",
          expand("workflow/out/midas2_output/{sample}/snps/snps_summary.tsv",sample=samples),
         #"workflow/out/midas2_output/merge/snps/snps_summary.tsv",
@@ -146,9 +149,10 @@ rule all:
          expand("workflow/report/track_snpsv2_ALL_bootstrapv3/{species}/done.txt", species=species_list), 
  #        expand("workflow/report/calculateFixedDiffsFastv3/{species}/{species}_fixed_diffs.csv",species=species_list),
          expand("workflow/report/track_snpsv2_sel_bootstrapv3/{species}/done.txt",  species=species_list),
-   #      expand("workflow/report/track_snpsv2_shift_self_test_mod_12/{species}/done.txt",  species=species_list),
+        # expand("workflow/report/track_snpsv2_shift_self_test_mod_shift/{species}/done.txt",  species=species_list),
+        # expand("workflow/report/track_snpsv2_shift_self_test_mod_shift/{species}/done23.txt",  species=species_list)
    #      expand("workflow/report/track_snpsv2_shift_self_test_mod_shift/{species}/done.txt",  species=species_list),
-
+         expand("workflow/report/track_snpsv2_ALL_bootstrapv3_both/{species}/done.txt",species=species_list)
        # expand("workflow/report/track_snpsv2_ALL_same_subject/{species}/done.txt",species=species_list),
       #  workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv
 #  "workflow/report/calculateFixedDiffs/100013/100013_fixed_diffs.csv"
@@ -159,6 +163,6 @@ rule all:
 #include: "workflow/rules/processRawReads_no_concatenation.smk",
 #include: "workflow/rules/processRawReads.smk",
 #include: "workflow/rules/runMIDAS2.smk",
-include: "workflow/rules/runMIDAS2_population.smk"
+#include: "workflow/rules/runMIDAS2_population.smk"
 include: "workflow/rules/processMIDAS2.smk"
 #includ: "workflow/rules/processSNPs.smk"
