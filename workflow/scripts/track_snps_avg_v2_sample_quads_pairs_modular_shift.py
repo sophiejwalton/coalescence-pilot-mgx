@@ -260,7 +260,7 @@ def get_main(metadata,species_dir,species, parent_samples, child_samples, freq_f
     count_parent1 = pd.DataFrame(get_count(freq_children, parent1_snps)).rename(columns = {0: parent_samples[0]})  
     count_parent2 = pd.DataFrame(get_count(freq_children, parent2_snps)).rename(columns = {0: parent_samples[1]})  
 
-    parent1_info = get_bootstrap_sel_coeffs(metadata,freq_children, med_depth_children, depth_children, reads_children, reads_children_opp, parent1_snps,parent2_snps, inoculumn, n_bootstraps = 1000)
+    parent1_info = get_bootstrap_sel_coeffs(metadata,freq_children, med_depth_children, depth_children, reads_children, reads_children_opp, parent1_snps,parent2_snps, inoculumn, early_interval = early_interval,n_bootstraps = 1000)
   #  parent2_info = get_bootstrap_sel_coeffs(metadata,freq_children, med_depth_children, reads_children, reads_children_opp, parent2_snps, n_bootstraps = 1000)
 
     return pd.concat([count_parent1, count_parent2],axis=1), parent1_info #parent2_info 
