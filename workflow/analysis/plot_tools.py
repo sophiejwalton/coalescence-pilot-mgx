@@ -665,7 +665,7 @@ def adjust_df(meso_df, good_families ):
     
     return meso_df
 
-def make_bar_plot_assembly(meso_to_look_at, df_abundance,add=.2,bar_width = 1,plot_width=600,include_glycerol=False):
+def make_bar_plot_assembly(meso_to_look_at, df_abundance,add=.2,bar_width = 1,plot_width=600,include_glycerol=False, species_emph = None):
     df_meso=df_abundance.loc[df_abundance['mesocosm']==meso_to_look_at,:]
     sub = meso_to_look_at.split('-')[1]
     in_sample = df_abundance.loc[df_abundance['mesocosm']==f'fecal-{sub}-fecal',:]
@@ -699,11 +699,17 @@ def make_bar_plot_assembly(meso_to_look_at, df_abundance,add=.2,bar_width = 1,pl
     df_meso_small =df_meso.loc[df_meso['passage'].isin(passages),:].sort_values(by='family_plot')
     bars2 = hv.Bars(df_meso_small, kdims=[hv.Dimension('passage', values=passages), 'species_id',],
                 vdims = ['relative_abundance','family_plot',])
+    alpha = 1.
+    alpha_bar = .5
+    if species_emph:
+        alpha=.1
+        alpha_bar = .1
+    
 
     bars2=bars2.opts(width=plot_width, height=365).opts(stacked=True,#alpha='relative_abundance',
                                         color='family_plot',
                                         cmap=cmap_family,
-                                        alpha=1,
+                                        alpha=alpha,
                                                 ylim = (0,1),
                                                 bar_width = bar_width,
                                         xlabel='Timepoint',
@@ -722,13 +728,24 @@ def make_bar_plot_assembly(meso_to_look_at, df_abundance,add=.2,bar_width = 1,pl
         new_df.append(df_meso_smallb)
     new_df = pd.concat(new_df)
     df_meso_small_big = pd.concat([new_df, df_meso_small])
-    overlay = hv.Overlay([hv.Area(df_meso_small_big.loc[df_meso_small_big['species_id']==sp,:].sort_values(by='passage'), kdims=[hv.Dimension('passage',values=passages,)],
-                                vdims=['relative_abundance','family_plot']).opts(alpha=.5,line_color='grey',
-                                                                                color=cmap_family[df_meso_small.loc[df_meso_small['species_id']==sp,'family_plot'].values[0]]) for sp in sp_good])
+    to_overlay = []
+    for sp in sp_good:
+        if str(sp) == str(species_emph):
+            to_overlay.append(hv.Area(df_meso_small_big.loc[df_meso_small_big['species_id']==sp,:].sort_values(by='passage'), 
+            kdims=[hv.Dimension('passage',values=[0,1,2,3,4,5],)],
+                                vdims=['relative_abundance','family_plot']).opts(alpha=1.,line_color='black',
+                                                                                color=cmap_family[df_meso_small.loc[df_meso_small['species_id']==sp,'family_plot'].values[0]]))
+        else:
+            to_overlay.append(hv.Area(df_meso_small_big.loc[df_meso_small_big['species_id']==sp,:].sort_values(by='passage'), 
+            kdims=[hv.Dimension('passage',values=[0,1,2,3,4,5],)],
+                                vdims=['relative_abundance','family_plot']).opts(alpha=alpha_bar,line_color='grey',
+                                                                                color=cmap_family[df_meso_small.loc[df_meso_small['species_id']==sp,'family_plot'].values[0]]))
 
+    overlay = hv.Overlay(to_overlay)
     p=hv.Area.stack(overlay)
-    if include_glycerol:
-        p = hv.render((p*bars2).opts(xlim=(-0.25,6.5),ylim=(0,1)))
+
+    if species_emph:
+        p = hv.render((bars2*p).opts(xlim=(-0.25,5.5),ylim=(0,1)))
     else:
         p = hv.render((p*bars2).opts(xlim=(-0.25,5.5),ylim=(0,1)))
    # p.legend.visible = False
@@ -741,7 +758,7 @@ def make_bar_plot_assembly(meso_to_look_at, df_abundance,add=.2,bar_width = 1,pl
     return p
 
 
-def make_bar_plot_coalescence(df_meso,add=.2,bar_width = 1, passages = [0,1,2,3,4,5,6,7]):
+def make_bar_plot_coalescence(df_meso,add=.2,bar_width = 1, passages = [0,1,2,3,4,5,6,7], species_emph = None):
     df_meso['passage_plot']=df_meso['passage'].astype(str)
     df_meso['family'] = df_meso['family'].transform(lambda x: x.split('f__')[-1])
     sums = df_meso.groupby(['sample']).sum(numeric_only=True)
@@ -768,17 +785,23 @@ def make_bar_plot_coalescence(df_meso,add=.2,bar_width = 1, passages = [0,1,2,3,
     df_meso_small =df_meso.loc[df_meso['passage'].isin(passages),:].sort_values(by='family_plot')
     bars2 = hv.Bars(df_meso_small, kdims=[hv.Dimension('passage', values=passages), 'species_id',],
                 vdims = ['relative_abundance','family_plot',])
+    alpha = 1
+    alpha_bar=.5
+    if species_emph:
+        alpha = .1
+        alpha_bar=.1
 
     bars2=bars2.opts(width=500, height=250,).opts(stacked=True,#alpha='relative_abundance',
                                         color='family_plot',
                                         cmap=cmap_family,
-                                        alpha=1,
+                                        alpha=alpha,
                                                 ylim = (0,1),
                                                 bar_width = bar_width,
                                         xlabel='Timepoint',
                                         ylabel='Relative Abundance',
                                             show_legend=True,legend_position='right',
                                             )#.sort(by='passage_plot')   
+                                        
     sp_good = df_meso_small['species_id'].unique()
     df_meso_small_adjust = df_meso_small.copy()
     new_df = []
@@ -791,12 +814,25 @@ def make_bar_plot_coalescence(df_meso,add=.2,bar_width = 1, passages = [0,1,2,3,
         new_df.append(df_meso_smallb)
     new_df = pd.concat(new_df)
     df_meso_small_big = pd.concat([new_df, df_meso_small])
-    overlay = hv.Overlay([hv.Area(df_meso_small_big.loc[df_meso_small_big['species_id']==sp,:].sort_values(by='passage'), kdims=[hv.Dimension('passage',values=[0,1,2,3,4,5],)],
-                                vdims=['relative_abundance','family_plot']).opts(alpha=.5,line_color='grey',
-                                                                                color=cmap_family[df_meso_small.loc[df_meso_small['species_id']==sp,'family_plot'].values[0]]) for sp in sp_good])
+    to_overlay = []
+    for sp in sp_good:
+        if str(sp) == str(species_emph):
+            to_overlay.append(hv.Area(df_meso_small_big.loc[df_meso_small_big['species_id']==sp,:].sort_values(by='passage'), 
+            kdims=[hv.Dimension('passage',values=[0,1,2,3,4,5],)],
+                                vdims=['relative_abundance','family_plot']).opts(alpha=1.,line_color='black',
+                                                                                color=cmap_family[df_meso_small.loc[df_meso_small['species_id']==sp,'family_plot'].values[0]]))
+        else:
+            to_overlay.append(hv.Area(df_meso_small_big.loc[df_meso_small_big['species_id']==sp,:].sort_values(by='passage'), 
+            kdims=[hv.Dimension('passage',values=[0,1,2,3,4,5],)],
+                                vdims=['relative_abundance','family_plot']).opts(alpha=alpha_bar,line_color='grey',
+                                                                                color=cmap_family[df_meso_small.loc[df_meso_small['species_id']==sp,'family_plot'].values[0]]))
 
+    overlay = hv.Overlay(to_overlay)
     p=hv.Area.stack(overlay)
-    p = hv.render((p*bars2).opts(xlim=(-0.25,7.5),ylim=(0,1)))
+    if species_emph:
+        p = hv.render((bars2*p).opts(xlim=(-0.25,7.5),ylim=(0,1)))
+    else:
+        p = hv.render((p*bars2).opts(xlim=(-0.25,7.5),ylim=(0,1)))
     p.legend.visible = False
     p.xaxis.axis_label_text_font_size=label_font_size
     p.xaxis.major_label_text_font_size=tick_font_size
