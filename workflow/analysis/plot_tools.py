@@ -371,21 +371,31 @@ def plot_abundance_trajectories_with_in_abundance(freq_df, df_abundance, colorby
 
     return p1,p2
 
-def make_plain_linear_plot_abundance(df_abundance, species, inoculumn,emph=[],same_plots = False,colorby='media',markers='meso',shift=True, medias=['mBHI','mGAM']):
+def make_plain_linear_plot_abundance(df_abundance, species, inoculumn,emph=[],same_plots = False,colorby='media',markers='meso',shift=True,useboth=True, medias=['mBHI','mGAM']):
     e003_metadata = pd.read_csv('e003_coalescence_metadata_round4_good.csv').set_index('sample')
    # print(e003_metadata.columns.values)
-
-    fname1=f'/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/report/track_snpsv2_ALL_bootstrapv3/{species}/{inoculumn}_parent1_info.csv'
-    df_both = get_both_dfs(fname1)
-    df_both['boot_med1_shift'] = df_both['boot_med1']/(df_both['boot_med1']+df_both['boot_med2'])
-    df_both = df_both.loc[np.intersect1d(df_both.index.values,e003_metadata.index.values),:]
-    df_both_meta = pd.concat([df_both,e003_metadata.loc[np.intersect1d(df_both.index.values,
-                                                                               e003_metadata.index.values),:]],axis=1).reset_index()
-    df_both_meta_good = df_both_meta.loc[df_both_meta['total_shift']<.1,:]
-    if shift:
-        df_both_meta_good['boot_med1_shift']=df_both_meta_good['boot_med1']/(df_both_meta_good['boot_med1']+df_both_meta_good['boot_med2'])
-        df_both_meta_good['boot_high1_shift']=df_both_meta_good['boot_high1']/(df_both_meta_good['boot_high1']+df_both_meta_good['boot_high2'])
-        df_both_meta_good['boot_low1_shift']=df_both_meta_good['boot_low1']/(df_both_meta_good['boot_low1']+df_both_meta_good['boot_low2'])
+    if useboth:
+        fname1=f'/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/report/track_snpsv2_ALL_bootstrapv3_both/{species}/{inoculumn}_parentboth_info.csv'
+        df_both = pd.read_csv(fname1).set_index('sample')
+        df_both = df_both.loc[np.intersect1d(df_both.index.values,e003_metadata.index.values),:]
+        df_both_meta = pd.concat([df_both,e003_metadata.loc[np.intersect1d(df_both.index.values,
+                                                                                e003_metadata.index.values),:]],axis=1).reset_index()
+        df_both_meta_good = df_both_meta.loc[df_both_meta['shifts_med']<.1,:]
+        df_both_meta_good['boot_med1'] =  df_both_meta_good['boot_med'].copy()
+        df_both_meta_good['boot_high1'] =  df_both_meta_good['boot_high'].copy()
+        df_both_meta_good['boot_low1'] =  df_both_meta_good['boot_low'].copy()
+    else:
+        fname1=f'/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/report/track_snpsv2_ALL_bootstrapv3/{species}/{inoculumn}_parent1_info.csv'
+        df_both = get_both_dfs(fname1)
+        df_both['boot_med1_shift'] = df_both['boot_med1']/(df_both['boot_med1']+df_both['boot_med2'])
+        df_both = df_both.loc[np.intersect1d(df_both.index.values,e003_metadata.index.values),:]
+        df_both_meta = pd.concat([df_both,e003_metadata.loc[np.intersect1d(df_both.index.values,
+                                                                                e003_metadata.index.values),:]],axis=1).reset_index()
+        df_both_meta_good = df_both_meta.loc[df_both_meta['total_shift']<.1,:]
+        if shift:
+            df_both_meta_good['boot_med1_shift']=df_both_meta_good['boot_med1']/(df_both_meta_good['boot_med1']+df_both_meta_good['boot_med2'])
+            df_both_meta_good['boot_high1_shift']=df_both_meta_good['boot_high1']/(df_both_meta_good['boot_high1']+df_both_meta_good['boot_high2'])
+            df_both_meta_good['boot_low1_shift']=df_both_meta_good['boot_low1']/(df_both_meta_good['boot_low1']+df_both_meta_good['boot_low2'])
     df_abundance_good = df_abundance.loc[df_abundance['species_id']==species,:]
     plots_abundance = []
     plots_strain=[]
@@ -406,6 +416,8 @@ def make_plain_linear_plot_abundance(df_abundance, species, inoculumn,emph=[],sa
 
 
     current_max = 0
+    if useboth:
+        shift=False
     for good_meso in df_both_meta_good['type_mesocosm'].unique():
         med = good_meso.split('-')[-1]
         if med not in medias:
@@ -486,7 +498,7 @@ def plot_trajectories_with_in(freq_df, colorby='const',alpha=1.,strain1=True,
             if in_sample not in df_meso['sample'].values:
                 df_meso= pd.concat([df_meso,freq_df.loc[freq_df['sample'] == in_sample,:]],axis=0)
             df_meso = df_meso.sort_values(by = 'passage') 
-            if strain1:
+            if True:
                 minor_strain = 'boot_med1'
                 upper = 'boot_high1'
                 lower = 'boot_low1'
@@ -494,21 +506,32 @@ def plot_trajectories_with_in(freq_df, colorby='const',alpha=1.,strain1=True,
                     minor_strain = 'boot_med1_shift'
                     upper = 'boot_high1_shift'
                     lower = 'boot_low1_shift'
-            else:
-                minor_strain = 'boot_med2'
-                upper = 'boot_high2'
-                lower = 'boot_low2'
-            df_source = bokeh.models.ColumnDataSource(data=dict(base=df_meso['passage'].values, 
+            
+              #  minor_strain = 'boot_med2'
+               # upper = 'boot_high2'
+                #lower = 'boot_low2'
+            if strain1:
+                df_source = bokeh.models.ColumnDataSource(data=dict(base=df_meso['passage'].values, 
                                                                 upper=df_meso[upper].values, lower=df_meso[lower].values))
+            else:
+                df_source = bokeh.models.ColumnDataSource(data=dict(base=df_meso['passage'].values, 
+                                                                upper=1-df_meso[upper].values, lower=1-df_meso[lower].values))
             error = bokeh.models.Whisker(base='base', upper='upper', lower='lower', source=df_source,line_color='black',
                                          line_width=1,  level="annotation",)
             error.upper_head.size=5
             error.lower_head.size=5
-            p2.line(df_meso['passage'].values,
-                   df_meso[minor_strain].values,color=color,alpha=alpha)
-            p2.scatter(df_meso['passage'].values,
-                   df_meso[minor_strain].values,color = color, legend_label = mesocosm, size = 8,marker=marker,
-                      alpha=alpha)
+            if strain1:
+                p2.line(df_meso['passage'].values,
+                    df_meso[minor_strain].values,color=color,alpha=alpha)
+                p2.scatter(df_meso['passage'].values,
+                    df_meso[minor_strain].values,color = color, legend_label = mesocosm, size = 8,marker=marker,
+                        alpha=alpha)
+            else:
+                p2.line(df_meso['passage'].values,
+                    1-df_meso[minor_strain].values,color=color,alpha=alpha)
+                p2.scatter(df_meso['passage'].values,
+                    1-df_meso[minor_strain].values,color = color, legend_label = mesocosm, size = 8,marker=marker,
+                        alpha=alpha)
             p2.add_layout(error,)
     subs_dic = {'AA':'A','AE':'B','AF':'C'}
     sub1, sub2 = type_meso.split('-')[0],type_meso.split('-')[1]
@@ -531,40 +554,48 @@ def plot_trajectories_with_in(freq_df, colorby='const',alpha=1.,strain1=True,
     
     return p2
 
-def make_logit_plot(species, inoculumn,emph=[],same_plots = False,colorby='const',markers='meso',shift=True,thresh=1e-3,medias = ['mBHI','mGAM'],logit=True):
+def make_logit_plot(species, inoculumn,emph=[],same_plots = False,colorby='const',markers='meso',shift=True,thresh=1e-3,medias = ['mBHI','mGAM'],
+strain1=True,logit=True, useboth=True):
     e003_metadata = pd.read_csv('e003_coalescence_metadata_round4_good.csv').set_index('sample')
    # print(e003_metadata.columns.values)
-
-    fname1=f'/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/report/track_snpsv2_ALL_bootstrapv3/{species}/{inoculumn}_parent1_info.csv'
-    df_both = get_both_dfs(fname1)
-    df_both = df_both.loc[np.intersect1d(df_both.index.values,e003_metadata.index.values),:]
-    df_both_meta = pd.concat([df_both,e003_metadata.loc[np.intersect1d(df_both.index.values,
-                                                                               e003_metadata.index.values),:]],axis=1).reset_index()
-
-    df_both_meta_good = df_both_meta.loc[df_both_meta['total_shift']<.1,:]
-    for col in ['boot_med1','boot_low1','boot_high1','boot_med2','boot_low2','boot_high2']:
-        df_both_meta_good.loc[df_both_meta_good[col]<thresh,col]=thresh
-        df_both_meta_good.loc[df_both_meta_good[col]>1-thresh,col]=1-thresh
-    if shift:
-        df_both_meta_good['boot_med1_shift']=df_both_meta_good['boot_med1']/(df_both_meta_good['boot_med1']+df_both_meta_good['boot_med2'])
-        df_both_meta_good['boot_high1_shift']=df_both_meta_good['boot_high1']/(df_both_meta_good['boot_high1']+df_both_meta_good['boot_high2'])
-        df_both_meta_good['boot_low1_shift']=df_both_meta_good['boot_low1']/(df_both_meta_good['boot_low1']+df_both_meta_good['boot_low2'])
-        for col in ['boot_med1_shift','boot_low1_shift','boot_high1_shift']:
+    if useboth:
+        fname1=f'/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/report/track_snpsv2_ALL_bootstrapv3_both/{species}/{inoculumn}_parentboth_info.csv'
+        df_both = pd.read_csv(fname1).set_index('sample')
+        df_both = df_both.loc[np.intersect1d(df_both.index.values,e003_metadata.index.values),:]
+        df_both_meta = pd.concat([df_both,e003_metadata.loc[np.intersect1d(df_both.index.values,
+                                                                                e003_metadata.index.values),:]],axis=1).reset_index()
+        df_both_meta_good = df_both_meta.loc[df_both_meta['shifts_med']<.1,:]
+        for col in ['boot_med', 'boot_low', 'boot_high']:
             df_both_meta_good.loc[df_both_meta_good[col]<thresh,col]=thresh
             df_both_meta_good.loc[df_both_meta_good[col]>1-thresh,col]=1-thresh
+            df_both_meta_good[f'{col}1_shift'] = df_both_meta_good[col] 
 
-    sel_stuff, df_both_meta_good = get_selection_stuff_both(species,inoculumn)
-    df_both_meta_good = df_both_meta.loc[df_both_meta['total_shift']<.1,:]
+    else:
+        fname1=f'/Users/sophiewalton/git/coalescence-pilot-mgx/workflow/report/track_snpsv2_ALL_bootstrapv3/{species}/{inoculumn}_parent1_info.csv'
+        df_both = get_both_dfs(fname1)
+        df_both = df_both.loc[np.intersect1d(df_both.index.values,e003_metadata.index.values),:]
+        df_both_meta = pd.concat([df_both,e003_metadata.loc[np.intersect1d(df_both.index.values,
+                                                                                e003_metadata.index.values),:]],axis=1).reset_index()
+        df_both_meta_good = df_both_meta.loc[df_both_meta['total_shift']<.1,:]
+        for col in ['boot_med1','boot_low1','boot_high1','boot_med2','boot_low2','boot_high2']:
+            df_both_meta_good.loc[df_both_meta_good[col]<thresh,col]=thresh
+            df_both_meta_good.loc[df_both_meta_good[col]>1-thresh,col]=1-thresh
+        if shift:
+            df_both_meta_good['boot_med1_shift']=df_both_meta_good['boot_med1']/(df_both_meta_good['boot_med1']+df_both_meta_good['boot_med2'])
+            df_both_meta_good['boot_high1_shift']=df_both_meta_good['boot_high1']/(df_both_meta_good['boot_high1']+df_both_meta_good['boot_high2'])
+            df_both_meta_good['boot_low1_shift']=df_both_meta_good['boot_low1']/(df_both_meta_good['boot_low1']+df_both_meta_good['boot_low2'])
+            for col in ['boot_med1_shift','boot_low1_shift','boot_high1_shift']:
+                df_both_meta_good.loc[df_both_meta_good[col]<thresh,col]=thresh
+                df_both_meta_good.loc[df_both_meta_good[col]>1-thresh,col]=1-thresh
+
+ #  sel_stuff, df_both_meta_good = get_selection_stuff_both(species,inoculumn)
+   # df_both_meta_good = df_both_meta.loc[df_both_meta['total_shift']<.1,:]
     df_both_meta_good_logit = df_both_meta_good.copy()
+    #if shift:
     if logit:
-        df_both_meta_good_logit[['boot_med1','boot_low1','boot_high1',
-        'boot_med2','boot_low2','boot_high2',]] = np.log(df_both_meta_good_logit[['boot_med1','boot_low1','boot_high1',
-        'boot_med2','boot_low2','boot_high2',]]/(1-df_both_meta_good_logit[['boot_med1','boot_low1','boot_high1',
-        'boot_med2','boot_low2','boot_high2',]]) )
-       # if shift:
-        #    df_both_meta_good_logit[['boot_med1_shift','boot_low1_shift','boot_high1_shift']] = \
-         #   np.log(df_both_meta_good_logit[['boot_med1_shift','boot_low1_shift','boot_high1_shift']]/(1-\
-          #   df_both_meta_good_logit[['boot_med1_shift','boot_low1_shift','boot_high1_shift']]))
+        df_both_meta_good_logit[['boot_med1_shift','boot_low1_shift','boot_high1_shift']] = \
+            np.log(df_both_meta_good_logit[['boot_med1_shift','boot_low1_shift','boot_high1_shift']]/(1-\
+           df_both_meta_good_logit[['boot_med1_shift','boot_low1_shift','boot_high1_shift']]))
     plots_strain=[]
     type_mesos=[]
     for good_meso in df_both_meta_good['type_mesocosm'].unique():
@@ -581,7 +612,7 @@ def make_logit_plot(species, inoculumn,emph=[],same_plots = False,colorby='const
                     )
         p=hv.render(p)
 
-        p = plot_trajectories_with_in(df_both_meta_good_meso_logit, strain1=True,shift=False, colorby=colorby,p2=p)
+        p = plot_trajectories_with_in(df_both_meta_good_meso_logit, strain1=strain1,shift=True, colorby=colorby,p2=p)
         subject1 = fname1.split('/')[-1].split('-')[0]
         in_name = fname1.split('/')[-1].split('_')[0]
         p.x_range = bokeh.models.Range1d(-.1,7.1)
