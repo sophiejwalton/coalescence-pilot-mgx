@@ -60,7 +60,7 @@ def get_main(species_dir, save_dir, species,thresh=.8):
   #  ss_df['Strain Shift'] = ss_df['fixed_diffs'] > 1000
   #  if '/' in parent_subjects_media:
    #     parent_subjects_media = ''.join(parent_subjects_media.split('/'))
-    ss_df.to_csv(f'{save_dir}/{species}_shared_{str(int(thesh*100))}.csv')
+    ss_df.to_csv(f'{save_dir}/{species}_shared_{str(int(thresh*100))}.csv')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='basic filtering of sites')
@@ -80,4 +80,4 @@ if __name__ == '__main__':
     save_dir = f'{args.outdir}/{args.species}'
     if not path.isdir(save_dir):
         mkdir(save_dir)
-    get_main(species_dir, save_dir, args.species, )
+    get_main(species_dir, save_dir, args.species,thresh=.2 )
