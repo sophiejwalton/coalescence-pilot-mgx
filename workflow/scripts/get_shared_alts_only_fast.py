@@ -54,6 +54,7 @@ def get_main(species_dir, save_dir, species,thresh=.8):
         fixed_diffs= get_shared(freq_filtered,s1,thresh=thresh).reset_index()
         fixed_diffs['sample1'] = s1
         fixed_diffs['species_id'] = species
+        fixed_diffs['num_sites'] = np.sum(freq_filtered[s1] > thresh)
         all_dfs.append(fixed_diffs)
 
     ss_df = pd.concat(all_dfs,axis=0)
