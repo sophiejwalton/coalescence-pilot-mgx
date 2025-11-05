@@ -1,0 +1,5 @@
+,index,shared,sample1,species_id,num_sites
+0,e003-inoculumn-fecal-AC,16981,e003-inoculumn-fecal-AC,100262,16981
+1,e003-inoculumn-fecal-inoculumn,1166,e003-inoculumn-fecal-AC,100262,16981
+0,e003-inoculumn-fecal-AC,1166,e003-inoculumn-fecal-inoculumn,100262,5465
+1,e003-inoculumn-fecal-inoculumn,5465,e003-inoculumn-fecal-inoculumn,100262,5465

@@ -1,0 +1,5 @@
+,index,shared,sample1,species_id,num_sites
+0,C_B1_e003Assembly_6_S205,8687,C_B1_e003Assembly_6_S205,102302,8687
+1,C_B9_e003Assembly_4_S213,7599,C_B1_e003Assembly_6_S205,102302,8687
+0,C_B1_e003Assembly_6_S205,7599,C_B9_e003Assembly_4_S213,102302,8856
+1,C_B9_e003Assembly_4_S213,8856,C_B9_e003Assembly_4_S213,102302,8856

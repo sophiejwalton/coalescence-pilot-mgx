@@ -1,0 +1,17 @@
+,index,shared,sample1,species_id,num_sites
+0,B9-e003Coalescence-mBHI-p1_S757,426,B9-e003Coalescence-mBHI-p1_S757,102876,426
+1,D3-e003Assembly-mBHI-p5,21,B9-e003Coalescence-mBHI-p1_S757,102876,426
+2,D9-e003Assembly-mGAM-p5,18,B9-e003Coalescence-mBHI-p1_S757,102876,426
+3,Assembly-G2-B3-ACPP-mBHI-3_S693,21,B9-e003Coalescence-mBHI-p1_S757,102876,426
+0,B9-e003Coalescence-mBHI-p1_S757,21,D3-e003Assembly-mBHI-p5,102876,258
+1,D3-e003Assembly-mBHI-p5,258,D3-e003Assembly-mBHI-p5,102876,258
+2,D9-e003Assembly-mGAM-p5,24,D3-e003Assembly-mBHI-p5,102876,258
+3,Assembly-G2-B3-ACPP-mBHI-3_S693,16,D3-e003Assembly-mBHI-p5,102876,258
+0,B9-e003Coalescence-mBHI-p1_S757,18,D9-e003Assembly-mGAM-p5,102876,959
+1,D3-e003Assembly-mBHI-p5,24,D9-e003Assembly-mGAM-p5,102876,959
+2,D9-e003Assembly-mGAM-p5,959,D9-e003Assembly-mGAM-p5,102876,959
+3,Assembly-G2-B3-ACPP-mBHI-3_S693,15,D9-e003Assembly-mGAM-p5,102876,959
+0,B9-e003Coalescence-mBHI-p1_S757,21,Assembly-G2-B3-ACPP-mBHI-3_S693,102876,391
+1,D3-e003Assembly-mBHI-p5,16,Assembly-G2-B3-ACPP-mBHI-3_S693,102876,391
+2,D9-e003Assembly-mGAM-p5,15,Assembly-G2-B3-ACPP-mBHI-3_S693,102876,391
+3,Assembly-G2-B3-ACPP-mBHI-3_S693,391,Assembly-G2-B3-ACPP-mBHI-3_S693,102876,391

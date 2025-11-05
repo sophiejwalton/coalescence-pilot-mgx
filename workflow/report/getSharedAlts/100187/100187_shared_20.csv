@@ -1,0 +1,17 @@
+,index,shared,sample1,species_id,num_sites
+0,e003-inoculumn-fecal-AC,9988,e003-inoculumn-fecal-AC,100187,9988
+1,e003-inoculumn-fecal-AE,729,e003-inoculumn-fecal-AC,100187,9988
+2,e003-inoculumn-fecal-AF,964,e003-inoculumn-fecal-AC,100187,9988
+3,e003-inoculumn-fecal-inoculumn,693,e003-inoculumn-fecal-AC,100187,9988
+0,e003-inoculumn-fecal-AC,729,e003-inoculumn-fecal-AE,100187,6704
+1,e003-inoculumn-fecal-AE,6704,e003-inoculumn-fecal-AE,100187,6704
+2,e003-inoculumn-fecal-AF,759,e003-inoculumn-fecal-AE,100187,6704
+3,e003-inoculumn-fecal-inoculumn,438,e003-inoculumn-fecal-AE,100187,6704
+0,e003-inoculumn-fecal-AC,964,e003-inoculumn-fecal-AF,100187,30883
+1,e003-inoculumn-fecal-AE,759,e003-inoculumn-fecal-AF,100187,30883
+2,e003-inoculumn-fecal-AF,30883,e003-inoculumn-fecal-AF,100187,30883
+3,e003-inoculumn-fecal-inoculumn,712,e003-inoculumn-fecal-AF,100187,30883
+0,e003-inoculumn-fecal-AC,693,e003-inoculumn-fecal-inoculumn,100187,5379
+1,e003-inoculumn-fecal-AE,438,e003-inoculumn-fecal-inoculumn,100187,5379
+2,e003-inoculumn-fecal-AF,712,e003-inoculumn-fecal-inoculumn,100187,5379
+3,e003-inoculumn-fecal-inoculumn,5379,e003-inoculumn-fecal-inoculumn,100187,5379

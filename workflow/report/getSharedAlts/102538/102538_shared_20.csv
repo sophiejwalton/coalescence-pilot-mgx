@@ -1,0 +1,17 @@
+,index,shared,sample1,species_id,num_sites
+0,C4-e003GlycerolRevival-mBHI-p2,2845,C4-e003GlycerolRevival-mBHI-p2,102538,2845
+1,C_B11_e003Assembly_4_S215,44,C4-e003GlycerolRevival-mBHI-p2,102538,2845
+2,D_B11_e003Assembly_S311,45,C4-e003GlycerolRevival-mBHI-p2,102538,2845
+3,D_F11_e003Assembly_S359,13,C4-e003GlycerolRevival-mBHI-p2,102538,2845
+0,C4-e003GlycerolRevival-mBHI-p2,44,C_B11_e003Assembly_4_S215,102538,94
+1,C_B11_e003Assembly_4_S215,94,C_B11_e003Assembly_4_S215,102538,94
+2,D_B11_e003Assembly_S311,77,C_B11_e003Assembly_4_S215,102538,94
+3,D_F11_e003Assembly_S359,32,C_B11_e003Assembly_4_S215,102538,94
+0,C4-e003GlycerolRevival-mBHI-p2,45,D_B11_e003Assembly_S311,102538,136
+1,C_B11_e003Assembly_4_S215,77,D_B11_e003Assembly_S311,102538,136
+2,D_B11_e003Assembly_S311,136,D_B11_e003Assembly_S311,102538,136
+3,D_F11_e003Assembly_S359,30,D_B11_e003Assembly_S311,102538,136
+0,C4-e003GlycerolRevival-mBHI-p2,13,D_F11_e003Assembly_S359,102538,346
+1,C_B11_e003Assembly_4_S215,32,D_F11_e003Assembly_S359,102538,346
+2,D_B11_e003Assembly_S311,30,D_F11_e003Assembly_S359,102538,346
+3,D_F11_e003Assembly_S359,346,D_F11_e003Assembly_S359,102538,346
