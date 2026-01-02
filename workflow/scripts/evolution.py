@@ -3,8 +3,8 @@ import numpy as np
 from os import path, mkdir
 from glob import glob
 import argparse
-import itertools as it
-from scipy.stats import linregress
+#import itertools as it
+#from scipy.stats import linregress
 from snp_analysis_tools_sherlock import *
 from evo_changes_tools import *
 from track_snps_funcs import *
@@ -21,11 +21,11 @@ def get_mutations(freqs, depth, metadata):
     for mesocosm in metadata['mesocosm'].unique():
         meso_df = metadata_non_zero.loc[metadata_non_zero['mesocosm'] == mesocosm, :]
         inoculumn = metadata.loc[metadata['mesocosm'] == mesocosm, 'inoculumn_sample'].values[0]
-        freqs_good = freqs[:,[inoculumn]+ list(meso_df['sample'].values)]
+        freqs_good = freqs[[inoculumn]+ list(meso_df['sample'].values)]
         freqs_polarize = freqs_good.copy()
         freqs_polarize.loc[freqs_polarize[inoculumn]>.8,:] = 1- freqs_polarize.loc[freqs_polarize[inoculumn]>.8,:]
-        
-        samples7 =  meso.loc[meso['passage']>=passage,'sample'].values[0]
+        print(freqs_polarize)
+        samples7 =  meso_df.loc[meso_df['passage']>=7,'sample']
         mutations = freqs_polarize[samples7]>.8
         mutations = mutations[mutations].index.values
         all_mutations = all_mutations + list(mutations)
@@ -79,8 +79,8 @@ if __name__ == '__main__':
        'AC/PP-AE-mBHI', 'AC/PP-AF-mBHI', 
        'AE-AF-mGAM', 'AE-AF-mBHI',
      ]
-    late=(6,7)
-    early = (int(args.interval[0]),int(args.interval[1]))
+#    late=(6,7)
+ #   early = (int(args.interval[0]),int(args.interval[1]))
     depth_filtered_in, freq_filtered_in = filter_sites_across_samples(depth_filtered, 
         freq_filtered,thresh=.75)
 
@@ -89,7 +89,7 @@ if __name__ == '__main__':
        'C4-AE-AE-mBHI-mBHI', 'E2-AA-AA-mBHI-mGAM', 'E8-AA-AA-mGAM-mGAM',
        'G4-AE-AE-mBHI-mBHI']
     metadata = metadata.loc[metadata['mesocosm'].isin(mesos),:]
-    samples = metadata['sample'].values
+    samples = np.intersect1d(metadata['sample'].values, freq_filtered.columns.values)
     freq_filtered = freq_filtered.loc[:,samples]
     depth_filtered = depth_filtered.loc[:,samples]
     freq_small, depth_small = get_mutations(freq_filtered, depth_filtered, metadata)
