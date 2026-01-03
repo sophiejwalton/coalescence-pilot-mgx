@@ -11,33 +11,39 @@ from track_snps_funcs import *
 import warnings
 warnings.filterwarnings('ignore')
 
+def get_child_samples(inoculumn, metadata):
+    subject,-,media = inoculumn.split('-')
+    mesocosms = metadata.loc[metadata['parent_media'] == media,:]
+    mesocosms['good']=mesocosms['parent_subjects'].transform(lambda x: subject in x)
+    mesocosms = mesocosms.loc[mesocosms['good'],:]
+    return mesocosms
 
 # right now just look for mutations that are 
-def get_mutations(freqs, depth, metadata):
+def get_mutations(freqs, depth, metadata, parent_dir):
     all_dfs = []
     metadata = metadata.loc[(metadata['passage']==0)+(metadata['passage']==7),:]
+    metadata_ino = metadata_ino.loc[metadata['is_inoculumn'],:]
+    metadata_ino.loc[metadata_ino['parent_subjects'].isin(['AA-AA','AE-AE',
+                                                                 'AF-AF']),:]
     metadata_non_zero=metadata.loc[metadata['passage']==7,:]
     print('metadata_non_zero',woo)
     all_mutations = []
-    for mesocosm in metadata['mesocosm'].unique():
-        meso_df = metadata_non_zero.loc[metadata_non_zero['mesocosm'] == mesocosm, :]
-        inoculumn = metadata.loc[metadata['mesocosm'] == mesocosm, 'inoculumn_sample'].values[0]
-        freqs_good = freqs[[inoculumn]+ list(meso_df['sample'].values)]
-        freqs_polarize = freqs_good.copy()
-        freqs_polarize.loc[freqs_polarize[inoculumn]>.8,:] = 1- freqs_polarize.loc[freqs_polarize[inoculumn]>.8,:]
-        freqs_polarize = freqs_polarize.loc[~freqs_polarize[inoculumn].isna(),:]
-        #iprint(freqs_polarize)
-        samples7 =  meso_df.loc[meso_df['passage']>=7,'sample']
-        mutations = freqs_polarize[samples7]>.8
-       # print('mut', len(mutations))
-        print('s7',samples7)
-        mutations = mutations[mutations].index.values
-        print(len(mutations))
-        if len(mutations)<100: all_mutations = all_mutations + list(mutations)
-    all_mutations = np.unique(all_mutations) 
-    return freqs.loc[all_mutations,:], depth.loc[all_mutations,:]
-
-
+    good_inos = np.intersect1d(freqs, metadata_ino.index.values)
+    for ino_sample in good_inos:
+        inoculumn = metadata_ino.loc[ino_sample, 'inoculumn']
+        metadata_good = get_child_samples(inoculumn, metadata)
+        metadata_p7 = metadata_good.loc[metadata_good['passage'] == 7,:]
+        good_samples = np.intersect1d(freqs.columns.values, metadata_p7.index.values)
+        cand_snps = []
+        for samp in good_samples:
+            moving_snps = get_transition_frequency_snps(freqs_polarize[[ino_sample,samp]], depth_filtered[[ino_sample,samp]]).index.values
+            if len(moving_snps) < 100:
+                cand_snps = cand_snps + list(moving_snps)
+        cand_snps = np.unique(cand_snps)
+        good_freqs = freqs.loc[cand_snps, [ino_sample] + list(good_samples)]
+        good_depth = depth.loc[cand_snps, [ino_sample] + list(good_samples)]
+        good_freqs.to_csv(f'{parent_dir}/{ino_sample}_freqs_changing.csv')
+        good_depths.to_csv(f'{parent_dir}/{ino_sample}_depths_changing.csv')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='basic filtering of sites')
@@ -64,7 +70,7 @@ if __name__ == '__main__':
     #print(info.columns.values)
     #print(info.index.values)
     freq = repolarize_against_reference(freq, info)
-    metadata = pd.read_csv('workflow/analysis/e003_coalescence_metadata_round4.csv')
+    metadata = pd.read_csv('workflow/analysis/e003_coalescence_metadata_round4.csv').set_index('sample')
     
    # metadata = pd.read_csv('workflow/analysis/e003_metadata_cultures_round2_change_AA.csv')
     
@@ -89,18 +95,19 @@ if __name__ == '__main__':
         freq_filtered,thresh=.75)
 
     
-    mesos = ['A2-AA-AA-mBHI-mBHI', 'A2-AA-AA-mBHI-mGAM', 'A2-AA-AA-mGAM-mGAM',
-       'C4-AE-AE-mBHI-mBHI', 'E2-AA-AA-mBHI-mGAM', 'E8-AA-AA-mGAM-mGAM',
-       'G4-AE-AE-mBHI-mBHI']
+   # mesos = ['A2-AA-AA-mBHI-mBHI', 'A2-AA-AA-mBHI-mGAM', 'A2-AA-AA-mGAM-mGAM',
+    #   'C4-AE-AE-mBHI-mBHI', 'E2-AA-AA-mBHI-mGAM', 'E8-AA-AA-mGAM-mGAM',
+     #  'G4-AE-AE-mBHI-mBHI']
    # type_mesos = ['AA-AA-mGAM-mGAM','AA-AE-mGAM-mGAM','AE-AE-mGAM-mGAM']
    # metadata = metadata.loc[metadata['type_mesocosm'].isin(type_mesos),:]
-    samples = np.intersect1d(metadata['sample'].values, freq_filtered.columns.values)
+   # e003_metadata = pd.read_csv('e003_coalescence_metadata_round4_good.csv').set_index('sample')
+    metadata['AC']=metadata['parent_subjects'].transform(lambda x: 'AC' in x)
+    metadata= metadata.loc[~metadata['AC'],:]
+    samples = np.intersect1d(metadata.index.values, freq_filtered.columns.values)
     freq_filtered = freq_filtered.loc[:,samples]
     depth_filtered = depth_filtered.loc[:,samples]
-    freq_small, depth_small = get_mutations(freq_filtered, depth_filtered, metadata)
+    get_mutations(freq_filtered, depth_filtered, metadata, save_dir)
 
-    freq_small.to_csv(f'{save_dir}/freq_small_evo.csv')
-    depth_small.to_csv(f'{save_dir}/depth_small_evo.csv')
        # parent2_info.to_csv(f'{save_dir}/{inoculumn}_{str(sample_init)}_{str(final_sample)}_parent2_info_shift.csv')
 
       #  distinguishing_snps.to_csv(f'{save_dir}/{inoculumn}_distinguishing_snps.csv')
