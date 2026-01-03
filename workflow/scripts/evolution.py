@@ -17,6 +17,7 @@ def get_mutations(freqs, depth, metadata):
     all_dfs = []
     metadata = metadata.loc[(metadata['passage']==0)+(metadata['passage']==7),:]
     metadata_non_zero=metadata.loc[metadata['passage']==7,:]
+    print('metadata_non_zero',woo)
     all_mutations = []
     for mesocosm in metadata['mesocosm'].unique():
         meso_df = metadata_non_zero.loc[metadata_non_zero['mesocosm'] == mesocosm, :]
@@ -24,12 +25,15 @@ def get_mutations(freqs, depth, metadata):
         freqs_good = freqs[[inoculumn]+ list(meso_df['sample'].values)]
         freqs_polarize = freqs_good.copy()
         freqs_polarize.loc[freqs_polarize[inoculumn]>.8,:] = 1- freqs_polarize.loc[freqs_polarize[inoculumn]>.8,:]
-        print(freqs_polarize)
+        freqs_polarize = freqs_polarize.loc[~freqs_polarize[inoculumn].isna(),:]
+        #iprint(freqs_polarize)
         samples7 =  meso_df.loc[meso_df['passage']>=7,'sample']
         mutations = freqs_polarize[samples7]>.8
+       # print('mut', len(mutations))
+        print('s7',samples7)
         mutations = mutations[mutations].index.values
-        all_mutations = all_mutations + list(mutations)
-
+        print(len(mutations))
+        if len(mutations)<100: all_mutations = all_mutations + list(mutations)
     all_mutations = np.unique(all_mutations) 
     return freqs.loc[all_mutations,:], depth.loc[all_mutations,:]
 
@@ -88,7 +92,8 @@ if __name__ == '__main__':
     mesos = ['A2-AA-AA-mBHI-mBHI', 'A2-AA-AA-mBHI-mGAM', 'A2-AA-AA-mGAM-mGAM',
        'C4-AE-AE-mBHI-mBHI', 'E2-AA-AA-mBHI-mGAM', 'E8-AA-AA-mGAM-mGAM',
        'G4-AE-AE-mBHI-mBHI']
-    metadata = metadata.loc[metadata['mesocosm'].isin(mesos),:]
+   # type_mesos = ['AA-AA-mGAM-mGAM','AA-AE-mGAM-mGAM','AE-AE-mGAM-mGAM']
+   # metadata = metadata.loc[metadata['type_mesocosm'].isin(type_mesos),:]
     samples = np.intersect1d(metadata['sample'].values, freq_filtered.columns.values)
     freq_filtered = freq_filtered.loc[:,samples]
     depth_filtered = depth_filtered.loc[:,samples]
