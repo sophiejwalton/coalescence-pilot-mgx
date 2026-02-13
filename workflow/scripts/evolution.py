@@ -12,7 +12,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 def get_child_samples(inoculumn, metadata):
-    subject,-,media = inoculumn.split('-')
+    subject,_,media = inoculumn.split('-')
     mesocosms = metadata.loc[metadata['parent_media'] == media,:]
     mesocosms['good']=mesocosms['parent_subjects'].transform(lambda x: subject in x)
     mesocosms = mesocosms.loc[mesocosms['good'],:]
@@ -22,28 +22,28 @@ def get_child_samples(inoculumn, metadata):
 def get_mutations(freqs, depth, metadata, parent_dir):
     all_dfs = []
     metadata = metadata.loc[(metadata['passage']==0)+(metadata['passage']==7),:]
-    metadata_ino = metadata_ino.loc[metadata['is_inoculumn'],:]
+    metadata_ino = metadata.loc[metadata['is_inoculumn'],:]
     metadata_ino.loc[metadata_ino['parent_subjects'].isin(['AA-AA','AE-AE',
                                                                  'AF-AF']),:]
     metadata_non_zero=metadata.loc[metadata['passage']==7,:]
-    print('metadata_non_zero',woo)
+ #   print(metadata_non_zero',woo)
     all_mutations = []
-    good_inos = np.intersect1d(freqs, metadata_ino.index.values)
+    good_inos = np.intersect1d(freqs.columns.values, metadata_ino.index.values)
     for ino_sample in good_inos:
         inoculumn = metadata_ino.loc[ino_sample, 'inoculumn']
         metadata_good = get_child_samples(inoculumn, metadata)
-        metadata_p7 = metadata_good.loc[metadata_good['passage'] == 7,:]
+        metadata_p7 = metadata_good.loc[metadata_good['passage'] >=5,:]
         good_samples = np.intersect1d(freqs.columns.values, metadata_p7.index.values)
         cand_snps = []
         for samp in good_samples:
-            moving_snps = get_transition_frequency_snps(freqs_polarize[[ino_sample,samp]], depth_filtered[[ino_sample,samp]]).index.values
+            moving_snps = get_transition_frequency_snps(freqs[[ino_sample,samp]], depth[[ino_sample,samp]]).index.values
             if len(moving_snps) < 100:
                 cand_snps = cand_snps + list(moving_snps)
         cand_snps = np.unique(cand_snps)
         good_freqs = freqs.loc[cand_snps, [ino_sample] + list(good_samples)]
         good_depth = depth.loc[cand_snps, [ino_sample] + list(good_samples)]
-        good_freqs.to_csv(f'{parent_dir}/{ino_sample}_freqs_changing.csv')
-        good_depths.to_csv(f'{parent_dir}/{ino_sample}_depths_changing.csv')
+        good_freqs.to_csv(f'{parent_dir}/{inoculumn}_freqs_changing.csv')
+        good_depth.to_csv(f'{parent_dir}/{inoculumn}_depths_changing.csv')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='basic filtering of sites')

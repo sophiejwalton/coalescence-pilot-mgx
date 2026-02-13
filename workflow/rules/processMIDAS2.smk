@@ -81,7 +81,7 @@ rule getsharedalts:
     input:
         snpsFreq="workflow/out/midas2v3_output/mergevfinal_{species}/snps/{species}/{species}.snps_freqs.tsv.gz",
     output:
-        "workflow/report/getSharedAlts/{species}/{species}_shared_80.csv"
+        "workflow/report/getSharedAlts/{species}/{species}_shared_20.csv"
     params:
         indir="workflow/out/midas2v3_output/mergevfinal_{species}/snps/",
         outdir="workflow/report/getSharedAlts/",
