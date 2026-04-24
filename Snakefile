@@ -229,12 +229,12 @@ rule all:
          #expand("workflow/report/getSharedAlts/{species}/{species}_shared_20.csv",species=species_list)    
 #=======
       #   expand("workflow/report/getSharedAlts/{species}/{species}_shared_80.csv")
-#>>>>>>> 048bc47ef37a297b645a22b183fe842bd2d8d4a3
        # expand("workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv",species=species_list),  
      #   expand("workflow/report/track_snpsv2_ALL/{species}/done.txt", species=species_list),   
       #   expand("workflow/report/track_snpsv2_ALL_bootstrapv3/{species}/done.txt", species=species_list), 
  #        expand("workflow/report/calculateFixedDiffsFastv3/{species}/{species}_fixed_diffs.csv",species=species_list),
          expand("workflow/report/track_snpsv3_sel_bootstrapv3/{species}/done.txt",  species=species_list),
+         expand( "workflow/report/track_snpsv5_shift_self_test_mod_shift/{species}/done12.txt",species=species_list),
 #"workflow/report/track_snpsv3_sel_bootstrapv3/{species}/done.txt"
         # expand("workflow/report/track_snpsv2_shift_self_test_mod_shift/{species}/done.txt",  species=species_list),
         # expand("workflow/report/track_snpsv2_shift_self_test_mod_shift/{species}/done23.txt",  species=species_list)

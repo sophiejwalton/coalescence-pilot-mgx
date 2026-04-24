@@ -222,16 +222,16 @@ rule trackSNPsAVG_shift_sel_mod_shift12:
        # snpsInfo="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_info.tsv.gz",
        # wo="workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv"
     output:
-        "workflow/report/track_snpsv2_shift_self_test_mod_shift/{species}/done12.txt"
+        "workflow/report/track_snpsv5_shift_self_test_mod_shift/{species}/done12.txt"
     params:
         indir="workflow/out/midas2v3_output/mergevfinal_{species}/snps/",
-        outdir="workflow/report/track_snpsv2_shift_self_test_mod_shift/",
+        outdir="workflow/report/track_snpsv5_shift_self_test_mod_shift/",
         #species={species}
   #  conda:
    #     "../../workflow/envs/snps_analysis_tools-no-builds.yml"
     shell:
         """
-        python3 workflow/scripts/track_snps_avg_v2_sample_quads_pairs_modular_shift.py --outdir {params.outdir} --indir {params.indir} --species {wildcards.species} --interval 12
+        python3 workflow/scripts/track_snps_avg_v5sample_quads_pairs_modular_shift.py --outdir {params.outdir} --indir {params.indir} --species {wildcards.species} --interval 12
         touch {params.outdir}/{wildcards.species}/done12.txt
         """
 
