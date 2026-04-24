@@ -194,7 +194,7 @@ rule trackSNPsAVG_bootstrapv3both:
 
 
 #workflow/report/track_snpsv2_shift_self_test_12_shift
-rule trackSNPsAVG_shift_sel_mod_shift01:
+rule trackSNPsAVG_shiftb_sel_mod_shift01:
     input:
        # snpsDepth="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_depth.tsv.gz",
         snpsFreq="workflow/out/midas2v3_output/mergevfinal_{species}/snps/{species}/{species}.snps_freqs.tsv.gz",
@@ -231,7 +231,7 @@ rule trackSNPsAVG_shift_sel_mod_shift12:
    #     "../../workflow/envs/snps_analysis_tools-no-builds.yml"
     shell:
         """
-        python3 workflow/scripts/track_snps_avg_v5sample_quads_pairs_modular_shift.py --outdir {params.outdir} --indir {params.indir} --species {wildcards.species} --interval 12
+        python3 workflow/scripts/track_snps_avg_v5_sample_quads_pairs_modular_shift.py --outdir {params.outdir} --indir {params.indir} --species {wildcards.species} --interval 12
         touch {params.outdir}/{wildcards.species}/done12.txt
         """
 

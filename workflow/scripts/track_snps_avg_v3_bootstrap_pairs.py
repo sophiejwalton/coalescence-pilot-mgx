@@ -16,10 +16,11 @@ def get_sample_freq(freqs, reads,readsopp, depth_med):
     readsopp = np.round(readsopp[~np.isnan(freqs)])
     freqs = freqs[~np.isnan(freqs)]
     freq_est = np.median(freqs)
+
     if freq_est == 0:
-        freq_est = (np.sum(reads==1)/np.sum(reads==0))/depth_med[0]
+        freq_est = (np.sum(reads==1)/np.sum(reads==0))/depth_med
     if freq_est == 1:
-        freq_est = 1-(np.sum(readsopp==1)/np.sum(readsopp==0))/depth_med[0]
+        freq_est = 1-(np.sum(readsopp==1)/np.sum(readsopp==0))/depth_med
     return freq_est 
 
 def get_sample_freq_adjust(freqs,reads,readsopp, sample, snps1,snps2, depth_med):
@@ -98,7 +99,7 @@ def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, 
             #                 np.log((1-medians[combo[0]])/(medians[combo[0]])))
             passage1_est = medians[combo[0]]
             passage2_est = medians[combo[1]]
-            sel_coeff_early = (1/dt)*(np.log(passage2_est/(1-passage2_est)) + \
+            sel_coeffs = (1/dt)*(np.log(passage2_est/(1-passage2_est)) + \
                                 np.log((1-passage1_est)/(passage1_est)))
   
             sel_inf_upper.append(np.quantile(sel_coeffs, q = .975))
