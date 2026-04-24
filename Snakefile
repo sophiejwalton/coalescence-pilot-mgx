@@ -130,6 +130,7 @@ print(len(species_list))
 #species_list = ['100099', '100146', '100196', '100910', '101059', '101294',
  #      '101346', '102438', '102478', '102506', '102528', '102544',
   #     '103117', '103656']
+<<<<<<< HEAD
 species_list=[100196]
 species_list=[100002, 100003, 100013, 100022, 100023, 100031, 100035, 100038,
        100044, 100059, 100071, 100074, 100078, 100084, 100087, 100088,
@@ -207,6 +208,9 @@ species_list = [100002, 100003, 100013, 100022, 100023, 100031, 100035, 100038,
        103117, 103141, 103190, 103439, 103656, 103681, 103683, 103686,
        103695, 103727, 103772, 103796, 103876, 103886, 103937, 104099,
        104552]
+=======
+species_list = ['103656']
+>>>>>>> 048bc47ef37a297b645a22b183fe842bd2d8d4a3
 rule all:
     input:
          #expand("workflow/out/trimmed/{sample}-trimmed-pair1.fastq.gz",sample=samples),
@@ -221,13 +225,18 @@ rule all:
         # expand("workflow/out/midas2_output/mergevfinal_{species}/snps/{species}/{species}.snps_freqs.tsv", species=species_list),
       #  expand("workflow/out/midas2_output/merge/snps/{species}/{species}.snps_freqs.tsv.gz", species=species_list),
         # expand("workflow/report/calculateDiversityDepthv3/{species}/{species}_diversity_df1.csv",species=species_list), 
+<<<<<<< HEAD
         # expand("workflow/report/getSharedAlts/{species}/{species}_shared_80.csv",species=species_list),
          expand("workflow/report/getSharedAlts/{species}/{species}_shared_20.csv",species=species_list)    
+=======
+      #   expand("workflow/report/getSharedAlts/{species}/{species}_shared_80.csv")
+>>>>>>> 048bc47ef37a297b645a22b183fe842bd2d8d4a3
        # expand("workflow/report/calculateFixedDiffs/{species}/{species}_fixed_diffs.csv",species=species_list),  
      #   expand("workflow/report/track_snpsv2_ALL/{species}/done.txt", species=species_list),   
       #   expand("workflow/report/track_snpsv2_ALL_bootstrapv3/{species}/done.txt", species=species_list), 
  #        expand("workflow/report/calculateFixedDiffsFastv3/{species}/{species}_fixed_diffs.csv",species=species_list),
-      #   expand("workflow/report/track_snpsv2_sel_bootstrapv3/{species}/done.txt",  species=species_list),
+         expand("workflow/report/track_snpsv3_sel_bootstrapv3/{species}/done.txt",  species=species_list),
+#"workflow/report/track_snpsv3_sel_bootstrapv3/{species}/done.txt"
         # expand("workflow/report/track_snpsv2_shift_self_test_mod_shift/{species}/done.txt",  species=species_list),
         # expand("workflow/report/track_snpsv2_shift_self_test_mod_shift/{species}/done23.txt",  species=species_list)
        #  expand("workflow/report/track_snpsv2_shift_self_test_mod_shift/{species}/done01.txt",  species=species_list),
