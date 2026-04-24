@@ -24,9 +24,9 @@ def get_sample_freq(freqs, reads,readsopp, depth_med):
 
 def get_sample_freq_adjust(freqs,reads,readsopp, sample, snps1,snps2, depth_med):
     est1 = get_sample_freq(freqs.loc[snps1,sample].values, reads.loc[snps1,sample].values,
-                                    readsopp.loc[snps1,sample].values, depth_med[sample].values)
+                                    readsopp.loc[snps1,sample].values, depth_med[sample])
     est2 = get_sample_freq(freqs.loc[snps2,sample].values, reads.loc[snps2,sample].values,
-                                    readsopp.loc[snps2,sample].values, depth_med[sample].values)
+                                    readsopp.loc[snps2,sample].values, depth_med[sample])
     if est1<1e-3:
         est1=1e-3
     if est2<1e-3:
@@ -42,7 +42,7 @@ def get_sample_freq_adjust(freqs,reads,readsopp, sample, snps1,snps2, depth_med)
         together = 1- 1e-3
     return together 
 
-def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, reads, readsopp, parent_snps1,parent_snps2, inoculumn,thresh = 1e-3, n_bootstraps = 1000):
+def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, reads_children, reads_children_opp, parent_snps1,parent_snps2, inoculumn,thresh = 1e-3, n_bootstraps = 1000):
     #med = freq_children.loc[parent_snps,:].median(axis = 0)
     #freq_masked = freq_children.mask((freq_children > freq_thresh * med),axis = 0)
    # freq_masked = freq_masked .mask((freq_masked  < med / freq_thresh),axis = 0)
@@ -76,8 +76,8 @@ def get_bootstrap_sel_coeffs(metadata,freq_children, depth_med, depth_children, 
             samples_meds= np.zeros(n_bootstraps)
             shifts = np.zeros(n_bootstraps)
             for n in range(n_bootstraps):
-                bs_sample1 = np.random.choice(strain1_snps.index.values, size = len(strain1_snps))
-                bs_sample2 = np.random.choice(strain2_snps.index.values, size = len(strain2_snps))
+                bs_sample1 = np.random.choice(parent_snps1, size = len(parent_snps1))
+                bs_sample2 = np.random.choice(parent_snps2, size = len(parent_snps2))
                 passage1_est=get_sample_freq_adjust(freq_children,reads_children, reads_children_opp, sample, bs_sample1,bs_sample2, depth_med)
                 samples_meds[n] = passage1_est
             medians.append(samples_meds)
