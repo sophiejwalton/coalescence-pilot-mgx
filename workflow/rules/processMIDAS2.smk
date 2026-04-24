@@ -156,6 +156,28 @@ rule trackSNPsAVG_bootstrap_pairs:
         touch {params.outdir}/{wildcards.species}/done.txt
         """
 
+
+rule trackSNPsAVG_bootstrap_pairsv3:
+    input:
+       # snpsDepth="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_depth.tsv.gz",
+        snpsFreq="workflow/out/midas2v3_output/mergevfinal_{species}/snps/{species}/{species}.snps_freqs.tsv.gz",
+       # snpsInfo="workflow/out/midas2_output/merge_{species}/snps/{species}/{species}.snps_info.tsv.gz",
+       # wo="workflow/report/calculateDiversityDepth/{species}/{species}_diversity_df.csv"
+    output:
+        "workflow/report/track_snpsv3_sel_bootstrapv3/{species}/done.txt"
+    params:
+        indir="workflow/out/midas2v3_output/mergevfinal_{species}/snps/",
+        outdir="workflow/report/track_snpsv3_sel_bootstrapv3/",
+        #species={species}
+  #  conda:
+   #     "../../workflow/envs/snps_analysis_tools-no-builds.yml"
+    shell:
+        """
+        python3 workflow/scripts/track_snps_avg_v3_bootstrap_pairs.py --outdir {params.outdir} --indir {params.indir} --species {wildcards.species}
+        touch {params.outdir}/{wildcards.species}/done.txt
+        """
+
+
 rule trackSNPsAVG_bootstrapv3both:
     input:
         snpsFreq="workflow/out/midas2v3_output/mergevfinal_{species}/snps/{species}/{species}.snps_freqs.tsv.gz",
