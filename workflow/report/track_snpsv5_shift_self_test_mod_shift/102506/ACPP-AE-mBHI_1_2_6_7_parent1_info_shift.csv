@@ -1,0 +1,3 @@
+,mesocosms,diff7_med,diff7_lower,diff7_upper,pred_7_upper,pred_7_lower,pred7_med,as_extreme7,act7_upper,act_7_lower,act_7_med,early_sel_upper,early_sel_lower,early_sel_med,late_sel_upper,late_sel_lower,late_sel_med,sample_early1,sample_early2,sample_late1,sample_late2
+0,C3-AC/PP-AE-mBHI-mBHI,,,,,,,157,0.6452282157676349,0.5731958762886599,0.6114183687022978,,,,,,,1,2,6,7
+1,C3-AC/PP-AE-mBHI-mGAM,0.8995063151370553,0.8450682558957182,0.9163833141973871,0.9988850655175446,0.9360178464951663,0.9888708532151658,0,0.10307234886025766,0.07763023493360571,0.08850457782299084,1.3018408859410604,0.5641923856552358,0.8959175330403779,,,,1,2,6,7
