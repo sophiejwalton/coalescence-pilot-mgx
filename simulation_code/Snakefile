@@ -1,0 +1,41 @@
+from os.path import join
+import pandas as pd
+import os
+import glob
+import numpy as np
+configfile: "config/config.yaml"
+
+
+
+abundance_files = glob.glob('workflow/abundance_files_one_genome_multi_depth/GUT_GENOME000472/*.txt') + glob.glob('workflow/abundance_files_one_genome_multi_depth/GUT_GENOME001637/*.txt') #+ glob.glob('workflow/abundance_files_one_genome_multi_depth/GUT_GENOME001553/*.txt')
+trial_parts = []
+abundance_files_list = []
+#abundance_files = glob.glob('workflow/abundance_files_one_genome/GUT_GENOME000472/*.txt')
+for i, file in enumerate(abundance_files):
+  for j in range(int(2)):
+    abundance_files_list.append(file)
+    trial_parts.append(f"{file.split('/')[-2]}_{file.split('/')[-1].split('.txt')[0]}_trial_{str(j).zfill(3)}")
+
+df = pd.DataFrame(data={'trial_parts': trial_parts, 'abundance_file': abundance_files_list})
+#metadata_csv = pd.read_csv('metadata_sims.csv')
+trial_parts = list(df['trial_parts'].values)
+#print(len(trial_parts), len(its))
+#
+print(len(trial_parts))
+df2_list = pd.DataFrame(data={'sample_name':trial_parts})
+df2_list['midas_outdir'] = 'workflow/out/midasoutput_with_ones'
+df2_list.to_csv('workflow/out/list_of_samples.tsv',index=False,sep='\t')
+#sample_name	midas_outdir
+#print('GUT_GENOME034180_G8-e003Coalescence-mBHI-p7_S125_annotated_abundance_GUT_GENOME034180_5_abundances_trial_000' in trial_parts)
+rule all:
+    input:
+ #     "workflow/report/track_snps/100196/done.txt"
+      expand('workflow/out/insilicoSeqOutput20ones/{trial_part}/insilico-reads.fastq_R1.fastq', trial_part = trial_parts),
+      expand('workflow/out/midasoutput_with_ones/{trial_part}/snps/snps_summary.tsv',trial_part = trial_parts),
+      "workflow/out/midasoutput_with_ones/mergeonly_two_genomes_100196/snps/100196/100196.snps_freqs.tsv.lz4"
+#workflow/out/insilicoSeqOutput/GUT_GENOME034180_G8-e003Coalescence-mBHI-p7_S125_annotated_abundance_GUT_GENOME034180_5_abundances_trial_001/insilico-reads.fastq_R1.fastq
+#insilico-reads.fastq_R1.fastq
+#insilicoSeqOutput
+include: 'workflow/rules/runinSilicoSeq.smk'
+include: 'workflow/rules/runmidas2_fr_inSilicoSeq.smk'
+#include: 'workflow/rules/processMIDAS2.smk'

@@ -1,0 +1,32 @@
+project: "coalescence-pilot-mgx"
+
+# Input directories and files.
+snakedir: "/oak/stanford/groups/dpetrov/swalton/coalescence-pilot-mgx"
+fastqdir: "/oak/stanford/groups/dpetrov/swalton/Sophie_Oct2024_Seq/"
+#fastqdir: "/oak/stanford/groups/dpetrov/Feb2024_biohub_SJW_JCCV_KAS/Sophie_Walton"
+fastqdir: "/oak/stanford/groups/dpetrov/"
+sampleFileRaw: "config/sample_fnames_round2.csv"
+genome_dir: '/home/groups/bhgood/UHGG_download_SJW'
+trials: 2
+genome_file: 'workflow/abundance_files_one_genome/genomes.fa'
+#speciesTaxonomy: "workflow/out/midasOutput/database/species_taxonomy.txt"
+
+# Human genome reference bowtie2 index.
+humanGenomeRef: "/home/groups/bhgood/human_genome_ref/GRCh38_noalt_as/GRCh38_noalt_as"
+# MIDAS2 database files.
+midasdb: 'uhgg'
+midasdb_dir: "/home/groups/bhgood/my_midasdb_uhgg"
+
+
+# Output directories
+trimdir: "workflow/out/trimmed"
+filterdir: "workflow/out/filter"
+rePaireddir: "workflow/out/rePair"
+concate_dir: "workflow/out/concat"
+#plotMIDASoutdir: "workflow/report/plotMIDAS"
+
+# Analysis parameters.
+maxCPUs: 64
+# MIDAS snps module.
+runMIDAS_speciesMinCoverage: 3
+
